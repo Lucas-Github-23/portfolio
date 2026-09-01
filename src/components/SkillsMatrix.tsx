@@ -16,16 +16,16 @@ export function SkillsMatrix() {
 
   const skillData: Record<string, SkillItem[]> = {
     frontend: [
-      { name: "Next.js (App Router)", level: 98, status: "OPTIMAL" },
-      { name: "React 19 & TypeScript", level: 96, status: "OPTIMAL" },
-      { name: "Tailwind CSS & Design Tokens", level: 99, status: "MAX SYNC" },
-      { name: "HTML5 / Web APIs", level: 95, status: "STABLE" },
+      { name: "Next.js", level: 95, status: "OPTIMAL" },
+      { name: "React (Vite)", level: 92, status: "OPTIMAL" },
+      { name: "TypeScript", level: 90, status: "OPTIMAL" },
+      { name: "HTML5 & Web APIs", level: 95, status: "MAX SYNC" },
     ],
     backend: [
-      { name: "Node.js & Express / Fastify", level: 94, status: "OPTIMAL" },
-      { name: "PostgreSQL & Prisma / Drizzle", level: 92, status: "STABLE" },
-      { name: "REST & GraphQL APIs", level: 95, status: "OPTIMAL" },
-      { name: "Redis & Caching Layers", level: 88, status: "STABLE" },
+      { name: "SQL (SQL Server, MySQL & MongoDB)", level: 88, status: "OPTIMAL" },
+      { name: "VBA (Excel, PowerPoint & MS Office)", level: 85, status: "OPTIMAL" },
+      { name: "Node.js", level: 75, status: "STABLE" },
+      { name: "REST & GraphQL APIs", level: 68, status: "DEVELOPING" },
     ],
     devops: [
       { name: "Docker & Containerization", level: 90, status: "OPTIMAL" },
@@ -34,10 +34,7 @@ export function SkillsMatrix() {
       { name: "Linux System Admin", level: 86, status: "STABLE" },
     ],
     tools: [
-      { name: "Git & Version Control", level: 99, status: "MAX SYNC" },
-      { name: "Jest / Vitest Testing", level: 88, status: "STABLE" },
-      { name: "Figma UI/UX Translation", level: 91, status: "OPTIMAL" },
-      { name: "Performance Optimization", level: 95, status: "OPTIMAL" },
+      { name: "Git & Version Control", level: 95, status: "MAX SYNC" },
     ],
   };
 
