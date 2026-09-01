@@ -1,6 +1,6 @@
 <div align="center">
 
-# ⚡ LUCAS // DEVPOS-01
+# LUCAS // DEV-02
 ### NERV Tactical Command Portfolio & Diagnostic Interface
 
 [![Next.js](https://img.shields.io/badge/Next.js-16-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
