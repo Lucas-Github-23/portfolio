@@ -1,0 +1,170 @@
+"use client";
+
+import React, { useState, useEffect } from "react";
+import { useLanguage } from "@/context/LanguageContext";
+import { SunIcon, MoonIcon, ShieldAlertIcon, MonitorIcon } from "./Icons";
+
+export function HUDHeader() {
+  const {
+    language,
+    setLanguage,
+    t,
+    theme,
+    toggleTheme,
+    crtEnabled,
+    toggleCrt,
+    emergencyActive,
+    toggleEmergency,
+    activeSection,
+    setActiveSection,
+  } = useLanguage();
+
+  const [timeString, setTimeString] = useState<string>("");
+  const [logoClicks, setLogoClicks] = useState<number>(0);
+
+  const handleLogoClick = () => {
+    const nextClicks = logoClicks + 1;
+    setLogoClicks(nextClicks);
+    if (nextClicks >= 5) {
+      window.dispatchEvent(new CustomEvent("nerv_angel_attack"));
+      setLogoClicks(0);
+    }
+  };
+
+  useEffect(() => {
+    const updateTime = () => {
+      const now = new Date();
+      setTimeString(
+        now.toISOString().replace("T", " // ").substring(0, 22) + " UTC"
+      );
+    };
+    updateTime();
+    const interval = setInterval(updateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
+  const navItems = [
+    { id: "status", label: t.nav.status },
+    { id: "magi", label: "MAGI" },
+    { id: "projects", label: t.nav.projects },
+    { id: "skills", label: t.nav.skills },
+    { id: "experience", label: t.nav.experience },
+    { id: "contact", label: t.nav.contact },
+  ] as const;
+
+  return (
+    <header className="sticky top-0 z-50 bg-[var(--bg-main)]/90 backdrop-blur-md border-b border-[var(--border-grid)] shadow-md transition-colors">
+      {/* Top Warning Ribbon */}
+      <div className="w-full bg-[var(--accent-orange)] text-black font-mono text-[10px] md:text-xs py-0.5 px-4 flex justify-between items-center font-bold tracking-widest uppercase overflow-hidden">
+        <span className="whitespace-nowrap">
+          NERV HQ SECURITY SYSTEM // MAGI-01 OPERATIONAL
+        </span>
+        <span className="hidden md:inline whitespace-nowrap">
+          {timeString || "2026-08-31 // 20:00:00 UTC"}
+        </span>
+        <span className="whitespace-nowrap">CLASSIFICATION: TOP SECRET</span>
+      </div>
+
+      {/* Main HUD Bar */}
+      <div className="max-w-7xl mx-auto px-4 py-2.5 min-h-[64px] flex items-center justify-between gap-4">
+        {/* Brand / Logo */}
+        <div className="flex items-center gap-3 shrink-0">
+          <div
+            onClick={handleLogoClick}
+            className="w-8 h-8 bg-[var(--accent-orange)] text-black font-black text-xs flex items-center justify-center hud-panel-sm font-mono shadow-[0_0_10px_var(--accent-orange-glow)] cursor-pointer select-none hover:scale-105 active:scale-95 transition-transform"
+            title="NERV HQ LOGO (Secret Click x5)"
+          >
+            NERV
+          </div>
+          <div>
+            <div className="font-mono text-sm md:text-base font-extrabold tracking-wider text-[var(--text-primary)] flex items-center gap-2 whitespace-nowrap">
+              LUCAS // DEVPOS-01
+              <span className="inline-block w-2 h-2 rounded-full bg-[var(--accent-green)] animate-ping" />
+            </div>
+            <div className="font-mono text-[10px] text-[var(--text-secondary)] tracking-widest uppercase whitespace-nowrap">
+              {t.hud.location}
+            </div>
+          </div>
+        </div>
+
+        {/* Navigation Links / Section Switcher Tabs */}
+        <nav className="hidden lg:flex items-center gap-3 font-mono text-xs font-bold tracking-wider whitespace-nowrap">
+          {navItems.map((item) => {
+            const isActive = activeSection === item.id;
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveSection(item.id)}
+                className={`px-3 py-1.5 transition-all uppercase hud-button ${
+                  isActive
+                    ? "bg-[var(--accent-orange)] text-black font-black shadow-[0_0_10px_var(--accent-orange-glow)]"
+                    : "text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:bg-[var(--surface-panel)] border border-transparent hover:border-[var(--border-grid)]"
+                }`}
+              >
+                {item.label}
+              </button>
+            );
+          })}
+        </nav>
+
+        {/* Controls: Language, Theme, CRT & Emergency */}
+        <div className="flex items-center gap-2 font-mono text-xs shrink-0 whitespace-nowrap">
+          {/* Language Switcher */}
+          <div className="flex border border-[var(--border-grid)] p-0.5 hud-panel-sm bg-[var(--surface-panel)]">
+            <button
+              onClick={() => setLanguage("en")}
+              className={`px-2 py-1 font-bold text-[10px] transition-colors ${
+                language === "en"
+                  ? "bg-[var(--accent-orange)] text-black shadow-sm"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              EN
+            </button>
+            <button
+              onClick={() => setLanguage("pt")}
+              className={`px-2 py-1 font-bold text-[10px] transition-colors ${
+                language === "pt"
+                  ? "bg-[var(--accent-orange)] text-black shadow-sm"
+                  : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
+              }`}
+            >
+              PT-BR
+            </button>
+          </div>
+
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="p-1.5 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] transition-colors hud-panel-sm"
+            title={theme === "dark" ? t.hud.themeLight : t.hud.themeDark}
+          >
+            {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+          </button>
+
+          {/* CRT Overlay Toggle */}
+          <button
+            onClick={toggleCrt}
+            className={`p-1.5 border hud-panel-sm transition-colors ${
+              crtEnabled
+                ? "border-[var(--accent-green)] text-[var(--accent-green)] bg-[var(--accent-green-glow)]"
+                : "border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)]"
+            }`}
+            title={t.hud.crtScanlines}
+          >
+            <MonitorIcon />
+          </button>
+
+          {/* Emergency Alert Button */}
+          <button
+            onClick={toggleEmergency}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-[var(--accent-red)] text-black font-extrabold text-[10px] tracking-wider uppercase hud-button hover:opacity-90 transition-opacity shadow-[0_0_10px_var(--accent-red-glow)]"
+          >
+            <ShieldAlertIcon className="w-3.5 h-3.5" />
+            <span className="hidden sm:inline">{t.hud.emergency}</span>
+          </button>
+        </div>
+      </div>
+    </header>
+  );
+}

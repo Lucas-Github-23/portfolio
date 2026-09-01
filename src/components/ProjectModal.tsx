@@ -1,0 +1,128 @@
+"use client";
+
+import React from "react";
+import { useLanguage } from "@/context/LanguageContext";
+import { ExternalLinkIcon, GithubIcon, ShieldAlertIcon } from "./Icons";
+
+export interface ProjectData {
+  id: string;
+  titleEn: string;
+  titlePt: string;
+  category: "fullstack" | "frontend" | "backend";
+  clearance: string;
+  shortDescEn: string;
+  shortDescPt: string;
+  fullDescEn: string;
+  fullDescPt: string;
+  techStack: string[];
+  liveUrl?: string;
+  repoUrl?: string;
+  status: string;
+  isPlaceholder?: boolean;
+}
+
+export function ProjectModal({
+  project,
+  onClose,
+}: {
+  project: ProjectData | null;
+  onClose: () => void;
+}) {
+  const { language, t } = useLanguage();
+
+  if (!project) return null;
+
+  const title = language === "pt" ? project.titlePt : project.titleEn;
+  const description = language === "pt" ? project.fullDescPt : project.fullDescEn;
+
+  return (
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
+      <div className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] max-w-2xl w-full hud-panel p-6 md:p-8 space-y-6 relative shadow-[0_0_30px_var(--accent-orange-glow)] animate-in fade-in zoom-in-95 duration-200">
+        {/* Header Ribbon */}
+        <div className="flex justify-between items-center border-b border-[var(--border-grid)] pb-4 font-mono">
+          <div>
+            <div className="text-[10px] text-[var(--accent-orange)] font-bold tracking-widest uppercase flex items-center gap-1.5 flex-wrap">
+              <ShieldAlertIcon className="w-4 h-4 text-[var(--accent-orange)]" />
+              {project.clearance}
+              {project.isPlaceholder && (
+                <span className="placeholder-tag ml-2">
+                  {t.projects.placeholderTagFull}
+                </span>
+              )}
+            </div>
+            <h3 className="text-2xl font-black text-[var(--text-primary)] uppercase tracking-tight mt-1 font-mono">
+              {title}
+            </h3>
+          </div>
+          <button
+            onClick={onClose}
+            className="px-3 py-1.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs tracking-wider uppercase hud-button hover:bg-orange-600 transition-colors"
+          >
+            {t.projects.closeModal}
+          </button>
+        </div>
+
+        {/* Status Tag & Category */}
+        <div className="flex items-center gap-3 font-mono text-xs">
+          <span className="px-2.5 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] font-bold uppercase">
+            STATUS: {project.status}
+          </span>
+          <span className="text-[var(--text-secondary)] uppercase">
+            CATEGORY: {project.category}
+          </span>
+        </div>
+
+        {/* Detailed Narrative */}
+        <div className="space-y-3 font-mono text-sm text-[var(--text-primary)] leading-relaxed">
+          <p className="border-l-2 border-[var(--accent-orange)] pl-3 italic text-[var(--text-secondary)]">
+            &quot;Classified operational dossier details for deployment {project.id}. All technical specifications verified.&quot;
+          </p>
+          <p>{description}</p>
+        </div>
+
+        {/* Tech Stack Matrix */}
+        <div className="space-y-2 font-mono">
+          <span className="text-xs text-[var(--text-secondary)] tracking-widest uppercase block">
+            TECHNOLOGY STACK INTEGRATION:
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {project.techStack.map((tech) => (
+              <span
+                key={tech}
+                className="px-2.5 py-1 bg-[var(--bg-main)] border border-[var(--border-grid)] text-[var(--accent-orange)] text-xs font-bold uppercase"
+              >
+                {tech}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Links */}
+        <div className="flex flex-wrap gap-4 pt-4 border-t border-[var(--border-grid)] font-mono">
+          {project.liveUrl && (
+            <a
+              href={project.liveUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs uppercase hud-button flex items-center gap-2 hover:bg-orange-600 transition-colors shadow-[0_0_10px_var(--accent-orange-glow)]"
+            >
+              <ExternalLinkIcon />
+              {t.projects.liveDemo}
+            </a>
+          )}
+          {project.repoUrl && (
+            <a
+              href={project.repoUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-5 py-2.5 bg-[var(--surface-panel)] border border-[var(--border-bright)] text-[var(--text-primary)] font-bold text-xs uppercase hud-button flex items-center gap-2 hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-colors"
+            >
+              <GithubIcon />
+              {t.projects.sourceCode}
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
