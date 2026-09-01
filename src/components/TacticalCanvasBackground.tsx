@@ -28,21 +28,37 @@ export function TacticalCanvasBackground() {
     if (!bgCtx || !fgCtx) return;
 
     let animationFrameId: number;
-    let width = (bgCanvas.width = fgCanvas.width = window.innerWidth);
-    let height = (bgCanvas.height = fgCanvas.height = window.innerHeight);
+    let dpr = Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 1.5);
+    let width = typeof window !== "undefined" ? window.innerWidth : 1200;
+    let height = typeof window !== "undefined" ? window.innerHeight : 800;
 
-    let mouseX = width / 2;
-    let mouseY = height / 2;
-    let targetMouseX = mouseX;
-    let targetMouseY = mouseY;
+    const setupCanvasSize = () => {
+      if (!bgCanvas || !fgCanvas || !bgCtx || !fgCtx) return;
+      dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+      width = window.innerWidth;
+      height = window.innerHeight;
 
-    let scrollY = window.scrollY;
+      bgCanvas.width = Math.floor(width * dpr);
+      bgCanvas.height = Math.floor(height * dpr);
+      fgCanvas.width = Math.floor(width * dpr);
+      fgCanvas.height = Math.floor(height * dpr);
+
+      bgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      fgCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    };
+
+    setupCanvasSize();
+
+    let mouseX = -9999;
+    let mouseY = -9999;
+    let targetMouseX = -9999;
+    let targetMouseY = -9999;
+
+    let scrollY = window.scrollY || 0;
 
     // Handle Window Resize
     const handleResize = () => {
-      if (!bgCanvas || !fgCanvas) return;
-      width = bgCanvas.width = fgCanvas.width = window.innerWidth;
-      height = bgCanvas.height = fgCanvas.height = window.innerHeight;
+      setupCanvasSize();
     };
 
     // Handle Mouse Movement
@@ -53,7 +69,7 @@ export function TacticalCanvasBackground() {
 
     // Handle Scroll
     const handleScroll = () => {
-      scrollY = window.scrollY;
+      scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
     };
 
     interface ATImpact {
@@ -68,12 +84,12 @@ export function TacticalCanvasBackground() {
 
     const atImpacts: ATImpact[] = [];
 
-    const handleClick = (e: MouseEvent) => {
-      const isTopArea = e.clientY < 85;
+    const spawnImpactRing = (x: number, y: number) => {
+      const isTopArea = y < 85;
       const isLight = themeRef.current === "light";
       atImpacts.push({
-        x: e.clientX,
-        y: e.clientY,
+        x,
+        y,
         radius: isTopArea ? 4 : 8,
         maxRadius: isTopArea ? 32 + Math.random() * 12 : 75 + Math.random() * 35,
         opacity: isTopArea ? 0.45 : 0.9,
@@ -88,10 +104,70 @@ export function TacticalCanvasBackground() {
       });
     };
 
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let touchMoved = false;
+    let lastTouchTime = 0;
+
+    const handleClick = (e: MouseEvent) => {
+      // Ignore click if it was simulated from a mobile touch tap in the last 500ms
+      if (Date.now() - lastTouchTime < 500) return;
+      spawnImpactRing(e.clientX, e.clientY);
+    };
+
+    const handleTouchStart = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        touchStartTime = Date.now();
+        touchMoved = false;
+        targetMouseX = touch.clientX;
+        targetMouseY = touch.clientY;
+      }
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        targetMouseX = touch.clientX;
+        targetMouseY = touch.clientY;
+        if (Math.hypot(touch.clientX - touchStartX, touch.clientY - touchStartY) > 10) {
+          touchMoved = true;
+        }
+      }
+    };
+
+    const handleTouchEnd = (e: TouchEvent) => {
+      lastTouchTime = Date.now();
+      const elapsed = Date.now() - touchStartTime;
+      // Only spawn impact ring if user genuinely tapped without dragging or scrolling!
+      if (!touchMoved && elapsed < 350) {
+        if (e.changedTouches.length > 0) {
+          const touch = e.changedTouches[0];
+          spawnImpactRing(touch.clientX, touch.clientY);
+        }
+      }
+      // Reset target coordinates away so Ramiel smoothly closes when finger lifts off the screen!
+      targetMouseX = -9999;
+      targetMouseY = -9999;
+    };
+
+    const handleTouchCancel = () => {
+      targetMouseX = -9999;
+      targetMouseY = -9999;
+    };
+
     window.addEventListener("resize", handleResize);
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("scroll", handleScroll);
     window.addEventListener("click", handleClick);
+    window.addEventListener("touchstart", handleTouchStart, { passive: true });
+    window.addEventListener("touchmove", handleTouchMove, { passive: true });
+    window.addEventListener("touchend", handleTouchEnd, { passive: true });
+    window.addEventListener("touchcancel", handleTouchCancel, { passive: true });
+    window.addEventListener("mouseleave", handleTouchCancel);
 
     // Floating particles for background atmosphere
     const particles = Array.from({ length: 40 }, () => ({
@@ -136,10 +212,23 @@ export function TacticalCanvasBackground() {
     const render = () => {
       time += 0.015;
       const isLight = themeRef.current === "light";
+      const isMobile = width < 768;
 
       // Smooth mouse position interpolation
-      mouseX += (targetMouseX - mouseX) * 0.05;
-      mouseY += (targetMouseY - mouseY) * 0.05;
+      if (targetMouseX < -5000) {
+        mouseX = -9999;
+        mouseY = -9999;
+      } else {
+        if (mouseX < -5000) {
+          mouseX = targetMouseX;
+          mouseY = targetMouseY;
+        } else {
+          mouseX += (targetMouseX - mouseX) * 0.05;
+          mouseY += (targetMouseY - mouseY) * 0.05;
+        }
+      }
+
+      const hasActivePointer = targetMouseX > -5000 && mouseX > -5000;
 
       bgCtx.clearRect(0, 0, width, height);
       fgCtx.clearRect(0, 0, width, height);
@@ -156,17 +245,17 @@ export function TacticalCanvasBackground() {
         bgCtx.globalAlpha = ramielOpacity * (isLight ? 0.95 : 0.9);
 
         // Position Ramiel on left-center side clear of Sync widget
-        const cx = width > 1024 ? width * 0.32 : width * 0.5;
-        const cy = height * 0.38;
-        const radius = Math.min(width, height) * 0.16;
+        const cx = width > 1024 ? width * 0.32 : isMobile ? width * 0.50 : width * 0.40;
+        const cy = width > 1024 ? height * 0.38 : isMobile ? height * 0.30 : height * 0.35;
+        const radius = Math.min(width, height) * (width > 1024 ? 0.16 : isMobile ? 0.22 : 0.18);
 
-        // Proximity / Hover Detection
-        const distToMouse = Math.hypot(mouseX - cx, mouseY - cy);
+        // Proximity / Hover Detection (Only when user pointer is actually active on screen)
+        const distToMouse = hasActivePointer ? Math.hypot(mouseX - cx, mouseY - cy) : 99999;
         const isHovered = distToMouse < radius * 2.2;
         ramielMorph += ((isHovered ? 1 : 0) - ramielMorph) * 0.08;
 
-        const mouseTiltX = (mouseY - height / 2) * 0.0004;
-        const mouseTiltY = (mouseX - width / 2) * 0.0004;
+        const mouseTiltX = hasActivePointer ? (mouseY - height / 2) * 0.0004 : 0;
+        const mouseTiltY = hasActivePointer ? (mouseX - width / 2) * 0.0004 : 0;
 
         const morphOffset = ramielMorph * radius * 0.55;
 
@@ -210,13 +299,13 @@ export function TacticalCanvasBackground() {
         bgCtx.strokeStyle = isLight
           ? (ramielMorph > 0.3 ? "#0044cc" : "#0055d4")
           : (ramielMorph > 0.3 ? "#00ffff" : "#00f0ff");
-        bgCtx.lineWidth = (isLight ? 2.5 : 1.8) + ramielMorph * 1.0;
+        bgCtx.lineWidth = (isLight ? 2.8 : 2.4) + ramielMorph * 1.0;
         bgCtx.shadowColor = isLight ? "#0055d4" : (ramielMorph > 0.3 ? "#00ffff" : "#00f0ff");
-        bgCtx.shadowBlur = isLight ? 8 : (14 + ramielMorph * 15);
+        bgCtx.shadowBlur = isMobile ? 0 : (isLight ? 10 : (16 + ramielMorph * 15));
 
         const facetFillStyle = isLight
-          ? (ramielMorph > 0.3 ? "rgba(0, 85, 212, 0.25)" : "rgba(0, 85, 212, 0.14)")
-          : (ramielMorph > 0.3 ? "rgba(0, 255, 255, 0.12)" : "rgba(0, 240, 255, 0.05)");
+          ? (ramielMorph > 0.3 ? "rgba(0, 85, 212, 0.35)" : "rgba(0, 85, 212, 0.22)")
+          : (ramielMorph > 0.3 ? "rgba(0, 255, 255, 0.30)" : "rgba(0, 240, 255, 0.18)");
 
         // Render Top Facets
         topFaces.forEach(([p1, p2, p3]) => {
@@ -264,7 +353,7 @@ export function TacticalCanvasBackground() {
           : (ramielMorph > 0.4 ? "#ff0055" : "#ff4500");
         bgCtx.lineWidth = isLight ? 2.6 : 2.2;
         bgCtx.shadowColor = isLight ? "#cc0033" : (ramielMorph > 0.4 ? "#ff0055" : "#ff4500");
-        bgCtx.shadowBlur = 20 + ramielMorph * 20;
+        bgCtx.shadowBlur = isMobile ? 0 : (20 + ramielMorph * 20);
 
         const coreFillStyle = isLight
           ? (ramielMorph > 0.4 ? "rgba(204, 0, 51, 0.45)" : "rgba(217, 59, 0, 0.30)")
@@ -295,7 +384,7 @@ export function TacticalCanvasBackground() {
             bgCtx.arc(satX, satY, 5 + ramielMorph * 3, 0, Math.PI * 2);
             bgCtx.fillStyle = "#00ffff";
             bgCtx.shadowColor = "#00ffff";
-            bgCtx.shadowBlur = 15;
+            bgCtx.shadowBlur = isMobile ? 0 : 15;
             bgCtx.fill();
           }
           bgCtx.restore();
@@ -309,7 +398,7 @@ export function TacticalCanvasBackground() {
           bgCtx.strokeStyle = "#00ffff";
           bgCtx.lineWidth = 4 + Math.sin(time * 20) * 2;
           bgCtx.shadowColor = "#00ffff";
-          bgCtx.shadowBlur = 25;
+          bgCtx.shadowBlur = isMobile ? 0 : 25;
 
           bgCtx.beginPath();
           bgCtx.moveTo(cx, cy);
@@ -317,9 +406,9 @@ export function TacticalCanvasBackground() {
           bgCtx.stroke();
 
           bgCtx.strokeStyle = "rgba(255, 0, 85, 0.6)";
-          bgCtx.lineWidth = 10;
+          bgCtx.lineWidth = isMobile ? 5 : 10;
           bgCtx.shadowColor = "#ff0055";
-          bgCtx.shadowBlur = 30;
+          bgCtx.shadowBlur = isMobile ? 0 : 30;
           bgCtx.beginPath();
           bgCtx.moveTo(cx, cy);
           bgCtx.lineTo(mouseX, mouseY);
@@ -339,37 +428,40 @@ export function TacticalCanvasBackground() {
         bgCtx.arc(cx, cy, (8 + Math.sin(time * 8) * 3) * (1 + ramielMorph * 0.8), 0, Math.PI * 2);
         bgCtx.fillStyle = ramielMorph > 0.4 ? "#ff0055" : "#ffcc00";
         bgCtx.shadowColor = ramielMorph > 0.4 ? "#ff0055" : "#ffcc00";
-        bgCtx.shadowBlur = 25;
+        bgCtx.shadowBlur = isMobile ? 0 : 25;
         bgCtx.fill();
 
         bgCtx.restore();
       }
 
       // --- MOUSE-FOLLOWING AT-FIELD RIPPLES (BACKGROUND CANVAS Z-0) ---
-      const atFieldOpacity = Math.max(0.15, 1 - scrollRatio * 0.5);
-      bgCtx.save();
-      bgCtx.globalAlpha = atFieldOpacity * 0.5;
-      bgCtx.strokeStyle = isLight ? "#00aa44" : "#00ff66";
-      bgCtx.shadowColor = isLight ? "#00aa44" : "#00ff66";
-      bgCtx.shadowBlur = 10;
+      if (hasActivePointer) {
+        const atFieldOpacity = Math.max(0.15, 1 - scrollRatio * 0.5);
+        bgCtx.save();
+        bgCtx.globalAlpha = atFieldOpacity * 0.5;
+        bgCtx.strokeStyle = isLight ? "#00aa44" : "#00ff66";
+        bgCtx.shadowColor = isLight ? "#00aa44" : "#00ff66";
+        bgCtx.shadowBlur = isMobile ? 0 : 10;
 
-      for (let r = 1; r <= 3; r++) {
-        const atRadius = r * 50 + ((time * 25 + r * 20) % 70);
-        bgCtx.lineWidth = 1.2;
-        bgCtx.globalAlpha = atFieldOpacity * (1 - atRadius / 260) * 0.4;
+        const rippleCount = isMobile ? 1 : 3;
+        for (let r = 1; r <= rippleCount; r++) {
+          const atRadius = r * 50 + ((time * 25 + r * 20) % 70);
+          bgCtx.lineWidth = 1.2;
+          bgCtx.globalAlpha = atFieldOpacity * (1 - atRadius / 260) * 0.4;
 
-        bgCtx.beginPath();
-        for (let i = 0; i < 8; i++) {
-          const angle = (i * Math.PI) / 4 + time * 0.15;
-          const px = mouseX + Math.cos(angle) * atRadius;
-          const py = mouseY + Math.sin(angle) * atRadius;
-          if (i === 0) bgCtx.moveTo(px, py);
-          else bgCtx.lineTo(px, py);
+          bgCtx.beginPath();
+          for (let i = 0; i < 8; i++) {
+            const angle = (i * Math.PI) / 4 + time * 0.15;
+            const px = mouseX + Math.cos(angle) * atRadius;
+            const py = mouseY + Math.sin(angle) * atRadius;
+            if (i === 0) bgCtx.moveTo(px, py);
+            else bgCtx.lineTo(px, py);
+          }
+          bgCtx.closePath();
+          bgCtx.stroke();
         }
-        bgCtx.closePath();
-        bgCtx.stroke();
+        bgCtx.restore();
       }
-      bgCtx.restore();
 
       // --- MOON & SPEAR OF LONGINUS (BACKGROUND CANVAS Z-0) ---
       const moonOpacity = Math.max(0, (scrollRatio - 0.35) * 2);
@@ -377,17 +469,18 @@ export function TacticalCanvasBackground() {
         bgCtx.save();
         bgCtx.globalAlpha = moonOpacity * 0.85;
 
-        const moonX = width > 1024 ? width * 0.68 : width * 0.45;
-        const moonY = height * 0.60;
-        const moonRadius = Math.min(width, height) * 0.22;
+        const isMobileScreen = width < 768;
+        const moonX = width > 1024 ? width * 0.68 : isMobileScreen ? width * 0.50 : width * 0.55;
+        const moonY = height * (isMobileScreen ? 0.65 : 0.60);
+        const moonRadius = Math.min(width, height) * (isMobileScreen ? 0.25 : 0.22);
 
         bgCtx.beginPath();
         bgCtx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
-        bgCtx.fillStyle = isLight ? "rgba(0, 0, 0, 0.04)" : "rgba(232, 230, 225, 0.04)";
-        bgCtx.strokeStyle = isLight ? "rgba(0, 0, 0, 0.30)" : "rgba(255, 255, 255, 0.2)";
-        bgCtx.lineWidth = 1.8;
+        bgCtx.fillStyle = isLight ? "rgba(0, 0, 0, 0.06)" : "rgba(232, 230, 225, 0.08)";
+        bgCtx.strokeStyle = isLight ? "rgba(0, 0, 0, 0.40)" : "rgba(255, 255, 255, 0.35)";
+        bgCtx.lineWidth = 2.2;
         bgCtx.shadowColor = isLight ? "#333333" : "#e8e6e1";
-        bgCtx.shadowBlur = 25;
+        bgCtx.shadowBlur = isMobileScreen ? 0 : 25;
         bgCtx.fill();
         bgCtx.stroke();
 
@@ -425,7 +518,7 @@ export function TacticalCanvasBackground() {
 
         // 1. Slender Tightly-Wound Double Helix Shaft (0 to 60% of length)
         const shaftEnd = spearLength * 0.60;
-        const shaftSteps = 80;
+        const shaftSteps = isMobileScreen ? 36 : 80;
         const strandA: { x: number; y: number }[] = [];
         const strandB: { x: number; y: number }[] = [];
 
@@ -446,7 +539,7 @@ export function TacticalCanvasBackground() {
         bgCtx.closePath();
         bgCtx.fillStyle = isLight ? "#cc0029" : "#e6002b";
         bgCtx.shadowColor = "#ff0033";
-        bgCtx.shadowBlur = 14;
+        bgCtx.shadowBlur = isMobileScreen ? 0 : 14;
         bgCtx.fill();
 
         // Shaft Helix Outer Outlines
@@ -714,7 +807,8 @@ export function TacticalCanvasBackground() {
 
       // --- AMBIENT FLOATING PARTICLES (BACKGROUND CANVAS Z-0) ---
       bgCtx.save();
-      particles.forEach((p) => {
+      const activeParticles = isMobile ? particles.slice(0, 16) : particles;
+      activeParticles.forEach((p) => {
         p.y -= p.speedY;
         if (p.y < 0) {
           p.y = height;
@@ -724,7 +818,7 @@ export function TacticalCanvasBackground() {
         bgCtx.globalAlpha = p.opacity * (isLight ? 0.6 : 0.4);
         bgCtx.fillStyle = isLight ? (p.color === "#ff4500" ? "#d93b00" : "#008833") : p.color;
         bgCtx.shadowColor = isLight ? (p.color === "#ff4500" ? "#d93b00" : "#008833") : p.color;
-        bgCtx.shadowBlur = 6;
+        bgCtx.shadowBlur = isMobile ? 0 : 6;
         bgCtx.beginPath();
         bgCtx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
         bgCtx.fill();
@@ -746,7 +840,7 @@ export function TacticalCanvasBackground() {
         fgCtx.globalAlpha = imp.opacity;
         fgCtx.strokeStyle = imp.color;
         fgCtx.shadowColor = imp.color;
-        fgCtx.shadowBlur = imp.isTopArea ? 8 : 16;
+        fgCtx.shadowBlur = isMobile ? 0 : (imp.isTopArea ? 8 : 16);
         fgCtx.lineWidth = imp.isTopArea ? 1.2 : 2.2;
 
         const ringCount = imp.isTopArea ? 1 : 2;
@@ -778,6 +872,11 @@ export function TacticalCanvasBackground() {
       window.removeEventListener("mousemove", handleMouseMove);
       window.removeEventListener("scroll", handleScroll);
       window.removeEventListener("click", handleClick);
+      window.removeEventListener("touchstart", handleTouchStart);
+      window.removeEventListener("touchmove", handleTouchMove);
+      window.removeEventListener("touchend", handleTouchEnd);
+      window.removeEventListener("touchcancel", handleTouchCancel);
+      window.removeEventListener("mouseleave", handleTouchCancel);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -788,7 +887,7 @@ export function TacticalCanvasBackground() {
       <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
         <canvas
           ref={bgCanvasRef}
-          className="w-full h-full opacity-70 dark:opacity-35 transition-opacity duration-500"
+          className="w-full h-full pointer-events-none opacity-90 transition-opacity duration-500"
         />
       </div>
 
@@ -796,7 +895,7 @@ export function TacticalCanvasBackground() {
       <div className="fixed inset-0 pointer-events-none z-[9998] overflow-hidden">
         <canvas
           ref={fgCanvasRef}
-          className="w-full h-full opacity-90 transition-opacity duration-500"
+          className="w-full h-full pointer-events-none opacity-95 transition-opacity duration-500"
         />
       </div>
     </>

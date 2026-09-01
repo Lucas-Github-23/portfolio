@@ -75,16 +75,16 @@ export function MagiSystemMonitor() {
         </div>
 
         {/* Selected Core Detailed Diagnostic Panel */}
-        <div className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] p-6 hud-panel relative font-mono shadow-md">
-          <div className="flex items-center justify-between border-b border-[var(--border-grid)] pb-3 mb-4">
+        <div className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] p-4 sm:p-6 hud-panel relative font-mono shadow-md">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b border-[var(--border-grid)] pb-3 mb-4">
             <span className="text-xs font-extrabold text-[var(--accent-orange)] tracking-widest uppercase flex items-center gap-2">
-              <span className="w-2 h-2 bg-[var(--accent-orange)]" />
-              SYSTEM DIAGNOSTIC LOG // {coreData[activeCore].name}
+              <span className="w-2 h-2 bg-[var(--accent-orange)] shrink-0" />
+              <span className="truncate">DIAGNOSTIC LOG // {coreData[activeCore].name}</span>
             </span>
             <span className="text-[10px] text-[var(--text-secondary)]">STATUS: 100% OPERATIONAL</span>
           </div>
 
-          <div className="text-sm text-[var(--text-primary)] leading-relaxed space-y-2">
+          <div className="text-xs sm:text-sm text-[var(--text-primary)] leading-relaxed space-y-2">
             <p className="font-bold text-[var(--accent-green)]">
               &gt; {coreData[activeCore].role}
             </p>

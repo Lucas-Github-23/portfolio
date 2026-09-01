@@ -130,23 +130,23 @@ export function ProjectDossierGrid() {
             return (
               <div
                 key={project.id}
-                className="bg-[var(--surface-panel)] border-2 border-[var(--border-grid)] p-6 hud-panel relative flex flex-col justify-between hover:border-[var(--accent-orange)] transition-all group shadow-md"
+                className="bg-[var(--surface-panel)] border-2 border-[var(--border-grid)] p-4 sm:p-6 hud-panel relative flex flex-col justify-between hover:border-[var(--accent-orange)] transition-all group shadow-md"
               >
                 {/* Dossier Top Bar */}
                 <div className="space-y-4">
-                  <div className="flex justify-between items-start border-b border-[var(--border-grid)] pb-3 font-mono">
-                    <div>
+                  <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 border-b border-[var(--border-grid)] pb-3 font-mono">
+                    <div className="min-w-0">
                       <span className="text-[10px] font-bold text-[var(--accent-orange)] tracking-widest uppercase flex items-center gap-1.5 flex-wrap">
                         {project.id} // {project.clearance}
                         {project.isPlaceholder && (
                           <span className="placeholder-tag">{t.projects.placeholderTag}</span>
                         )}
                       </span>
-                      <h3 className="text-xl font-black text-[var(--text-primary)] uppercase tracking-tight group-hover:text-[var(--accent-orange)] transition-colors font-mono">
+                      <h3 className="text-lg sm:text-xl font-black text-[var(--text-primary)] uppercase tracking-tight group-hover:text-[var(--accent-orange)] transition-colors font-mono mt-0.5 break-words">
                         {title}
                       </h3>
                     </div>
-                    <span className="px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] text-[10px] font-bold font-mono uppercase">
+                    <span className="px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] text-[9px] sm:text-[10px] font-bold font-mono uppercase self-start shrink-0">
                       {project.status}
                     </span>
                   </div>

@@ -68,7 +68,7 @@ export function SkillsMatrix() {
               <button
                 key={catKey}
                 onClick={() => setSelectedCategory(catKey)}
-                className={`px-4 py-2 text-xs font-bold tracking-wider uppercase hud-button transition-all ${
+                className={`px-3 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold tracking-wider uppercase hud-button transition-all ${
                   isActive
                     ? "bg-[var(--accent-orange)] text-black shadow-[0_0_15px_var(--accent-orange-glow)]"
                     : "bg-[var(--surface-panel)] text-[var(--text-secondary)] border border-[var(--border-grid)] hover:text-[var(--text-primary)] hover:border-[var(--accent-orange)]"
@@ -81,17 +81,17 @@ export function SkillsMatrix() {
         </div>
 
         {/* Skill Bars Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
           {skillData[selectedCategory].map((skill) => (
             <div
               key={skill.name}
-              className="bg-[var(--surface-panel)] border border-[var(--border-grid)] p-5 hud-panel-sm space-y-3 hover:border-[var(--accent-green)] transition-colors"
+              className="bg-[var(--surface-panel)] border border-[var(--border-grid)] p-4 sm:p-5 hud-panel-sm space-y-3 hover:border-[var(--accent-green)] transition-colors"
             >
-              <div className="flex justify-between items-center font-mono">
-                <span className="text-sm font-bold text-[var(--text-primary)] tracking-wide">
+              <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 font-mono">
+                <span className="text-xs sm:text-sm font-bold text-[var(--text-primary)] tracking-wide">
                   {skill.name}
                 </span>
-                <span className="text-xs text-[var(--accent-green)] font-extrabold px-2 py-0.5 bg-[var(--accent-green-glow)] border border-[var(--accent-green)]">
+                <span className="text-[10px] sm:text-xs text-[var(--accent-green)] font-extrabold px-2 py-0.5 bg-[var(--accent-green-glow)] border border-[var(--accent-green)] self-start sm:self-auto">
                   {skill.status} // {skill.level}%
                 </span>
               </div>

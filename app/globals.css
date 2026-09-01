@@ -59,13 +59,25 @@ body {
   left: 0;
   width: 100vw;
   height: 100vh;
-  pointer-events: none;
+  height: 100dvh;
+  pointer-events: none !important;
+  user-select: none !important;
   z-index: 9999;
   background: linear-gradient(
     rgba(18, 16, 16, 0) 50%, 
     rgba(0, 0, 0, 0.12) 50%
   );
   background-size: 100% 4px;
+}
+
+@media (max-width: 768px) {
+  .crt-overlay {
+    background-size: 100% 3px;
+    background: linear-gradient(
+      rgba(18, 16, 16, 0) 50%, 
+      rgba(0, 0, 0, 0.05) 50%
+    );
+  }
 }
 
 .crt-flicker {
@@ -76,6 +88,12 @@ body {
   0% { opacity: 0.98; }
   50% { opacity: 1; }
   100% { opacity: 0.99; }
+}
+
+/* Mobile Touch Responsiveness & Instant Tap */
+button, a, input, textarea, select {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 /* Tactical Placeholder Badge */

@@ -44,9 +44,15 @@ export function SignalTransmissionForm() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 max-w-5xl mx-auto font-mono">
-          {/* Transmission Form */}
-          <div className="lg:col-span-7 bg-[var(--surface-panel)] border-2 border-[var(--border-grid)] p-6 md:p-8 hud-panel space-y-6 shadow-md">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* Main Transmission Form */}
+          <div className="lg:col-span-7 bg-[var(--surface-panel)] border-2 border-[var(--border-grid)] p-4 sm:p-6 hud-panel space-y-6 shadow-md">
+            <div className="border-b border-[var(--border-grid)] pb-3">
+              <span className="font-mono text-xs font-bold text-[var(--text-secondary)] tracking-widest uppercase flex items-center gap-2">
+                <span className="w-2 h-2 bg-[var(--accent-green)] animate-ping" />
+                COMMS_CHANNEL: DIRECT_RELAY // ACTIVE
+              </span>
+            </div>
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name */}
               <div>

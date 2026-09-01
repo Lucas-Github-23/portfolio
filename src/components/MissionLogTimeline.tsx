@@ -77,7 +77,7 @@ export function MissionLogTimeline() {
         </div>
 
         {/* Vertical Tactical Timeline */}
-        <div className="max-w-4xl mx-auto relative pl-6 md:pl-8 border-l-2 border-[var(--accent-orange)] space-y-10 font-mono">
+        <div className="max-w-4xl mx-auto relative pl-5 sm:pl-6 md:pl-8 border-l-2 border-[var(--accent-orange)] space-y-8 sm:space-y-10 font-mono ml-3 sm:ml-auto">
           {timelineData.map((item) => {
             const year = language === "pt" ? item.yearPt : item.yearEn;
             const org = language === "pt" ? item.orgPt : item.orgEn;
@@ -87,21 +87,21 @@ export function MissionLogTimeline() {
             return (
               <div key={item.id} className="relative group">
                 {/* Timeline Marker Point */}
-                <div className="absolute -left-[31px] md:-left-[39px] top-1.5 w-4 h-4 rounded-full bg-[var(--bg-main)] border-2 border-[var(--accent-orange)] group-hover:bg-[var(--accent-orange)] transition-colors shadow-[0_0_10px_var(--accent-orange-glow)]" />
+                <div className="absolute -left-[27px] sm:-left-[31px] md:-left-[39px] top-1.5 w-3.5 sm:w-4 h-3.5 sm:h-4 rounded-full bg-[var(--bg-main)] border-2 border-[var(--accent-orange)] group-hover:bg-[var(--accent-orange)] transition-colors shadow-[0_0_10px_var(--accent-orange-glow)]" />
 
-                <div className="bg-[var(--surface-panel)] border border-[var(--border-grid)] p-6 hud-panel-sm hover:border-[var(--accent-orange)] transition-colors space-y-3 shadow-sm">
+                <div className="bg-[var(--surface-panel)] border border-[var(--border-grid)] p-4 sm:p-6 hud-panel-sm hover:border-[var(--accent-orange)] transition-colors space-y-2.5 sm:space-y-3 shadow-sm">
                   {/* Top Bar */}
-                  <div className="flex flex-wrap justify-between items-center gap-2 border-b border-[var(--border-grid)] pb-3">
-                    <span className="text-xs font-extrabold text-[var(--accent-orange)] tracking-widest uppercase">
+                  <div className="flex flex-wrap justify-between items-center gap-2 border-b border-[var(--border-grid)] pb-2 sm:pb-3">
+                    <span className="text-[11px] sm:text-xs font-extrabold text-[var(--accent-orange)] tracking-widest uppercase">
                       {year} // {org}
                     </span>
-                    <span className="px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] text-[10px] font-bold uppercase">
+                    <span className="px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] text-[9px] sm:text-[10px] font-bold uppercase">
                       {item.status}
                     </span>
                   </div>
 
                   {/* Role Title */}
-                  <h3 className="text-lg font-black text-[var(--text-primary)] uppercase tracking-tight">
+                  <h3 className="text-base sm:text-lg font-black text-[var(--text-primary)] uppercase tracking-tight">
                     {role}
                   </h3>
 

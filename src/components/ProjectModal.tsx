@@ -36,27 +36,27 @@ export function ProjectModal({
   const description = language === "pt" ? project.fullDescPt : project.fullDescEn;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-4">
-      <div className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] max-w-2xl w-full hud-panel p-6 md:p-8 space-y-6 relative shadow-[0_0_30px_var(--accent-orange-glow)] animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
+      <div className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] max-w-2xl w-full max-h-[90vh] overflow-y-auto hud-panel p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 relative shadow-[0_0_30px_var(--accent-orange-glow)] animate-in fade-in zoom-in-95 duration-200">
         {/* Header Ribbon */}
-        <div className="flex justify-between items-center border-b border-[var(--border-grid)] pb-4 font-mono">
-          <div>
+        <div className="flex justify-between items-start sm:items-center border-b border-[var(--border-grid)] pb-4 font-mono gap-3">
+          <div className="min-w-0 flex-1">
             <div className="text-[10px] text-[var(--accent-orange)] font-bold tracking-widest uppercase flex items-center gap-1.5 flex-wrap">
-              <ShieldAlertIcon className="w-4 h-4 text-[var(--accent-orange)]" />
-              {project.clearance}
+              <ShieldAlertIcon className="w-4 h-4 text-[var(--accent-orange)] shrink-0" />
+              <span>{project.clearance}</span>
               {project.isPlaceholder && (
-                <span className="placeholder-tag ml-2">
+                <span className="placeholder-tag">
                   {t.projects.placeholderTagFull}
                 </span>
               )}
             </div>
-            <h3 className="text-2xl font-black text-[var(--text-primary)] uppercase tracking-tight mt-1 font-mono">
+            <h3 className="text-xl sm:text-2xl font-black text-[var(--text-primary)] uppercase tracking-tight mt-1 font-mono break-words">
               {title}
             </h3>
           </div>
           <button
             onClick={onClose}
-            className="px-3 py-1.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs tracking-wider uppercase hud-button hover:bg-orange-600 transition-colors"
+            className="px-3 py-1.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs tracking-wider uppercase hud-button hover:bg-orange-600 transition-colors shrink-0"
           >
             {t.projects.closeModal}
           </button>

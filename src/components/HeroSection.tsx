@@ -18,9 +18,9 @@ export function HeroSection() {
   }, []);
 
   return (
-    <section id="status" className="relative py-16 md:py-24 border-b border-[var(--border-grid)] overflow-hidden">
+    <section id="status" className="relative py-12 sm:py-16 md:py-24 border-b border-[var(--border-grid)] overflow-hidden">
       {/* Decorative Grid Lines & NERV Stamps */}
-      <div className="absolute top-4 right-4 font-mono text-[10px] text-[var(--text-secondary)] tracking-widest pointer-events-none opacity-40 select-none">
+      <div className="absolute top-3 right-3 sm:top-4 sm:right-4 font-mono text-[9px] sm:text-[10px] text-[var(--text-secondary)] tracking-widest pointer-events-none opacity-40 select-none text-right">
         <div>SYS_ID: EVA-01 // MAGI-LINK</div>
         <div>PILOT_STATUS: READY</div>
       </div>
@@ -29,7 +29,7 @@ export function HeroSection() {
         {/* Main Text Content */}
         <div className="lg:col-span-8 space-y-6">
           {/* Security Clearance Tag */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-[var(--surface-panel)] border border-[var(--accent-orange)] text-[var(--accent-orange)] font-mono text-xs font-bold tracking-widest uppercase hud-panel-sm shadow-sm">
+          <div className="inline-flex items-center gap-2 px-2.5 sm:px-3 py-1 bg-[var(--surface-panel)] border border-[var(--accent-orange)] text-[var(--accent-orange)] font-mono text-[11px] sm:text-xs font-bold tracking-widest uppercase hud-panel-sm shadow-sm">
             <span className="w-2 h-2 rounded-full bg-[var(--accent-orange)] animate-pulse" />
             {t.hero.clearance}
           </div>
@@ -40,28 +40,28 @@ export function HeroSection() {
               <TerminalIcon className="w-4 h-4" />
               {t.hero.codeName}
             </div>
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black tracking-tight text-[var(--text-primary)] uppercase leading-none font-mono text-glow-orange">
+            <h1 className="text-3xl sm:text-5xl md:text-6xl font-black tracking-tight text-[var(--text-primary)] uppercase leading-tight sm:leading-none font-mono text-glow-orange break-words">
               {t.hero.title}
             </h1>
           </div>
 
           {/* Subtitle / Bio */}
-          <p className="text-base sm:text-lg text-[var(--text-secondary)] font-mono max-w-2xl leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-[var(--text-secondary)] font-mono max-w-2xl leading-relaxed">
             {t.hero.subtitle}
           </p>
 
           {/* Action CTAs */}
-          <div className="flex flex-wrap gap-4 pt-2 font-mono">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 font-mono">
             <a
               href="#projects"
-              className="px-6 py-3.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs md:text-sm tracking-wider uppercase hud-button hover:bg-orange-600 transition-all flex items-center gap-2 shadow-[0_0_15px_var(--accent-orange-glow)]"
+              className="w-full sm:w-auto px-6 py-3.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs md:text-sm tracking-wider uppercase hud-button hover:bg-orange-600 transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_var(--accent-orange-glow)] text-center"
             >
               <CpuIcon className="w-4 h-4" />
               {t.hero.ctaProjects}
             </a>
             <a
               href="#contact"
-              className="px-6 py-3.5 bg-[var(--surface-panel)] border border-[var(--border-bright)] text-[var(--text-primary)] font-bold text-xs md:text-sm tracking-wider uppercase hud-button hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-all flex items-center gap-2"
+              className="w-full sm:w-auto px-6 py-3.5 bg-[var(--surface-panel)] border border-[var(--border-bright)] text-[var(--text-primary)] font-bold text-xs md:text-sm tracking-wider uppercase hud-button hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-all flex items-center justify-center gap-2 text-center"
             >
               <TerminalIcon className="w-4 h-4" />
               {t.hero.ctaContact}

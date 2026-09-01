@@ -13,34 +13,17 @@ import { TacticalCanvasBackground } from "@/components/TacticalCanvasBackground"
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen flex flex-col selection:bg-[var(--accent-orange)] selection:text-black">
+    <div className="relative min-h-screen flex flex-col selection:bg-[var(--accent-orange)] selection:text-black overflow-x-hidden">
       <TacticalCanvasBackground />
       <HUDHeader />
 
-      <main className="flex-1 relative z-10 space-y-16 py-6">
-        <section id="status" className="scroll-mt-24 transition-all duration-300">
-          <HeroSection />
-        </section>
-
-        <section id="magi" className="scroll-mt-24 transition-all duration-300">
-          <MagiSystemMonitor />
-        </section>
-
-        <section id="projects" className="scroll-mt-24 transition-all duration-300">
-          <ProjectDossierGrid />
-        </section>
-
-        <section id="skills" className="scroll-mt-24 transition-all duration-300">
-          <SkillsMatrix />
-        </section>
-
-        <section id="experience" className="scroll-mt-24 transition-all duration-300">
-          <MissionLogTimeline />
-        </section>
-
-        <section id="contact" className="scroll-mt-24 transition-all duration-300">
-          <SignalTransmissionForm />
-        </section>
+      <main className="flex-1 relative z-10 space-y-12 sm:space-y-16 py-4 sm:py-6">
+        <HeroSection />
+        <MagiSystemMonitor />
+        <ProjectDossierGrid />
+        <SkillsMatrix />
+        <MissionLogTimeline />
+        <SignalTransmissionForm />
       </main>
 
       <Footer />

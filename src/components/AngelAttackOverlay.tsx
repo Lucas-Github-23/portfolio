@@ -66,10 +66,10 @@ export function AngelAttackOverlay() {
       </div>
 
       {/* Center Tactical Warning Display */}
-      <div className="max-w-4xl mx-auto text-center space-y-6 font-mono text-[var(--accent-red)] my-auto p-6 bg-[var(--surface-panel)] border-2 border-[var(--accent-red)] hud-panel shadow-[0_0_50px_var(--accent-red-glow)]">
-        <div className="inline-flex items-center gap-2 px-4 py-1 bg-[var(--accent-red)] text-black font-black text-xs uppercase hud-panel-sm tracking-widest">
-          <ShieldAlertIcon className="w-5 h-5" />
-          BLOOD TYPE: BLUE // ANGEL DETECTED
+      <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6 font-mono text-[var(--accent-red)] my-auto p-4 sm:p-6 bg-[var(--surface-panel)] border-2 border-[var(--accent-red)] hud-panel shadow-[0_0_50px_var(--accent-red-glow)] max-h-[80vh] overflow-y-auto">
+        <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 bg-[var(--accent-red)] text-black font-black text-[10px] sm:text-xs uppercase hud-panel-sm tracking-widest">
+          <ShieldAlertIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
+          <span className="truncate">BLOOD TYPE: BLUE // ANGEL DETECTED</span>
         </div>
 
         <h1 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase tracking-tighter text-glow-red leading-none">

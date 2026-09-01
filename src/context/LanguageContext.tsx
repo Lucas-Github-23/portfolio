@@ -93,9 +93,10 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         element.classList.remove("tactical-section-pulse");
       }, 1200);
 
-      const headerOffset = 80;
+      const headerOffset = 70;
       const elementPosition = element.getBoundingClientRect().top;
-      const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+      const currentScroll = window.pageYOffset || window.scrollY || document.documentElement.scrollTop || 0;
+      const offsetPosition = elementPosition + currentScroll - headerOffset;
 
       window.scrollTo({
         top: Math.max(0, offsetPosition),
