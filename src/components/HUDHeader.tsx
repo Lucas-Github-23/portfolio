@@ -84,7 +84,7 @@ export function HUDHeader() {
           </div>
           <div>
             <div className="font-mono text-xs sm:text-sm md:text-base font-extrabold tracking-wider text-[var(--text-primary)] flex items-center gap-1.5 whitespace-nowrap">
-              DEV-02
+              LUCAS // DEV-02
               <span className="inline-block w-2 h-2 rounded-full bg-[var(--accent-green)] animate-ping" />
             </div>
             <div className="font-mono text-[9px] sm:text-[10px] text-[var(--text-secondary)] tracking-widest uppercase whitespace-nowrap">

@@ -35,6 +35,8 @@ export function SkillsMatrix() {
     ],
     tools: [
       { name: "Git & Version Control", level: 95, status: "MAX SYNC" },
+      { name: "Power BI (Dashboards & DAX)", level: 90, status: "OPTIMAL" },
+      { name: "Linguagem M (Power Query ETL)", level: 88, status: "OPTIMAL" },
     ],
   };
 

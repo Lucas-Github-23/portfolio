@@ -42,7 +42,7 @@ export const translations = {
           name: "BALTHASAR-2",
           role: "Backend & Systems Intelligence",
           verdict: "CONSENSUS: 100% APPROVAL",
-          detail: "Knowledge in SQL Server, MySQL, MongoDB, Node.js, REST/GraphQL APIs, and VBA Office Automation.",
+          detail: "Knowledge in SQL Server, MySQL, MongoDB, Node.js, REST/GraphQL APIs, Power BI, M, and VBA Office Automation.",
         },
         caspar: {
           name: "CASPAR-3",
@@ -139,7 +139,7 @@ export const translations = {
           name: "BALTHASAR-2",
           role: "Inteligência Backend & Sistemas",
           verdict: "CONSENSO: 100% APROVAÇÃO",
-          detail: "Conhecimento em SQL Server, MySQL, MongoDB, Node.js, APIs REST/GraphQL e automação VBA Office.",
+          detail: "Conhecimento em SQL Server, MySQL, MongoDB, Node.js, APIs REST/GraphQL, Power BI, Linguagem M e automação VBA Office.",
         },
         caspar: {
           name: "CASPAR-3",
