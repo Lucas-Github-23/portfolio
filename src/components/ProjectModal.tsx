@@ -98,16 +98,16 @@ export function ProjectModal({
         </div>
 
         {/* Links */}
-        <div className="flex flex-wrap gap-4 pt-4 border-t border-[var(--border-grid)] font-mono">
+        <div className="flex flex-wrap gap-3 pt-4 border-t border-[var(--border-grid)] font-mono">
           {project.liveUrl && (
             <a
               href={project.liveUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-2.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs uppercase hud-button flex items-center gap-2 hover:bg-orange-600 transition-colors shadow-[0_0_10px_var(--accent-orange-glow)]"
+              className="px-5 py-2.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs uppercase hud-button flex items-center gap-2 hover:bg-orange-600 transition-all shadow-[0_0_15px_var(--accent-orange-glow)] active:scale-95"
             >
-              <ExternalLinkIcon />
-              {t.projects.liveDemo}
+              <ExternalLinkIcon className="w-4 h-4" />
+              <span>{t.projects.liveDemo}</span>
             </a>
           )}
           {project.repoUrl && (
@@ -115,10 +115,10 @@ export function ProjectModal({
               href={project.repoUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-5 py-2.5 bg-[var(--surface-panel)] border border-[var(--border-bright)] text-[var(--text-primary)] font-bold text-xs uppercase hud-button flex items-center gap-2 hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-colors"
+              className="px-5 py-2.5 bg-[var(--bg-main)] border-2 border-[var(--accent-green)] text-[var(--accent-green)] hover:bg-[var(--accent-green)] hover:text-black font-extrabold text-xs uppercase hud-button flex items-center gap-2 transition-all shadow-[0_0_10px_var(--accent-green-glow)] active:scale-95"
             >
-              <GithubIcon />
-              {t.projects.sourceCode}
+              <GithubIcon className="w-4 h-4" />
+              <span>{t.projects.sourceCode}</span>
             </a>
           )}
         </div>

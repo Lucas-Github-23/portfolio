@@ -86,7 +86,7 @@ export function AngelAttackOverlay() {
           <div className="p-3 bg-[var(--accent-red)] hud-panel-sm">TARGET: RAMIEL</div>
           <div className="p-3 bg-[var(--accent-orange)] hud-panel-sm">CODE: PATTERN BLUE</div>
           <div className="p-3 bg-[var(--accent-green)] hud-panel-sm">SYNC: 99.8% READY</div>
-          <div className="p-3 bg-yellow-400 hud-panel-sm">PILOT: LUCAS</div>
+          <div className="p-3 bg-yellow-400 hud-panel-sm">PILOT: SHINJI</div>
         </div>
 
         <div className="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4">

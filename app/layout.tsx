@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Lucas | NERV Tactical Interface Portfolio",
-  description: "Full-Stack Software Engineer portfolio designed in Evangelion NERV / MAGI tactical interface style.",
+  title: "Lucas | Portfolio // DEV-02",
+  description: "Software Engineer portfolio designed in Evangelion NERV / MAGI interface style.",
   keywords: ["Software Engineer", "Next.js", "React", "TypeScript", "Tailwind CSS", "Developer Portfolio", "NERV", "MAGI"],
   icons: {
     icon: [

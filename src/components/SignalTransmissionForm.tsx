@@ -50,7 +50,7 @@ export function SignalTransmissionForm() {
             <div className="border-b border-[var(--border-grid)] pb-3">
               <span className="font-mono text-xs font-bold text-[var(--text-secondary)] tracking-widest uppercase flex items-center gap-2">
                 <span className="w-2 h-2 bg-[var(--accent-green)] animate-ping" />
-                COMMS_CHANNEL: DIRECT_RELAY // ACTIVE
+                {t.contact.channelStatus}
               </span>
             </div>
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -64,7 +64,7 @@ export function SignalTransmissionForm() {
                   required
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="OPERATIVE NAME..."
+                  placeholder={t.contact.namePlaceholder}
                   className="w-full bg-[var(--bg-main)] border border-[var(--border-grid)] px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none font-mono transition-colors"
                 />
               </div>
@@ -79,7 +79,7 @@ export function SignalTransmissionForm() {
                   required
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="USER@DOMINIO.COM..."
+                  placeholder={t.contact.emailPlaceholder}
                   className="w-full bg-[var(--bg-main)] border border-[var(--border-grid)] px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none font-mono transition-colors"
                 />
               </div>
@@ -93,7 +93,7 @@ export function SignalTransmissionForm() {
                   type="text"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  placeholder="NEW PROJECT / COLLABORATION..."
+                  placeholder={t.contact.subjectPlaceholder}
                   className="w-full bg-[var(--bg-main)] border border-[var(--border-grid)] px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none font-mono transition-colors"
                 />
               </div>
@@ -108,7 +108,7 @@ export function SignalTransmissionForm() {
                   rows={4}
                   value={formData.message}
                   onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder="ENTER ENCRYPTED TRANSMISSION DETAILS..."
+                  placeholder={t.contact.messagePlaceholder}
                   className="w-full bg-[var(--bg-main)] border border-[var(--border-grid)] px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none font-mono transition-colors resize-none"
                 />
               </div>
@@ -149,7 +149,7 @@ export function SignalTransmissionForm() {
                 >
                   <GithubIcon className="w-5 h-5 text-[var(--accent-orange)]" />
                   <div>
-                    <span className="block text-xs font-bold">GITHUB REPOSITORIES</span>
+                    <span className="block text-xs font-bold">{t.contact.githubLabel}</span>
                     <span className="text-[10px] text-[var(--text-secondary)]">github.com/Lucas-Github-23</span>
                   </div>
                 </a>
@@ -162,7 +162,7 @@ export function SignalTransmissionForm() {
                 >
                   <LinkedinIcon className="w-5 h-5 text-[var(--accent-orange)]" />
                   <div>
-                    <span className="block text-xs font-bold">LINKEDIN PROFILE</span>
+                    <span className="block text-xs font-bold">{t.contact.linkedinLabel}</span>
                     <span className="text-[10px] text-[var(--accent-orange)] font-bold">
                       linkedin.com/in/lucas-pereira-521082279
                     </span>
@@ -175,7 +175,7 @@ export function SignalTransmissionForm() {
                 >
                   <MailIcon className="w-5 h-5 text-[var(--accent-orange)]" />
                   <div>
-                    <span className="block text-xs font-bold">DIRECT ENCRYPTED MAIL</span>
+                    <span className="block text-xs font-bold">{t.contact.emailDirectLabel}</span>
                     <span className="text-[10px] text-[var(--accent-orange)] font-bold">
                       kukagabriel@hotmail.com
                     </span>
@@ -187,10 +187,10 @@ export function SignalTransmissionForm() {
             {/* Tactical Security Note */}
             <div className="p-4 bg-[var(--surface-panel)]/50 border border-[var(--border-grid)] text-[10px] text-[var(--text-secondary)] space-y-1">
               <span className="text-[var(--accent-orange)] font-bold block">
-                SECURITY PROTOCOL // HIGH FREQUENCY LINK
+                {t.contact.securityProtocolTitle}
               </span>
               <p>
-                All transmissions are routed through NERV Geofront relay nodes. Encryption key 4096-bit active.
+                {t.contact.securityProtocolDesc}
               </p>
             </div>
           </div>

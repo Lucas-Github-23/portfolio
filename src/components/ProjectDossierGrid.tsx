@@ -170,24 +170,25 @@ export function ProjectDossierGrid() {
                 </div>
 
                 {/* Card Actions */}
-                <div className="flex items-center justify-between pt-6 mt-4 border-t border-[var(--border-grid)] font-mono">
+                <div className="flex flex-wrap items-center justify-between gap-2.5 pt-5 mt-4 border-t border-[var(--border-grid)] font-mono">
                   <button
                     onClick={() => setSelectedProject(project)}
-                    className="px-4 py-2 bg-[var(--accent-orange)] text-black font-extrabold text-xs uppercase hud-button hover:bg-orange-600 transition-colors shadow-[0_0_10px_var(--accent-orange-glow)]"
+                    className="px-4 py-2 bg-[var(--accent-orange)] text-black font-extrabold text-xs uppercase hud-button hover:bg-orange-600 transition-all shadow-[0_0_10px_var(--accent-orange-glow)] active:scale-95"
                   >
                     {t.projects.viewDetails}
                   </button>
 
-                  <div className="flex gap-2 text-[var(--text-secondary)]">
+                  <div className="flex items-center gap-2">
                     {project.liveUrl && (
                       <a
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-1.5 border border-[var(--border-grid)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-colors"
+                        className="px-2.5 py-1.5 bg-[var(--bg-main)] border-2 border-[var(--accent-green)] text-[var(--accent-green)] hover:bg-[var(--accent-green)] hover:text-black font-extrabold text-[11px] uppercase hud-panel-sm transition-all flex items-center gap-1.5 shadow-[0_0_8px_var(--accent-green-glow)]"
                         title={t.projects.liveDemo}
                       >
-                        <ExternalLinkIcon className="w-4 h-4" />
+                        <ExternalLinkIcon className="w-3.5 h-3.5" />
+                        <span>{language === "pt" ? "ONLINE" : "LIVE"}</span>
                       </a>
                     )}
                     {project.repoUrl && (
@@ -195,10 +196,11 @@ export function ProjectDossierGrid() {
                         href={project.repoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="p-1.5 border border-[var(--border-grid)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-colors"
+                        className="px-2.5 py-1.5 bg-[var(--bg-main)] border-2 border-[var(--border-bright)] text-[var(--text-primary)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] font-extrabold text-[11px] uppercase hud-panel-sm transition-all flex items-center gap-1.5 shadow-sm"
                         title={t.projects.sourceCode}
                       >
-                        <GithubIcon className="w-4 h-4" />
+                        <GithubIcon className="w-3.5 h-3.5" />
+                        <span>CODE</span>
                       </a>
                     )}
                   </div>
