@@ -63,16 +63,9 @@ export function TacticalCanvasBackground() {
       setupCanvasSize();
     };
 
-    // Dynamic coordinate mapping to eliminate mobile address-bar scaling and scroll drift
+    // Clean coordinate mapping
     const getCanvasCoords = (clientX: number, clientY: number) => {
-      if (!bgCanvas) return { x: clientX, y: clientY };
-      const rect = bgCanvas.getBoundingClientRect();
-      const cssWidth = rect.width || width || 1;
-      const cssHeight = rect.height || height || 1;
-      return {
-        x: (clientX - rect.left) * (width / cssWidth),
-        y: (clientY - rect.top) * (height / cssHeight),
-      };
+      return { x: clientX, y: clientY };
     };
 
     let touchStartX = 0;
@@ -264,16 +257,11 @@ export function TacticalCanvasBackground() {
 
     // --- RENDER LOOP ---
     const render = () => {
-      // Auto-calibrate canvas dimensions if mobile browser address bar shifted
-      if (typeof window !== "undefined" && (window.innerWidth !== width || Math.abs(window.innerHeight - height) > 2)) {
-        setupCanvasSize();
-      }
-
       time += 0.015;
       const isLight = themeRef.current === "light";
       const isMobile = width < 768;
 
-      // Smooth and responsive pointer interpolation
+      // Ultra-smooth 60fps/120fps pointer interpolation (responsive, fluid, zero stutter)
       const hasActivePointer = targetMouseX > -5000;
       if (!hasActivePointer) {
         mouseX = -9999;
@@ -283,8 +271,8 @@ export function TacticalCanvasBackground() {
           mouseX = targetMouseX;
           mouseY = targetMouseY;
         } else {
-          mouseX += (targetMouseX - mouseX) * 0.45;
-          mouseY += (targetMouseY - mouseY) * 0.45;
+          mouseX += (targetMouseX - mouseX) * 0.30;
+          mouseY += (targetMouseY - mouseY) * 0.30;
         }
       }
 
@@ -454,8 +442,8 @@ export function TacticalCanvasBackground() {
           bgCtx.save();
           bgCtx.globalAlpha = Math.min(1.0, (ramielMorph - 0.2) * 1.5);
 
-          const aimX = hasActivePointer ? targetMouseX : lastValidPointerX;
-          const aimY = hasActivePointer ? targetMouseY : lastValidPointerY;
+          const aimX = hasActivePointer ? mouseX : lastValidPointerX;
+          const aimY = hasActivePointer ? mouseY : lastValidPointerY;
           const coreCenter = project3D(0, 0, 0, rotX, rotY, 420, cx, cy);
 
           bgCtx.strokeStyle = "#00ffff";
@@ -516,8 +504,8 @@ export function TacticalCanvasBackground() {
           bgCtx.beginPath();
           for (let i = 0; i < 8; i++) {
             const angle = (i * Math.PI) / 4 + time * 0.15;
-            const px = targetMouseX + Math.cos(angle) * atRadius;
-            const py = targetMouseY + Math.sin(angle) * atRadius;
+            const px = mouseX + Math.cos(angle) * atRadius;
+            const py = mouseY + Math.sin(angle) * atRadius;
             if (i === 0) bgCtx.moveTo(px, py);
             else bgCtx.lineTo(px, py);
           }
