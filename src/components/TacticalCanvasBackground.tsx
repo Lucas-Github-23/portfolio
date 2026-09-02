@@ -53,6 +53,8 @@ export function TacticalCanvasBackground() {
     let mouseY = -9999;
     let targetMouseX = -9999;
     let targetMouseY = -9999;
+    let lastValidPointerX = width * 0.5;
+    let lastValidPointerY = height * 0.5;
 
     let scrollY = window.scrollY || 0;
 
@@ -61,10 +63,19 @@ export function TacticalCanvasBackground() {
       setupCanvasSize();
     };
 
-    // Handle Mouse Movement
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartTime = 0;
+    let touchMoved = false;
+    let lastTouchTime = 0;
+
+    // Handle Mouse Movement (Ignore synthetic mouse events fired by mobile browsers after touch)
     const handleMouseMove = (e: MouseEvent) => {
+      if (Date.now() - lastTouchTime < 1000) return;
       targetMouseX = e.clientX;
       targetMouseY = e.clientY;
+      lastValidPointerX = e.clientX;
+      lastValidPointerY = e.clientY;
     };
 
     // Handle Scroll
@@ -104,19 +115,14 @@ export function TacticalCanvasBackground() {
       });
     };
 
-    let touchStartX = 0;
-    let touchStartY = 0;
-    let touchStartTime = 0;
-    let touchMoved = false;
-    let lastTouchTime = 0;
-
     const handleClick = (e: MouseEvent) => {
-      // Ignore click if it was simulated from a mobile touch tap in the last 500ms
-      if (Date.now() - lastTouchTime < 500) return;
+      // Ignore click if it was simulated from a mobile touch tap in the last 600ms
+      if (Date.now() - lastTouchTime < 600) return;
       spawnImpactRing(e.clientX, e.clientY);
     };
 
     const handleTouchStart = (e: TouchEvent) => {
+      lastTouchTime = Date.now();
       if (e.touches.length > 0) {
         const touch = e.touches[0];
         touchStartX = touch.clientX;
@@ -125,14 +131,19 @@ export function TacticalCanvasBackground() {
         touchMoved = false;
         targetMouseX = touch.clientX;
         targetMouseY = touch.clientY;
+        lastValidPointerX = touch.clientX;
+        lastValidPointerY = touch.clientY;
       }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
+      lastTouchTime = Date.now();
       if (e.touches.length > 0) {
         const touch = e.touches[0];
         targetMouseX = touch.clientX;
         targetMouseY = touch.clientY;
+        lastValidPointerX = touch.clientX;
+        lastValidPointerY = touch.clientY;
         if (Math.hypot(touch.clientX - touchStartX, touch.clientY - touchStartY) > 10) {
           touchMoved = true;
         }
@@ -147,9 +158,11 @@ export function TacticalCanvasBackground() {
         if (e.changedTouches.length > 0) {
           const touch = e.changedTouches[0];
           spawnImpactRing(touch.clientX, touch.clientY);
+          lastValidPointerX = touch.clientX;
+          lastValidPointerY = touch.clientY;
         }
       }
-      // Reset target coordinates away so Ramiel smoothly closes when finger lifts off the screen!
+      // Reset target coordinates so Ramiel morph decays smoothly
       targetMouseX = -9999;
       targetMouseY = -9999;
     };
@@ -169,8 +182,16 @@ export function TacticalCanvasBackground() {
     window.addEventListener("touchcancel", handleTouchCancel, { passive: true });
     window.addEventListener("mouseleave", handleTouchCancel);
 
-    // Floating particles for background atmosphere
-    const particles = Array.from({ length: 40 }, () => ({
+    interface Particle {
+      x: number;
+      y: number;
+      size: number;
+      speedY: number;
+      opacity: number;
+      color: string;
+    }
+
+    const particles: Particle[] = Array.from({ length: 28 }, () => ({
       x: Math.random() * width,
       y: Math.random() * height,
       size: Math.random() * 2 + 1,
@@ -215,7 +236,8 @@ export function TacticalCanvasBackground() {
       const isMobile = width < 768;
 
       // Smooth mouse position interpolation
-      if (targetMouseX < -5000) {
+      const hasActivePointer = targetMouseX > -5000;
+      if (!hasActivePointer) {
         mouseX = -9999;
         mouseY = -9999;
       } else {
@@ -223,12 +245,10 @@ export function TacticalCanvasBackground() {
           mouseX = targetMouseX;
           mouseY = targetMouseY;
         } else {
-          mouseX += (targetMouseX - mouseX) * 0.05;
-          mouseY += (targetMouseY - mouseY) * 0.05;
+          mouseX += (targetMouseX - mouseX) * 0.08;
+          mouseY += (targetMouseY - mouseY) * 0.08;
         }
       }
-
-      const hasActivePointer = targetMouseX > -5000 && mouseX > -5000;
 
       bgCtx.clearRect(0, 0, width, height);
       fgCtx.clearRect(0, 0, width, height);
@@ -277,7 +297,7 @@ export function TacticalCanvasBackground() {
           [0, morphOffset * 0.2, radius + morphOffset * 0.3],
         ];
 
-        const rotX = time * 0.35 + mouseTiltX;
+        const rotX = 0.18 + mouseTiltX;
         const rotY = time * 0.55 + mouseTiltY;
 
         const topProj = topPyramidVertices.map(([vx, vy, vz]) =>
@@ -340,7 +360,7 @@ export function TacticalCanvasBackground() {
         ];
 
         const innerProj = innerVertices.map(([vx, vy, vz]) =>
-          project3D(vx, vy, vz, -time * 0.9, -time * 1.3, 420, cx, cy)
+          project3D(vx, vy, vz, 0.18, -time * 1.3, 420, cx, cy)
         );
 
         const faces = [
@@ -370,12 +390,13 @@ export function TacticalCanvasBackground() {
           bgCtx.stroke();
         });
 
-        // 4 Orbiting Mini-Diamond Satellites
+        // Orbiting Mini-Diamond Satellites (2 on mobile for performance, 4 on desktop)
         if (ramielMorph > 0.2) {
           bgCtx.save();
           bgCtx.globalAlpha = ramielMorph;
-          for (let s = 0; s < 4; s++) {
-            const orbitAngle = time * 2 + (s * Math.PI) / 2;
+          const satCount = isMobile ? 2 : 4;
+          for (let s = 0; s < satCount; s++) {
+            const orbitAngle = time * 2 + (s * Math.PI * 2) / satCount;
             const orbitDist = radius * (1.6 + ramielMorph * 0.4);
             const satX = cx + Math.cos(orbitAngle) * orbitDist;
             const satY = cy + Math.sin(orbitAngle) * orbitDist * 0.5;
@@ -390,10 +411,13 @@ export function TacticalCanvasBackground() {
           bgCtx.restore();
         }
 
-        // Concentrated Laser Cannon Beam on Hover
-        if (ramielMorph > 0.3) {
+        // Concentrated Laser Cannon Beam on Hover (Anchors smoothly to last valid on-screen coordinate)
+        if (ramielMorph > 0.2) {
           bgCtx.save();
-          bgCtx.globalAlpha = (ramielMorph - 0.3) * 1.4;
+          bgCtx.globalAlpha = Math.min(1.0, (ramielMorph - 0.2) * 1.5);
+
+          const aimX = hasActivePointer ? mouseX : lastValidPointerX;
+          const aimY = hasActivePointer ? mouseY : lastValidPointerY;
 
           bgCtx.strokeStyle = "#00ffff";
           bgCtx.lineWidth = 4 + Math.sin(time * 20) * 2;
@@ -402,7 +426,7 @@ export function TacticalCanvasBackground() {
 
           bgCtx.beginPath();
           bgCtx.moveTo(cx, cy);
-          bgCtx.lineTo(mouseX, mouseY);
+          bgCtx.lineTo(aimX, aimY);
           bgCtx.stroke();
 
           bgCtx.strokeStyle = "rgba(255, 0, 85, 0.6)";
@@ -411,11 +435,11 @@ export function TacticalCanvasBackground() {
           bgCtx.shadowBlur = isMobile ? 0 : 30;
           bgCtx.beginPath();
           bgCtx.moveTo(cx, cy);
-          bgCtx.lineTo(mouseX, mouseY);
+          bgCtx.lineTo(aimX, aimY);
           bgCtx.stroke();
 
           bgCtx.beginPath();
-          bgCtx.arc(mouseX, mouseY, 15 + Math.sin(time * 15) * 5, 0, Math.PI * 2);
+          bgCtx.arc(aimX, aimY, 15 + Math.sin(time * 15) * 5, 0, Math.PI * 2);
           bgCtx.strokeStyle = "#00ffff";
           bgCtx.lineWidth = 2;
           bgCtx.stroke();
@@ -493,13 +517,15 @@ export function TacticalCanvasBackground() {
           bgCtx.stroke();
         }
 
-        // --- FULL 3D ROTATING CANONICAL SPEAR OF LONGINUS ---
+        // --- FULL 3D CANONICAL SPEAR OF LONGINUS (100% FAITHFUL TO PHOTO) ---
         bgCtx.save();
+        // Fully solid rendering so it looks like a real physical 3D object
+        bgCtx.globalAlpha = Math.min(1.0, moonOpacity * 1.3);
 
         const spearAngle = -Math.PI / 4.1;
-        const spearLength = moonRadius * 3.6;
-        const startX = moonX - Math.cos(spearAngle) * (spearLength * 0.40);
-        const startY = moonY - Math.sin(spearAngle) * (spearLength * 0.40);
+        const spearLength = moonRadius * 3.9;
+        const startX = moonX - Math.cos(spearAngle) * (spearLength * 0.44);
+        const startY = moonY - Math.sin(spearAngle) * (spearLength * 0.44);
         const dirX = Math.cos(spearAngle);
         const dirY = Math.sin(spearAngle);
         const perpX = -Math.sin(spearAngle);
@@ -516,253 +542,205 @@ export function TacticalCanvasBackground() {
           y: startY + dirY * axialDist + perpY * perpOffset,
         });
 
-        // 1. Slender Tightly-Wound Double Helix Shaft (0 to 60% of length)
-        const shaftEnd = spearLength * 0.60;
-        const shaftSteps = isMobileScreen ? 36 : 80;
-        const strandA: { x: number; y: number }[] = [];
-        const strandB: { x: number; y: number }[] = [];
+        // Color Palette (Evangelion Metallic Blood Crimson)
+        const colDarkShadow = isLight ? "#4a000a" : "#52000c";
+        const colBaseRed = isLight ? "#a3001a" : "#ba0022";
+        const colMainCrimson = isLight ? "#d90026" : "#e6002b";
+        const colBrightHighlight = isLight ? "#ff3355" : "#ff4d6d";
+        const colSpecular = "rgba(255, 240, 240, 0.95)";
 
-        for (let i = 0; i <= shaftSteps; i++) {
-          const d = (i / shaftSteps) * shaftEnd;
-          const phase = d * 0.22 + spin;
-          const offsetA = Math.sin(phase) * 3.2;
-          const offsetB = -Math.sin(phase) * 3.2;
+        // PARAMETRIC 3D SPINE EVALUATOR FOR STRAND 1 AND STRAND 2
+        // Both strands run continuously from s = 0 (base tip) to s = 1 (tine tip)
+        const evalStrand = (s: number, strandId: 1 | 2) => {
+          const d = s * spearLength;
+          const sign = strandId === 1 ? 1 : -1;
 
-          strandA.push(pt(d, offsetA));
-          strandB.push(pt(d, offsetB));
+          let offX = 0;
+          let offZ = 0;
+          let thickness = 2.4;
+
+          if (s < 0.56) {
+            // ZONE 1: SLENDER DOUBLE-HELIX SHAFT (0% to 56%)
+            // Tapers to a sharp point at the very base (s = 0)
+            const taper = Math.min(1.0, s / 0.08);
+            const helixRad = taper * 3.6;
+            thickness = Math.max(0.6, taper * 2.2);
+
+            // Double helix twist with tight pitch
+            const phase = s * 36.0 + spin + (strandId === 1 ? 0 : Math.PI);
+            offX = Math.cos(phase) * helixRad;
+            offZ = Math.sin(phase) * helixRad;
+          } else if (s < 0.66) {
+            // ZONE 2: THE 2 OPEN HELICAL EYELET LOOPS (56% to 66%)
+            const u = (s - 0.56) / 0.10; // 0 to 1
+            // Radius swells outward and creates the iconic open twists
+            const loopRad = 3.6 + Math.sin(u * Math.PI) * 7.5;
+            thickness = 2.5;
+
+            const phase = 0.56 * 36.0 + u * (Math.PI * 2.0) + spin + (strandId === 1 ? 0 : Math.PI);
+            offX = Math.cos(phase) * loopRad;
+            offZ = Math.sin(phase) * loopRad;
+          } else if (s < 0.74) {
+            // ZONE 3: SCULPTED DIAMOND / LOZENGE GUARD FORK (66% to 74%)
+            const u = (s - 0.66) / 0.08; // 0 to 1
+            thickness = 2.6;
+
+            // Wing profile with outer horn barb, waist notch, and secondary barb
+            let wingW = 3.6;
+            if (u < 0.35) {
+              const k = u / 0.35;
+              wingW = 3.6 + (19.0 - 3.6) * Math.sin(k * Math.PI * 0.5);
+            } else if (u < 0.60) {
+              const k = (u - 0.35) / 0.25;
+              wingW = 19.0 + (11.5 - 19.0) * (1 - Math.cos(k * Math.PI)) * 0.5;
+            } else if (u < 0.80) {
+              const k = (u - 0.60) / 0.20;
+              wingW = 11.5 + (17.0 - 11.5) * Math.sin(k * Math.PI * 0.5);
+            } else {
+              const k = (u - 0.80) / 0.20;
+              wingW = 17.0 + (7.2 - 17.0) * (1 - Math.cos(k * Math.PI)) * 0.5;
+            }
+
+            // In 3D, the guard is a planar structure rotating with (rotCos, rotSin)
+            offX = sign * wingW * rotCos;
+            offZ = sign * wingW * rotSin;
+          } else {
+            // ZONE 4: TWIN PARALLEL NEEDLE TINES (74% to 100% — 26% of total length!)
+            const u = (s - 0.74) / 0.26; // 0 to 1
+            // Distinct, clean parallel spacing between teeth
+            const tineGap = 7.2;
+
+            // Needle tip sharpening at the final 10%
+            thickness = u > 0.90 ? 2.0 * (1.0 - (u - 0.90) / 0.10) : 2.0;
+
+            offX = sign * tineGap * rotCos;
+            offZ = sign * tineGap * rotSin;
+          }
+
+          return { d, offX, offZ, thickness, pt2D: pt(d, offX) };
+        };
+
+        // Fast Pre-computed 32-step Metallic Crimson Shading LUT (Zero string allocations per frame)
+        const SHADE_LUT = [
+          "rgb(82,0,12)", "rgb(87,1,13)", "rgb(92,1,14)", "rgb(97,2,16)",
+          "rgb(103,2,17)", "rgb(108,3,18)", "rgb(113,3,20)", "rgb(118,4,21)",
+          "rgb(123,4,22)", "rgb(128,5,24)", "rgb(134,5,25)", "rgb(139,6,27)",
+          "rgb(144,6,28)", "rgb(149,7,29)", "rgb(154,8,31)", "rgb(160,8,32)",
+          "rgb(165,9,33)", "rgb(170,9,35)", "rgb(175,10,36)", "rgb(180,10,38)",
+          "rgb(186,11,39)", "rgb(191,12,40)", "rgb(196,12,42)", "rgb(201,13,43)",
+          "rgb(206,13,44)", "rgb(212,14,46)", "rgb(217,14,47)", "rgb(222,15,49)",
+          "rgb(227,15,50)", "rgb(232,16,51)", "rgb(237,17,53)", "rgb(240,20,50)"
+        ];
+
+        // Discretize Strand 1 and Strand 2 into 3D segments (Calibrated for high 60-120 FPS performance)
+        const sampleSteps = isMobileScreen ? 36 : 64;
+        const strand1Data: ReturnType<typeof evalStrand>[] = [];
+        const strand2Data: ReturnType<typeof evalStrand>[] = [];
+
+        for (let i = 0; i <= sampleSteps; i++) {
+          const s = i / sampleSteps;
+          strand1Data.push(evalStrand(s, 1));
+          strand2Data.push(evalStrand(s, 2));
         }
 
-        // Fill Shaft Ribbon
-        bgCtx.beginPath();
-        strandA.forEach((p, i) => (i === 0 ? bgCtx.moveTo(p.x, p.y) : bgCtx.lineTo(p.x, p.y)));
-        for (let i = strandB.length - 1; i >= 0; i--) bgCtx.lineTo(strandB[i].x, strandB[i].y);
-        bgCtx.closePath();
-        bgCtx.fillStyle = isLight ? "#cc0029" : "#e6002b";
-        bgCtx.shadowColor = "#ff0033";
-        bgCtx.shadowBlur = isMobileScreen ? 0 : 14;
-        bgCtx.fill();
+        // Disable heavy Gaussian shadowBlur inside loop for maximum FPS
+        bgCtx.shadowBlur = 0;
 
-        // Shaft Helix Outer Outlines
-        bgCtx.strokeStyle = "#ff2247";
-        bgCtx.lineWidth = 1.8;
-        bgCtx.beginPath();
-        strandA.forEach((p, i) => (i === 0 ? bgCtx.moveTo(p.x, p.y) : bgCtx.lineTo(p.x, p.y)));
-        bgCtx.stroke();
+        // Render function for an individual 3D strand segment (Fast and lightweight)
+        const drawStrandSegment = (p1: typeof strand1Data[0], p2: typeof strand1Data[0]) => {
+          const w1 = p1.thickness;
+          const w2 = p2.thickness;
 
-        bgCtx.beginPath();
-        strandB.forEach((p, i) => (i === 0 ? bgCtx.moveTo(p.x, p.y) : bgCtx.lineTo(p.x, p.y)));
-        bgCtx.stroke();
+          const p1_L = pt(p1.d, p1.offX - w1);
+          const p1_R = pt(p1.d, p1.offX + w1);
+          const p2_L = pt(p2.d, p2.offX - w2);
+          const p2_R = pt(p2.d, p2.offX + w2);
 
-        // 2. Two Interlocking Open Eyelet Loops Rotating in 3D (60% to 76% of length)
-        const l1Start = shaftEnd;
-        const l1Mid = spearLength * 0.64;
-        const l1End = spearLength * 0.68;
-        const l2Mid = spearLength * 0.72;
-        const l2End = spearLength * 0.76;
+          const avgZ = (p1.offZ + p2.offZ) * 0.5;
+          const normZ = Math.max(-1, Math.min(1, avgZ / 6.0));
+          const lutIdx = Math.floor((normZ + 1) * 15.5);
+          const col = SHADE_LUT[Math.max(0, Math.min(31, lutIdx))];
 
-        // Loop 1 (3D perspective projected with rotCos)
-        const loop1Spread = 7 * rotCos;
-        const loop1Thickness = 2.5 * Math.abs(rotSin) + 1.2;
-
-        bgCtx.beginPath();
-        bgCtx.moveTo(pt(l1Start, 0).x, pt(l1Start, 0).y);
-        bgCtx.quadraticCurveTo(
-          pt(l1Mid, -loop1Spread - loop1Thickness).x,
-          pt(l1Mid, -loop1Spread - loop1Thickness).y,
-          pt(l1End, 0).x,
-          pt(l1End, 0).y
-        );
-        bgCtx.quadraticCurveTo(
-          pt(l1Mid, -loop1Spread + loop1Thickness).x,
-          pt(l1Mid, -loop1Spread + loop1Thickness).y,
-          pt(l1Start, 0).x,
-          pt(l1Start, 0).y
-        );
-        bgCtx.closePath();
-        bgCtx.fillStyle = isLight ? "#b80024" : "#ff0033";
-        bgCtx.fill();
-        bgCtx.stroke();
-
-        bgCtx.beginPath();
-        bgCtx.moveTo(pt(l1Start, 0).x, pt(l1Start, 0).y);
-        bgCtx.quadraticCurveTo(
-          pt(l1Mid, loop1Spread + loop1Thickness).x,
-          pt(l1Mid, loop1Spread + loop1Thickness).y,
-          pt(l1End, 0).x,
-          pt(l1End, 0).y
-        );
-        bgCtx.quadraticCurveTo(
-          pt(l1Mid, loop1Spread - loop1Thickness).x,
-          pt(l1Mid, loop1Spread - loop1Thickness).y,
-          pt(l1Start, 0).x,
-          pt(l1Start, 0).y
-        );
-        bgCtx.closePath();
-        bgCtx.fillStyle = isLight ? "#b80024" : "#ff0033";
-        bgCtx.fill();
-        bgCtx.stroke();
-
-        // Loop 2 (3D perspective projected with rotCos)
-        const loop2Spread = 12 * rotCos;
-        const loop2Thickness = 2.8 * Math.abs(rotSin) + 1.4;
-
-        bgCtx.beginPath();
-        bgCtx.moveTo(pt(l1End, 0).x, pt(l1End, 0).y);
-        bgCtx.quadraticCurveTo(
-          pt(l2Mid, -loop2Spread - loop2Thickness).x,
-          pt(l2Mid, -loop2Spread - loop2Thickness).y,
-          pt(l2End, 0).x,
-          pt(l2End, 0).y
-        );
-        bgCtx.quadraticCurveTo(
-          pt(l2Mid, -loop2Spread + loop2Thickness).x,
-          pt(l2Mid, -loop2Spread + loop2Thickness).y,
-          pt(l1End, 0).x,
-          pt(l1End, 0).y
-        );
-        bgCtx.closePath();
-        bgCtx.fillStyle = isLight ? "#b80024" : "#ff0033";
-        bgCtx.fill();
-        bgCtx.stroke();
-
-        bgCtx.beginPath();
-        bgCtx.moveTo(pt(l1End, 0).x, pt(l1End, 0).y);
-        bgCtx.quadraticCurveTo(
-          pt(l2Mid, loop2Spread + loop2Thickness).x,
-          pt(l2Mid, loop2Spread + loop2Thickness).y,
-          pt(l2End, 0).x,
-          pt(l2End, 0).y
-        );
-        bgCtx.quadraticCurveTo(
-          pt(l2Mid, loop2Spread - loop2Thickness).x,
-          pt(l2Mid, loop2Spread - loop2Thickness).y,
-          pt(l1End, 0).x,
-          pt(l1End, 0).y
-        );
-        bgCtx.closePath();
-        bgCtx.fillStyle = isLight ? "#b80024" : "#ff0033";
-        bgCtx.fill();
-        bgCtx.stroke();
-
-        // 3. Sculpted Winged Shoulders & Barbed Notches Rotating in 3D (76% to 86% of length)
-        const forkRoot = l2End;
-        const barb1 = spearLength * 0.785;
-        const notch = spearLength * 0.81;
-        const barb2 = spearLength * 0.835;
-        const tineRoot = spearLength * 0.86;
-
-        const wingThickness = 2.2 * Math.abs(rotSin) + 1.2;
-
-        // Left Wing (projected dynamically around 3D axis)
-        const leftWing = [
-          pt(forkRoot, -1.5 * rotCos),
-          pt(barb1, -19 * rotCos - wingThickness),
-          pt(notch, -11 * rotCos - wingThickness),
-          pt(barb2, -18 * rotCos - wingThickness),
-          pt(tineRoot, -6 * rotCos - wingThickness),
-          pt(tineRoot, -2.5 * rotCos),
-          pt(forkRoot, 0),
-        ];
-
-        bgCtx.beginPath();
-        leftWing.forEach((p, i) => (i === 0 ? bgCtx.moveTo(p.x, p.y) : bgCtx.lineTo(p.x, p.y)));
-        bgCtx.closePath();
-        bgCtx.fillStyle = isLight ? "#b80024" : "#e6002b";
-        bgCtx.fill();
-        bgCtx.strokeStyle = "#ff3355";
-        bgCtx.lineWidth = 1.6;
-        bgCtx.stroke();
-
-        // Right Wing (projected dynamically around 3D axis)
-        const rightWing = [
-          pt(forkRoot, 1.5 * rotCos),
-          pt(barb1, 19 * rotCos + wingThickness),
-          pt(notch, 11 * rotCos + wingThickness),
-          pt(barb2, 18 * rotCos + wingThickness),
-          pt(tineRoot, 6 * rotCos + wingThickness),
-          pt(tineRoot, 2.5 * rotCos),
-          pt(forkRoot, 0),
-        ];
-
-        bgCtx.beginPath();
-        rightWing.forEach((p, i) => (i === 0 ? bgCtx.moveTo(p.x, p.y) : bgCtx.lineTo(p.x, p.y)));
-        bgCtx.closePath();
-        bgCtx.fillStyle = isLight ? "#b80024" : "#e6002b";
-        bgCtx.fill();
-        bgCtx.strokeStyle = "#ff3355";
-        bgCtx.lineWidth = 1.6;
-        bgCtx.stroke();
-
-        // 4. Twin Parallel Needle Tines Rotating in 3D (86% to 100% of length)
-        const tineTip = spearLength;
-        const tinePreTip = spearLength * 0.97;
-        const tineRadius = 4.2;
-        const tineWidth = 1.8 * Math.abs(rotSin) + 1.2;
-
-        // Left Needle Tine (3D orbiting point)
-        const leftTineOffset = -tineRadius * rotCos;
-        const leftTine = [
-          pt(tineRoot, leftTineOffset - tineWidth),
-          pt(tinePreTip, leftTineOffset - tineWidth * 0.7),
-          pt(tineTip, leftTineOffset), // Sharp needle tip
-          pt(tinePreTip, leftTineOffset + tineWidth * 0.7),
-          pt(tineRoot, leftTineOffset + tineWidth),
-        ];
-
-        bgCtx.beginPath();
-        leftTine.forEach((p, i) => (i === 0 ? bgCtx.moveTo(p.x, p.y) : bgCtx.lineTo(p.x, p.y)));
-        bgCtx.closePath();
-        bgCtx.fillStyle = isLight ? "#b80024" : "#e6002b";
-        bgCtx.fill();
-        bgCtx.strokeStyle = "#ff3355";
-        bgCtx.lineWidth = 1.2;
-        bgCtx.stroke();
-
-        // Right Needle Tine (3D orbiting point)
-        const rightTineOffset = tineRadius * rotCos;
-        const rightTine = [
-          pt(tineRoot, rightTineOffset - tineWidth),
-          pt(tinePreTip, rightTineOffset - tineWidth * 0.7),
-          pt(tineTip, rightTineOffset), // Sharp needle tip
-          pt(tinePreTip, rightTineOffset + tineWidth * 0.7),
-          pt(tineRoot, rightTineOffset + tineWidth),
-        ];
-
-        bgCtx.beginPath();
-        rightTine.forEach((p, i) => (i === 0 ? bgCtx.moveTo(p.x, p.y) : bgCtx.lineTo(p.x, p.y)));
-        bgCtx.closePath();
-        bgCtx.fillStyle = isLight ? "#b80024" : "#e6002b";
-        bgCtx.fill();
-        bgCtx.strokeStyle = "#ff3355";
-        bgCtx.lineWidth = 1.2;
-        bgCtx.stroke();
-
-        // 5. Dynamic 3D Specular Reflection Highlights
-        bgCtx.strokeStyle = "rgba(255, 255, 255, 0.75)";
-        bgCtx.lineWidth = 1.0;
-        bgCtx.shadowColor = "#ffffff";
-        bgCtx.shadowBlur = 4;
-
-        if (rotCos > 0) {
-          // Right Tine Facing Forward
           bgCtx.beginPath();
-          bgCtx.moveTo(pt(barb1, 17 * rotCos).x, pt(barb1, 17 * rotCos).y);
-          bgCtx.lineTo(pt(notch, 10 * rotCos).x, pt(notch, 10 * rotCos).y);
-          bgCtx.lineTo(pt(barb2, 16 * rotCos).x, pt(barb2, 16 * rotCos).y);
-          bgCtx.lineTo(pt(tineTip, rightTineOffset).x, pt(tineTip, rightTineOffset).y);
+          bgCtx.moveTo(p1_L.x, p1_L.y);
+          bgCtx.lineTo(p1_R.x, p1_R.y);
+          bgCtx.lineTo(p2_R.x, p2_R.y);
+          bgCtx.lineTo(p2_L.x, p2_L.y);
+          bgCtx.closePath();
+          bgCtx.fillStyle = col;
+          bgCtx.fill();
+
+          // Smooth outer bevel edge
+          bgCtx.strokeStyle = isLight ? "#9e001b" : "#6e0012";
+          bgCtx.lineWidth = 0.8;
           bgCtx.stroke();
-        } else {
-          // Left Tine Facing Forward
-          bgCtx.beginPath();
-          bgCtx.moveTo(pt(barb1, -17 * rotCos).x, pt(barb1, -17 * rotCos).y);
-          bgCtx.lineTo(pt(notch, -10 * rotCos).x, pt(notch, -10 * rotCos).y);
-          bgCtx.lineTo(pt(barb2, -16 * rotCos).x, pt(barb2, -16 * rotCos).y);
-          bgCtx.lineTo(pt(tineTip, leftTineOffset).x, pt(tineTip, leftTineOffset).y);
-          bgCtx.stroke();
+        };
+
+        // Per-Segment True 3D Depth Sorting
+        for (let i = 0; i < sampleSteps; i++) {
+          const seg1_Z = (strand1Data[i].offZ + strand1Data[i + 1].offZ) * 0.5;
+          const seg2_Z = (strand2Data[i].offZ + strand2Data[i + 1].offZ) * 0.5;
+
+          if (seg1_Z <= seg2_Z) {
+            drawStrandSegment(strand1Data[i], strand1Data[i + 1]);
+            drawStrandSegment(strand2Data[i], strand2Data[i + 1]);
+          } else {
+            drawStrandSegment(strand2Data[i], strand2Data[i + 1]);
+            drawStrandSegment(strand1Data[i], strand1Data[i + 1]);
+          }
         }
+
+        // Fast Batched Specular Crest Highlights
+        const drawSpecularSpine = (data: typeof strand1Data) => {
+          bgCtx.beginPath();
+          let drawing = false;
+          for (let i = 0; i < data.length - 1; i++) {
+            const p1 = data[i];
+            const p2 = data[i + 1];
+            const avgZ = (p1.offZ + p2.offZ) * 0.5;
+            if (avgZ > 0.8) {
+              if (!drawing) {
+                bgCtx.moveTo(p1.pt2D.x, p1.pt2D.y);
+                drawing = true;
+              }
+              bgCtx.lineTo(p2.pt2D.x, p2.pt2D.y);
+            } else {
+              drawing = false;
+            }
+          }
+          bgCtx.strokeStyle = "rgba(255, 245, 245, 0.85)";
+          bgCtx.lineWidth = 1.0;
+          bgCtx.stroke();
+        };
+
+        drawSpecularSpine(strand1Data);
+        drawSpecularSpine(strand2Data);
+
+        // Diamond Guard Center Aperture Fill (Solid opaque lozenge)
+        const guardRoot = evalStrand(0.66, 1);
+        const guardBarb1_L = evalStrand(0.69, 1);
+        const guardBarb1_R = evalStrand(0.69, 2);
+        const guardNotch_L = evalStrand(0.71, 1);
+        const guardNotch_R = evalStrand(0.71, 2);
+        const guardTine_L = evalStrand(0.74, 1);
+        const guardTine_R = evalStrand(0.74, 2);
+
+        // Draw the smooth inner diamond aperture bevels
+        bgCtx.beginPath();
+        bgCtx.moveTo(pt(guardRoot.d, 0).x, pt(guardRoot.d, 0).y);
+        bgCtx.lineTo(guardBarb1_L.pt2D.x, guardBarb1_L.pt2D.y);
+        bgCtx.lineTo(guardNotch_L.pt2D.x, guardNotch_L.pt2D.y);
+        bgCtx.lineTo(guardTine_L.pt2D.x, guardTine_L.pt2D.y);
+        bgCtx.lineTo(guardTine_R.pt2D.x, guardTine_R.pt2D.y);
+        bgCtx.lineTo(guardNotch_R.pt2D.x, guardNotch_R.pt2D.y);
+        bgCtx.lineTo(guardBarb1_R.pt2D.x, guardBarb1_R.pt2D.y);
+        bgCtx.closePath();
+        bgCtx.strokeStyle = isLight ? "#9e001b" : "#800014";
+        bgCtx.lineWidth = 1.2;
+        bgCtx.stroke();
 
         // 6. Impact Point Energy Burst & Lunar Crater Shockwaves
-        const impactPoint = pt(spearLength * 0.42, 0);
+        const impactPoint = pt(spearLength * 0.44, 0);
 
         // Radial Impact Plasma Burst
         const radGrad = bgCtx.createRadialGradient(
