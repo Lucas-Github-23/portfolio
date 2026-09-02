@@ -33,8 +33,8 @@ export function ProjectDossierGrid() {
       titlePt: "PIXEL ADVENTURE (AGRINHO 2022)",
       category: "frontend",
       clearance: "AWARD RECOGNITION // 3RD PLACE",
-      shortDescEn: "🥉 3rd Place NRE Maringá (Agrinho Program). 2D Pixel Art platformer game developed in HTML5/JS featuring classic physics, boss encounters, PWA offline support, and direct browser execution.",
-      shortDescPt: "🥉 3º Lugar NRE Maringá (Programa Agrinho). Jogo de plataforma 2D em Pixel Art desenvolvido em HTML5/JS com física clássica, chefões, suporte PWA offline e execução direta no navegador.",
+      shortDescEn: "[3RD PLACE] NRE Maringá (Agrinho Program). 2D Pixel Art platformer game developed in HTML5/JS featuring classic physics, boss encounters, PWA offline support, and direct browser execution.",
+      shortDescPt: "[3º LUGAR] NRE Maringá (Programa Agrinho). Jogo de plataforma 2D em Pixel Art desenvolvido em HTML5/JS com física clássica, chefões, suporte PWA offline e execução direta no navegador.",
       fullDescEn: "Awarded 3rd place in NRE Maringá by the Agrinho Program, combining educational environmental awareness with classic 8/16-bit 2D platforming mechanics. Features responsive running and double-jump physics, enemies and boss battles with health bars and attack patterns, moving traps and springboards, collectible-driven scoring, stage padlock progression, dynamic soundtrack via Web Audio API, and full offline PWA execution via Service Workers.",
       fullDescPt: "Premiado com o 3º lugar no NRE Maringá pelo Programa Agrinho, unindo a nostalgia dos jogos clássicos de plataforma 2D em 8/16-bits a mensagens educativas de conscientização ambiental, ética e cidadania. Conta com movimentação fluida (corrida, pulo duplo e física), inteligência de inimigos e chefões com barra de vida e padrões de ataque, armadilhas dinâmicas, sistema de pontuação com coletáveis, progressão de fases destraváveis (Padlock System), trilha sonora dinâmica via Web Audio API e suporte completo a PWA offline com Service Workers.",
       techStack: ["HTML5", "JavaScript (ES6)", "Canvas API", "Web Audio API", "PWA / Service Worker", "Construct Engine", "CSS3"],
@@ -137,7 +137,7 @@ export function ProjectDossierGrid() {
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 border-b border-[var(--border-grid)] pb-3 font-mono">
                     <div className="min-w-0">
                       <span className="text-[10px] font-bold text-[var(--accent-orange)] tracking-widest uppercase flex items-center gap-1.5 flex-wrap">
-                        {project.id} // {project.clearance}
+                        {project.id} {"//"} {project.clearance}
                         {project.isPlaceholder && (
                           <span className="placeholder-tag">{t.projects.placeholderTag}</span>
                         )}

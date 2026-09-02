@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { SunIcon, MoonIcon, ShieldAlertIcon, MonitorIcon } from "./Icons";
+import { SunIcon, MoonIcon, ShieldAlertIcon, MonitorIcon, LayersIcon } from "./Icons";
 import { IconPreviewModal } from "./IconPreviewModal";
 
 export function HUDHeader() {
@@ -130,10 +130,10 @@ export function HUDHeader() {
             {/* Icon Preview / Selector Button */}
             <button
               onClick={() => setIconModalOpen(true)}
-              className="p-1.5 px-2 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm flex items-center gap-1 text-[10px] font-bold"
+              className="p-1.5 px-2 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm flex items-center gap-1.5 text-[10px] font-bold"
               title={language === "pt" ? "Visualizar e Trocar Ícones HUD" : "View & Switch HUD Icons"}
             >
-              <span className="text-xs">◈</span>
+              <LayersIcon className="w-3.5 h-3.5 text-[var(--accent-orange)]" />
               <span className="hidden sm:inline">ICONS</span>
             </button>
 
@@ -226,7 +226,7 @@ export function HUDHeader() {
                 }}
                 className="flex-1 py-2 px-3 border border-[var(--accent-orange)] bg-[var(--surface-panel)] text-[var(--accent-orange)] font-bold text-xs uppercase hud-button flex items-center justify-center gap-1.5"
               >
-                <span>◈</span>
+                <LayersIcon className="w-3.5 h-3.5" />
                 <span>ICONS PREVIEW</span>
               </button>
 

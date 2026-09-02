@@ -96,6 +96,20 @@ button, a, input, textarea, select {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Prevent accidental mobile text selection during 3D Canvas / Angel interaction */
+#status,
+.hero-section,
+.tactical-canvas-layer,
+.hud-panel,
+.hud-panel-sm,
+.hud-button,
+.select-none,
+canvas {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
 /* Tactical Placeholder Badge */
 .placeholder-tag {
   display: inline-flex;

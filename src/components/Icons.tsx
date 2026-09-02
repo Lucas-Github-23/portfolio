@@ -87,3 +87,49 @@ export function MoonIcon({ className = "w-4 h-4" }: { className?: string }) {
     </svg>
   );
 }
+
+export function ShuffleIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M4 4h4l8 12h4m0 0l-3-3m3 3l-3 3M4 20h4l3-4.5M16 4h4m0 0l-3-3m3 3l-3 3" />
+    </svg>
+  );
+}
+
+export function CheckIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+    </svg>
+  );
+}
+
+export function TargetIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <circle cx="12" cy="12" r="8" />
+      <circle cx="12" cy="12" r="3" />
+      <line x1="12" y1="2" x2="12" y2="5" />
+      <line x1="12" y1="19" x2="12" y2="22" />
+      <line x1="2" y1="12" x2="5" y2="12" />
+      <line x1="19" y1="12" x2="22" y2="12" />
+    </svg>
+  );
+}
+
+export function XIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+  );
+}
+
+export function LayersIcon({ className = "w-4 h-4" }: { className?: string }) {
+  return (
+    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+      <path strokeLinecap="round" strokeLinejoin="round" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+    </svg>
+  );
+}
+

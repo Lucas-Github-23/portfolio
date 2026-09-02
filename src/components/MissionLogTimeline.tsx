@@ -49,8 +49,8 @@ export function MissionLogTimeline() {
       id: "LOG-AWARD-01",
       yearEn: "2022",
       yearPt: "2022",
-      roleEn: "🥉 3rd Place — NRE Maringá (Agrinho Program)",
-      rolePt: "🥉 3º Lugar — NRE Maringá (Programa Agrinho)",
+      roleEn: "[3RD PLACE] NRE Maringá (Agrinho Program)",
+      rolePt: "[3º LUGAR] NRE Maringá (Programa Agrinho)",
       orgEn: "PROGRAMA AGRINHO // FAEP / SENAR-PR",
       orgPt: "PROGRAMA AGRINHO // FAEP / SENAR-PR",
       descEn: "Developed Pixel Adventure, an interactive educational 2D platformer in HTML5 promoting environmental awareness and citizenship, awarded 3rd place across the Maringá regional education sector.",
@@ -93,7 +93,7 @@ export function MissionLogTimeline() {
                   {/* Top Bar */}
                   <div className="flex flex-wrap justify-between items-center gap-2 border-b border-[var(--border-grid)] pb-2 sm:pb-3">
                     <span className="text-[11px] sm:text-xs font-extrabold text-[var(--accent-orange)] tracking-widest uppercase">
-                      {year} // {org}
+                      {year} {"//"} {org}
                     </span>
                     <span className="px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] text-[9px] sm:text-[10px] font-bold uppercase">
                       {item.status}

@@ -91,7 +91,7 @@ export function SkillsMatrix() {
                   {skill.name}
                 </span>
                 <span className="text-[10px] sm:text-xs text-[var(--accent-green)] font-extrabold px-2 py-0.5 bg-[var(--accent-green-glow)] border border-[var(--accent-green)] self-start sm:self-auto">
-                  {skill.status} // {skill.level}%
+                  {skill.status} {"//"} {skill.level}%
                 </span>
               </div>
 

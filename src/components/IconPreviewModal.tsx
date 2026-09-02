@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { ICON_VARIANTS, IconInfo, IconVariant } from "./DynamicFavicon";
+import { ShuffleIcon, CheckIcon, TargetIcon, XIcon } from "./Icons";
 
 interface IconPreviewModalProps {
   isOpen: boolean;
@@ -12,19 +13,12 @@ interface IconPreviewModalProps {
 export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
   const { language } = useLanguage();
   const [currentMode, setCurrentMode] = useState<IconVariant>("random");
-  const [activeIconId, setActiveIconId] = useState<string>("tactical-l");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const saved = (localStorage.getItem("nerv_fav_variant") as IconVariant) || "random";
       setCurrentMode(saved);
-      
-      const link = document.querySelector("link[rel*='icon']") as HTMLLinkElement | null;
-      if (link && link.href) {
-        const found = ICON_VARIANTS.find((v) => link.href.includes(v.path));
-        if (found) setActiveIconId(found.id);
-      }
     }
   }, [isOpen]);
 
@@ -44,7 +38,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 select-none">
       <div 
         className="w-full max-w-3xl bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] hud-panel shadow-[0_0_30px_var(--accent-orange-glow)] p-4 sm:p-6 space-y-5 text-[var(--text-primary)] font-mono overflow-y-auto max-h-[90vh]"
         role="dialog"
@@ -67,9 +61,10 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
           </div>
           <button
             onClick={onClose}
-            className="px-2.5 py-1 text-xs border border-[var(--border-grid)] hover:border-[var(--accent-red)] hover:bg-[var(--accent-red)] hover:text-black font-bold uppercase transition-colors"
+            className="px-2.5 py-1 text-xs border border-[var(--border-grid)] hover:border-[var(--accent-red)] hover:bg-[var(--accent-red)] hover:text-black font-bold uppercase transition-colors flex items-center gap-1.5"
           >
-            ✕ {language === "pt" ? "FECHAR" : "CLOSE"}
+            <XIcon className="w-3.5 h-3.5" />
+            <span>{language === "pt" ? "FECHAR" : "CLOSE"}</span>
           </button>
         </div>
 
@@ -83,14 +78,22 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
 
         {/* Quick Mode Switcher */}
         <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-black/40 border border-[var(--border-grid)] hud-panel-sm">
-          <div className="text-xs">
+          <div className="text-xs flex items-center gap-1.5 flex-wrap">
             <span className="text-[var(--text-secondary)]">
               {language === "pt" ? "MODO ATUAL:" : "CURRENT MODE:"}
             </span>{" "}
-            <span className="font-extrabold text-[var(--accent-orange)] uppercase">
-              {currentMode === "random" 
-                ? (language === "pt" ? "🎲 Aleatório (Rotaciona a cada visita)" : "🎲 Random (Rotates on each visit)")
-                : (language === "pt" ? `🎯 Fixo (${currentMode})` : `🎯 Fixed (${currentMode})`)}
+            <span className="font-extrabold text-[var(--accent-orange)] uppercase flex items-center gap-1">
+              {currentMode === "random" ? (
+                <>
+                  <ShuffleIcon className="w-3.5 h-3.5 text-[var(--accent-green)] inline" />
+                  <span>{language === "pt" ? "Aleatório (Rotaciona a cada visita)" : "Random (Rotates on each visit)"}</span>
+                </>
+              ) : (
+                <>
+                  <TargetIcon className="w-3.5 h-3.5 text-[var(--accent-orange)] inline" />
+                  <span>{language === "pt" ? `Fixo (${currentMode})` : `Fixed (${currentMode})`}</span>
+                </>
+              )}
             </span>
           </div>
           
@@ -102,7 +105,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
                 : "border border-[var(--accent-green)] text-[var(--accent-green)] hover:bg-[var(--accent-green)] hover:text-black"
             }`}
           >
-            <span>🎲</span>
+            <ShuffleIcon className="w-3.5 h-3.5" />
             <span>{language === "pt" ? "ATIVAR MODO ALEATÓRIO" : "ENABLE RANDOM MODE"}</span>
           </button>
         </div>
@@ -169,7 +172,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
                 >
                   {isSelected ? (
                     <>
-                      <span>✓</span>
+                      <CheckIcon className="w-3.5 h-3.5 text-black stroke-[3]" />
                       <span>{language === "pt" ? "ATIVO NA ABA" : "ACTIVE IN TAB"}</span>
                     </>
                   ) : (
@@ -189,9 +192,10 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
           <div className="flex gap-2">
             <button
               onClick={onClose}
-              className="px-4 py-1.5 bg-[var(--surface-dark)] border border-[var(--border-grid)] text-[var(--text-primary)] hover:bg-[var(--surface-panel)] text-xs font-bold uppercase transition-colors"
+              className="px-4 py-1.5 bg-[var(--surface-dark)] border border-[var(--border-grid)] text-[var(--text-primary)] hover:bg-[var(--surface-panel)] text-xs font-bold uppercase transition-colors flex items-center gap-1.5"
             >
-              {language === "pt" ? "CONCLUIR" : "DONE"}
+              <CheckIcon className="w-3.5 h-3.5 text-[var(--accent-green)]" />
+              <span>{language === "pt" ? "CONCLUIR" : "DONE"}</span>
             </button>
           </div>
         </div>

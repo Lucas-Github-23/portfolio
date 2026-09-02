@@ -862,18 +862,18 @@ export function TacticalCanvasBackground() {
   return (
     <>
       {/* Background Canvas: Ramiel, Moon, Mouse-Follow Ripples & Particles at z-0 */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none touch-none">
         <canvas
           ref={bgCanvasRef}
-          className="w-full h-full pointer-events-none opacity-90 transition-opacity duration-500"
+          className="w-full h-full pointer-events-none opacity-90 transition-opacity duration-500 select-none"
         />
       </div>
 
       {/* Foreground Overlay Canvas: ONLY Click AT-Field Impact Rings at z-[9998] */}
-      <div className="fixed inset-0 pointer-events-none z-[9998] overflow-hidden">
+      <div className="fixed inset-0 pointer-events-none z-[9998] overflow-hidden select-none touch-none">
         <canvas
           ref={fgCanvasRef}
-          className="w-full h-full pointer-events-none opacity-95 transition-opacity duration-500"
+          className="w-full h-full pointer-events-none opacity-95 transition-opacity duration-500 select-none"
         />
       </div>
     </>
