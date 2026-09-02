@@ -56,7 +56,7 @@ export function ProjectModal({
     >
       <div
         onClick={(e) => e.stopPropagation()}
-        className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] max-w-2xl w-full max-h-[90vh] overflow-y-auto hud-panel p-4 sm:p-6 md:p-8 relative shadow-[0_0_35px_var(--accent-orange-glow)] hud-modal-animate hud-glow-pulse"
+        className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] max-w-2xl w-full max-h-[90vh] overflow-y-auto hud-panel p-4 sm:p-6 md:p-8 relative shadow-[0_0_35px_var(--accent-orange-glow)] hud-modal-animate"
       >
         <div className="hud-modal-content space-y-5 sm:space-y-6">
           {/* Header Ribbon */}

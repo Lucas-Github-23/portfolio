@@ -58,7 +58,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-3xl bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] hud-panel shadow-[0_0_35px_var(--accent-orange-glow)] p-4 sm:p-6 relative text-[var(--text-primary)] font-mono overflow-y-auto max-h-[90vh] hud-modal-animate hud-glow-pulse"
+        className="w-full max-w-3xl bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] hud-panel shadow-[0_0_35px_var(--accent-orange-glow)] p-4 sm:p-6 relative text-[var(--text-primary)] font-mono overflow-y-auto max-h-[90vh] hud-modal-animate"
         role="dialog"
         aria-modal="true"
       >

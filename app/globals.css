@@ -231,22 +231,26 @@ canvas {
   0% {
     opacity: 0;
     transform: scaleX(0.002) scaleY(0);
-    filter: brightness(3.5) drop-shadow(0 0 30px var(--accent-orange));
+    box-shadow: 0 0 40px var(--accent-orange), 0 0 60px #ffffff;
+    filter: brightness(3.5);
   }
-  30% {
+  28% {
     opacity: 1;
     transform: scaleX(0.002) scaleY(1);
-    filter: brightness(3) drop-shadow(0 0 40px var(--accent-orange));
+    box-shadow: 0 0 40px var(--accent-orange), 0 0 60px #ffffff;
+    filter: brightness(3);
   }
-  50% {
+  48% {
     opacity: 1;
-    transform: scaleX(0.12) scaleY(1);
-    filter: brightness(2) drop-shadow(0 0 30px var(--accent-orange));
+    transform: scaleX(0.15) scaleY(1);
+    box-shadow: 0 0 35px var(--accent-orange);
+    filter: brightness(2);
   }
   100% {
     opacity: 1;
     transform: scaleX(1) scaleY(1);
-    filter: brightness(1) drop-shadow(0 0 15px var(--accent-orange-glow));
+    box-shadow: 0 0 35px var(--accent-orange-glow);
+    filter: brightness(1);
   }
 }
 
@@ -255,14 +259,14 @@ canvas {
     opacity: 0;
     transform: translate(-50%, -50%) scaleY(0);
   }
-  30% {
+  28% {
     opacity: 1;
     transform: translate(-50%, -50%) scaleY(1);
     width: 4px;
     box-shadow: 0 0 20px #ffffff, 0 0 40px var(--accent-orange);
   }
   55% {
-    opacity: 0.9;
+    opacity: 0.85;
     transform: translate(-50%, -50%) scaleY(1);
     width: 14px;
     box-shadow: 0 0 35px var(--accent-orange);
@@ -275,7 +279,7 @@ canvas {
 }
 
 @keyframes hudContentReveal {
-  0%, 30% {
+  0%, 28% {
     opacity: 0;
     transform: scale(0.96);
   }
@@ -317,22 +321,10 @@ canvas {
   }
 }
 
-@keyframes scanlineFlash {
-  0% {
-    box-shadow: inset 0 0 15px var(--accent-orange-glow), 0 0 20px var(--accent-orange-glow);
-  }
-  50% {
-    box-shadow: inset 0 0 30px var(--accent-orange-glow), 0 0 35px var(--accent-orange-glow);
-  }
-  100% {
-    box-shadow: inset 0 0 15px var(--accent-orange-glow), 0 0 20px var(--accent-orange-glow);
-  }
-}
-
 .hud-modal-animate {
-  position: relative;
-  transform-origin: center center;
-  animation: hudModalLaserUnfold 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative !important;
+  transform-origin: center center !important;
+  animation: hudModalLaserUnfold 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 .hud-modal-animate::after {
@@ -347,11 +339,11 @@ canvas {
   box-shadow: 0 0 15px var(--accent-orange), 0 0 30px #ffffff;
   pointer-events: none;
   z-index: 100;
-  animation: hudLaserBeamVertical 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: hudLaserBeamVertical 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 .hud-modal-content {
-  animation: hudContentReveal 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: hudContentReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hud-menu-animate {
@@ -361,9 +353,5 @@ canvas {
 
 .hud-backdrop-animate {
   animation: hudBackdropFade 0.25s ease-out forwards;
-}
-
-.hud-glow-pulse {
-  animation: scanlineFlash 2.5s infinite ease-in-out;
 }
 
