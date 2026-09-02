@@ -25,7 +25,7 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>("pt");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [crtEnabled, setCrtEnabled] = useState<boolean>(true);
+  const [crtEnabled, setCrtEnabled] = useState<boolean>(false);
   const [emergencyActive, setEmergencyActive] = useState<boolean>(false);
   const [activeSection, setActiveSectionState] = useState<SectionId>("status");
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
