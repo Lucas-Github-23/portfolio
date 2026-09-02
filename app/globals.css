@@ -227,69 +227,81 @@ canvas {
 }
 
 /* Tactical Entrance & Modal Animations - Vertical Laser Streak + Horizontal Unfold */
-@keyframes hudLaserSplit {
+@keyframes hudModalLaserUnfold {
   0% {
     opacity: 0;
-    clip-path: inset(50% 49.6% 50% 49.6%);
-    filter: brightness(3) drop-shadow(0 0 20px var(--accent-orange));
-    transform: scale(0.96);
+    transform: scaleX(0.002) scaleY(0);
+    filter: brightness(3.5) drop-shadow(0 0 30px var(--accent-orange));
   }
   30% {
     opacity: 1;
-    clip-path: inset(0% 49.6% 0% 49.6%);
-    filter: brightness(2.5) drop-shadow(0 0 35px var(--accent-orange));
-    transform: scale(0.98);
+    transform: scaleX(0.002) scaleY(1);
+    filter: brightness(3) drop-shadow(0 0 40px var(--accent-orange));
   }
-  45% {
+  50% {
     opacity: 1;
-    clip-path: inset(0% 47% 0% 47%);
-    filter: brightness(1.8) drop-shadow(0 0 25px var(--accent-orange));
-    transform: scale(1);
+    transform: scaleX(0.12) scaleY(1);
+    filter: brightness(2) drop-shadow(0 0 30px var(--accent-orange));
   }
   100% {
     opacity: 1;
-    clip-path: inset(0% 0% 0% 0%);
+    transform: scaleX(1) scaleY(1);
     filter: brightness(1) drop-shadow(0 0 15px var(--accent-orange-glow));
-    transform: scale(1);
   }
 }
 
-@keyframes hudLaserBeam {
+@keyframes hudLaserBeamVertical {
   0% {
     opacity: 0;
-    transform: translateX(-50%) scaleY(0);
+    transform: translate(-50%, -50%) scaleY(0);
   }
   30% {
     opacity: 1;
-    transform: translateX(-50%) scaleY(1);
-    width: 3px;
+    transform: translate(-50%, -50%) scaleY(1);
+    width: 4px;
+    box-shadow: 0 0 20px #ffffff, 0 0 40px var(--accent-orange);
   }
   55% {
-    opacity: 0.85;
-    transform: translateX(-50%) scaleY(1);
-    width: 10px;
+    opacity: 0.9;
+    transform: translate(-50%, -50%) scaleY(1);
+    width: 14px;
+    box-shadow: 0 0 35px var(--accent-orange);
   }
   100% {
     opacity: 0;
-    transform: translateX(-50%) scaleY(1);
+    transform: translate(-50%, -50%) scaleY(1);
     width: 0px;
+  }
+}
+
+@keyframes hudContentReveal {
+  0%, 30% {
+    opacity: 0;
+    transform: scale(0.96);
+  }
+  60% {
+    opacity: 0.85;
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
   }
 }
 
 @keyframes hudMenuLaserUnfold {
   0% {
     opacity: 0;
-    clip-path: inset(0% 49.5% 100% 49.5%);
-    filter: brightness(2.5);
+    transform: scaleX(0.01) scaleY(0);
+    filter: brightness(3);
   }
   35% {
     opacity: 1;
-    clip-path: inset(0% 49.5% 0% 49.5%);
-    filter: brightness(2);
+    transform: scaleX(0.01) scaleY(1);
+    filter: brightness(2.5);
   }
   100% {
     opacity: 1;
-    clip-path: inset(0% 0% 0% 0%);
+    transform: scaleX(1) scaleY(1);
     filter: brightness(1);
   }
 }
@@ -319,22 +331,27 @@ canvas {
 
 .hud-modal-animate {
   position: relative;
-  animation: hudLaserSplit 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: center center;
+  animation: hudModalLaserUnfold 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hud-modal-animate::after {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
+  top: 50%;
   left: 50%;
+  height: 100%;
   width: 2px;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   background: #ffffff;
-  box-shadow: 0 0 15px var(--accent-orange), 0 0 25px #ffffff;
+  box-shadow: 0 0 15px var(--accent-orange), 0 0 30px #ffffff;
   pointer-events: none;
-  z-index: 50;
-  animation: hudLaserBeam 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  z-index: 100;
+  animation: hudLaserBeamVertical 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hud-modal-content {
+  animation: hudContentReveal 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hud-menu-animate {

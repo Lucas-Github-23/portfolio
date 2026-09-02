@@ -58,163 +58,166 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
     >
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-3xl bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] hud-panel shadow-[0_0_35px_var(--accent-orange-glow)] p-4 sm:p-6 space-y-5 text-[var(--text-primary)] font-mono overflow-y-auto max-h-[90vh] hud-modal-animate hud-glow-pulse"
+        className="w-full max-w-3xl bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] hud-panel shadow-[0_0_35px_var(--accent-orange-glow)] p-4 sm:p-6 relative text-[var(--text-primary)] font-mono overflow-y-auto max-h-[90vh] hud-modal-animate hud-glow-pulse"
         role="dialog"
         aria-modal="true"
       >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-[var(--border-grid)] pb-3">
-          <div className="flex items-center gap-2.5">
-            <span className="w-3 h-3 bg-[var(--accent-orange)] rotate-45 inline-block" />
-            <div>
-              <h2 className="text-sm sm:text-base md:text-lg font-black tracking-wider text-[var(--accent-orange)] uppercase">
-                {language === "pt" ? "SELETOR & PREVIEW DE ÍCONES HUD" : "HUD ICON SELECTOR & PREVIEW"}
-              </h2>
-              <p className="text-[10px] sm:text-xs text-[var(--text-secondary)]">
-                {language === "pt"
-                  ? "Selecione o ícone da aba ou ative a rotação aleatória a cada acesso"
-                  : "Select browser tab favicon or enable random rotation on each visit"}
-              </p>
-            </div>
-          </div>
-          <button
-            onClick={onClose}
-            className="px-2.5 py-1 text-xs border border-[var(--border-grid)] hover:border-[var(--accent-red)] hover:bg-[var(--accent-red)] hover:text-black font-bold uppercase transition-colors flex items-center gap-1.5"
-          >
-            <XIcon className="w-3.5 h-3.5" />
-            <span>{language === "pt" ? "FECHAR" : "CLOSE"}</span>
-          </button>
-        </div>
-
-        {/* Toast alert */}
-        {toastMessage && (
-          <div className="p-2.5 bg-[var(--accent-green)]/15 border border-[var(--accent-green)] text-[var(--accent-green)] text-xs font-bold flex items-center gap-2 animate-in fade-in duration-150">
-            <span className="w-2 h-2 rounded-full bg-[var(--accent-green)] animate-ping" />
-            <span>{toastMessage}</span>
-          </div>
-        )}
-
-        {/* Quick Mode Switcher */}
-        <div className="flex flex-wrap items-center justify-between gap-2 p-3 bg-black/40 border border-[var(--border-grid)] hud-panel-sm">
-          <div className="text-xs flex items-center gap-1.5 flex-wrap">
-            <span className="text-[var(--text-secondary)]">
-              {language === "pt" ? "MODO ATUAL:" : "CURRENT MODE:"}
-            </span>{" "}
-            <span className="font-extrabold text-[var(--accent-orange)] uppercase flex items-center gap-1">
-              {currentMode === "random" ? (
-                <>
-                  <ShuffleIcon className="w-3.5 h-3.5 text-[var(--accent-green)] inline" />
-                  <span>{language === "pt" ? "Aleatório (Rotaciona a cada visita)" : "Random (Rotates on each visit)"}</span>
-                </>
-              ) : (
-                <>
-                  <TargetIcon className="w-3.5 h-3.5 text-[var(--accent-orange)] inline" />
-                  <span>{language === "pt" ? `Fixo (${currentMode})` : `Fixed (${currentMode})`}</span>
-                </>
-              )}
-            </span>
-          </div>
-          
-          <button
-            onClick={() => selectVariant("random", language === "pt" ? "Modo Aleatório" : "Random Mode")}
-            className={`px-3 py-1.5 text-xs font-black uppercase transition-all hud-button flex items-center gap-1.5 ${
-              currentMode === "random"
-                ? "bg-[var(--accent-green)] text-black shadow-[0_0_10px_var(--accent-green-glow)]"
-                : "border border-[var(--accent-green)] text-[var(--accent-green)] hover:bg-[var(--accent-green)] hover:text-black"
-            }`}
-          >
-            <ShuffleIcon className="w-3.5 h-3.5" />
-            <span>{language === "pt" ? "ATIVAR MODO ALEATÓRIO" : "ENABLE RANDOM MODE"}</span>
-          </button>
-        </div>
-
-        {/* 3 Icons Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-          {ICON_VARIANTS.map((icon: IconInfo, index: number) => {
-            const isSelected = currentMode === icon.id;
-            return (
-              <div
-                key={icon.id}
-                className={`relative flex flex-col justify-between p-4 border hud-panel-sm transition-all bg-black/50 ${
-                  isSelected
-                    ? "border-[var(--accent-orange)] shadow-[0_0_15px_var(--accent-orange-glow)] scale-[1.02]"
-                    : "border-[var(--border-grid)] hover:border-[var(--text-secondary)] hover:bg-black/70"
-                }`}
-              >
-                {/* Top Badge */}
-                <div className="flex items-center justify-between mb-3 text-[10px]">
-                  <span className="px-1.5 py-0.5 font-extrabold bg-[var(--surface-dark)] border border-[var(--border-grid)] text-[var(--text-secondary)]">
-                    #0{index + 1}
-                  </span>
-                  <span 
-                    className="font-bold tracking-widest text-[9px] px-1.5 py-0.5 rounded"
-                    style={{ color: icon.themeColor, backgroundColor: `${icon.themeColor}15`, border: `1px solid ${icon.themeColor}40` }}
-                  >
-                    {icon.badge}
-                  </span>
-                </div>
-
-                {/* Big Preview Area */}
-                <div className="my-2 p-4 bg-[#0a0a0d] border border-[var(--border-grid)] rounded flex flex-col items-center justify-center group relative overflow-hidden">
-                  <div className="w-24 h-24 sm:w-28 sm:h-28 flex items-center justify-center p-1 transition-transform group-hover:scale-110 duration-300">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
-                      src={icon.path}
-                      alt={icon.name}
-                      className="w-full h-full object-contain drop-shadow-[0_0_12px_rgba(255,69,0,0.3)]"
-                    />
-                  </div>
-                  <span className="text-[9px] text-[var(--text-secondary)] font-mono mt-2 tracking-widest">
-                    {icon.path}
-                  </span>
-                </div>
-
-                {/* Info & Description */}
-                <div className="mt-2 space-y-1.5">
-                  <h3 className="text-xs sm:text-sm font-extrabold text-[var(--text-primary)]">
-                    {language === "pt" ? icon.namePt : icon.name}
-                  </h3>
-                  <p className="text-[10px] text-[var(--text-secondary)] leading-relaxed min-h-[40px]">
-                    {language === "pt" ? icon.descriptionPt : icon.description}
-                  </p>
-                </div>
-
-                {/* Apply Button */}
-                <button
-                  onClick={() => selectVariant(icon.id, language === "pt" ? icon.namePt : icon.name)}
-                  className={`mt-4 w-full py-2 text-xs font-black uppercase transition-all hud-button flex items-center justify-center gap-1.5 ${
-                    isSelected
-                      ? "bg-[var(--accent-orange)] text-black shadow-[0_0_10px_var(--accent-orange-glow)]"
-                      : "border border-[var(--border-grid)] text-[var(--text-primary)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)]"
-                  }`}
-                >
-                  {isSelected ? (
-                    <>
-                      <CheckIcon className="w-3.5 h-3.5 text-black stroke-[3]" />
-                      <span>{language === "pt" ? "ATIVO NA ABA" : "ACTIVE IN TAB"}</span>
-                    </>
-                  ) : (
-                    <span>{language === "pt" ? "USAR ESTE ÍCONE" : "USE THIS ICON"}</span>
-                  )}
-                </button>
+        <div className="hud-modal-content space-y-5">
+          {/* Header */}
+          <div className="flex items-center justify-between border-b border-[var(--border-grid)] pb-3">
+            <div className="flex items-center gap-2.5">
+              <span className="w-3 h-3 bg-[var(--accent-orange)] rotate-45 inline-block" />
+              <div>
+                <h2 className="text-sm sm:text-base md:text-lg font-black tracking-wider text-[var(--accent-orange)] uppercase">
+                  {language === "pt" ? "SELETOR & PREVIEW DE ÍCONES HUD" : "HUD ICON SELECTOR & PREVIEW"}
+                </h2>
+                <p className="text-[10px] sm:text-xs text-[var(--text-secondary)]">
+                  {language === "pt"
+                    ? "Selecione o ícone da aba ou ative a rotação aleatória a cada acesso"
+                    : "Select browser tab favicon or enable random rotation on each visit"}
+                </p>
               </div>
-            );
-          })}
-        </div>
-
-        {/* Footer Note */}
-        <div className="pt-2 border-t border-[var(--border-grid)] flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-[var(--text-secondary)]">
-          <div>
-            <span>NERV HUD // FAVICON RESOLUTION: 128x128 SCALABLE VECTOR SVG</span>
-          </div>
-          <div className="flex gap-2">
+            </div>
             <button
               onClick={onClose}
-              className="px-4 py-1.5 bg-[var(--surface-dark)] border border-[var(--border-grid)] text-[var(--text-primary)] hover:bg-[var(--surface-panel)] text-xs font-bold uppercase transition-colors flex items-center gap-1.5"
+              className="p-1.5 border border-[var(--border-grid)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-colors hud-panel-sm"
+              aria-label="Close icon modal"
             >
-              <CheckIcon className="w-3.5 h-3.5 text-[var(--accent-green)]" />
-              <span>{language === "pt" ? "CONCLUIR" : "DONE"}</span>
+              <XIcon className="w-4 h-4" />
             </button>
+          </div>
+
+          {/* Toast feedback */}
+          {toastMessage && (
+            <div className="p-2.5 bg-[var(--accent-green-glow)] border border-[var(--accent-green)] text-[var(--accent-green)] text-xs font-bold tracking-wider uppercase text-center animate-in fade-in slide-in-from-top-1 duration-150">
+              {toastMessage}
+            </div>
+          )}
+
+          {/* Global Mode Option: Random Rotation */}
+          <div className="p-3.5 bg-[var(--bg-main)] border border-[var(--border-grid)] hud-panel-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 rounded bg-[var(--surface-panel)] border border-[var(--border-grid)] flex items-center justify-center shrink-0">
+                <ShuffleIcon className="w-4 h-4 text-[var(--accent-orange)]" />
+              </div>
+              <div>
+                <span className="font-bold text-xs block text-[var(--text-primary)]">
+                  {language === "pt" ? "MODO ROTAÇÃO DINÂMICA (ALEATÓRIA)" : "DYNAMIC RANDOM ROTATION"}
+                </span>
+                <span className="text-[10px] text-[var(--text-secondary)]">
+                  {language === "pt"
+                    ? "Sorteia automaticamente um dos 3 ícones táticos a cada carregamento de página"
+                    : "Automatically picks one of the 3 tactical icons on every page refresh"}
+                </span>
+              </div>
+            </div>
+            <button
+              onClick={() => selectVariant("random", language === "pt" ? "Modo Aleatório" : "Random Mode")}
+              className={`px-3.5 py-1.5 text-xs font-black uppercase hud-button transition-all shrink-0 ${
+                currentMode === "random"
+                  ? "bg-[var(--accent-green)] text-black shadow-[0_0_10px_var(--accent-green-glow)]"
+                  : "bg-[var(--surface-panel)] text-[var(--text-primary)] border border-[var(--border-grid)] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)]"
+              }`}
+            >
+              {currentMode === "random" ? (
+                <span className="flex items-center gap-1.5">
+                  <CheckIcon className="w-3.5 h-3.5" />
+                  {language === "pt" ? "ATIVO" : "ACTIVE"}
+                </span>
+              ) : (
+                <span>{language === "pt" ? "ATIVAR MODO" : "ENABLE"}</span>
+              )}
+            </button>
+          </div>
+
+          {/* Icon Cards Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {ICON_VARIANTS.map((icon: IconInfo) => {
+              const isSelected = currentMode === icon.id;
+              const name = language === "pt" ? icon.namePt : icon.name;
+              const desc = language === "pt" ? icon.descriptionPt : icon.description;
+
+              return (
+                <div
+                  key={icon.id}
+                  className={`bg-[var(--bg-main)] border-2 p-4 hud-panel space-y-3 transition-all ${
+                    isSelected
+                      ? "border-[var(--accent-orange)] shadow-[0_0_15px_var(--accent-orange-glow)] bg-[var(--surface-panel)]"
+                      : "border-[var(--border-grid)] hover:border-[var(--border-bright)]"
+                  }`}
+                >
+                  {/* Top Badge */}
+                  <div className="flex items-center justify-between text-[10px] font-bold">
+                    <span className="text-[var(--accent-orange)]">{icon.id.toUpperCase()}</span>
+                    {isSelected && (
+                      <span className="px-1.5 py-0.5 bg-[var(--accent-orange)] text-black font-black text-[9px] hud-panel-sm">
+                        {language === "pt" ? "SELECIONADO" : "SELECTED"}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* SVG Icon Visual Preview Container */}
+                  <div className="h-28 bg-[var(--surface-panel)] border border-[var(--border-grid)] flex flex-col items-center justify-center p-3 relative overflow-hidden group">
+                    <div className="w-16 h-16 relative flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={icon.path}
+                        alt={name}
+                        className="w-14 h-14 object-contain drop-shadow-[0_0_8px_rgba(255,69,0,0.4)]"
+                      />
+                    </div>
+                    <span className="absolute bottom-1 right-2 text-[8px] text-[var(--text-secondary)] font-mono">
+                      SVG // 128px
+                    </span>
+                  </div>
+
+                  {/* Info */}
+                  <div className="space-y-1">
+                    <h3 className="font-black text-xs text-[var(--text-primary)] uppercase tracking-wide">
+                      {name}
+                    </h3>
+                    <p className="text-[10px] text-[var(--text-secondary)] leading-relaxed h-12 overflow-hidden">
+                      {desc}
+                    </p>
+                  </div>
+
+                  {/* Selection Button */}
+                  <button
+                    onClick={() => selectVariant(icon.id, name)}
+                    className={`w-full py-2 text-xs font-black uppercase hud-button transition-all flex items-center justify-center gap-1.5 ${
+                      isSelected
+                        ? "bg-[var(--accent-orange)] text-black shadow-[0_0_10px_var(--accent-orange-glow)]"
+                        : "bg-[var(--surface-panel)] text-[var(--text-primary)] border border-[var(--border-grid)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)]"
+                    }`}
+                  >
+                    {isSelected ? (
+                      <>
+                        <TargetIcon className="w-3.5 h-3.5" />
+                        <span>{language === "pt" ? "ÍCONE FIXADO" : "ACTIVE ICON"}</span>
+                      </>
+                    ) : (
+                      <span>{language === "pt" ? "USAR ESTE ÍCONE" : "USE THIS ICON"}</span>
+                    )}
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Footer Note */}
+          <div className="pt-2 border-t border-[var(--border-grid)] flex flex-col sm:flex-row items-center justify-between gap-2 text-[10px] text-[var(--text-secondary)]">
+            <div>
+              <span>NERV HUD // FAVICON RESOLUTION: 128x128 SCALABLE VECTOR SVG</span>
+            </div>
+            <div className="flex gap-2">
+              <button
+                onClick={onClose}
+                className="px-4 py-1.5 bg-[var(--surface-dark)] border border-[var(--border-grid)] text-[var(--text-primary)] hover:bg-[var(--surface-panel)] text-xs font-bold uppercase transition-colors flex items-center gap-1.5"
+              >
+                <CheckIcon className="w-3.5 h-3.5 text-[var(--accent-green)]" />
+                <span>{language === "pt" ? "CONCLUIR" : "DONE"}</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
