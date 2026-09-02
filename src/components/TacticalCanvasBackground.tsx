@@ -63,6 +63,18 @@ export function TacticalCanvasBackground() {
       setupCanvasSize();
     };
 
+    // Dynamic coordinate mapping to eliminate mobile address-bar scaling and scroll drift
+    const getCanvasCoords = (clientX: number, clientY: number) => {
+      if (!bgCanvas) return { x: clientX, y: clientY };
+      const rect = bgCanvas.getBoundingClientRect();
+      const cssWidth = rect.width || width || 1;
+      const cssHeight = rect.height || height || 1;
+      return {
+        x: (clientX - rect.left) * (width / cssWidth),
+        y: (clientY - rect.top) * (height / cssHeight),
+      };
+    };
+
     let touchStartX = 0;
     let touchStartY = 0;
     let touchStartTime = 0;
@@ -72,10 +84,11 @@ export function TacticalCanvasBackground() {
     // Handle Mouse Movement (Ignore synthetic mouse events fired by mobile browsers after touch)
     const handleMouseMove = (e: MouseEvent) => {
       if (Date.now() - lastTouchTime < 1000) return;
-      targetMouseX = e.clientX;
-      targetMouseY = e.clientY;
-      lastValidPointerX = e.clientX;
-      lastValidPointerY = e.clientY;
+      const coords = getCanvasCoords(e.clientX, e.clientY);
+      targetMouseX = coords.x;
+      targetMouseY = coords.y;
+      lastValidPointerX = coords.x;
+      lastValidPointerY = coords.y;
     };
 
     // Handle Scroll
@@ -118,21 +131,31 @@ export function TacticalCanvasBackground() {
     const handleClick = (e: MouseEvent) => {
       // Ignore click if it was simulated from a mobile touch tap in the last 600ms
       if (Date.now() - lastTouchTime < 600) return;
-      spawnImpactRing(e.clientX, e.clientY);
+      const coords = getCanvasCoords(e.clientX, e.clientY);
+      targetMouseX = coords.x;
+      targetMouseY = coords.y;
+      mouseX = coords.x;
+      mouseY = coords.y;
+      lastValidPointerX = coords.x;
+      lastValidPointerY = coords.y;
+      spawnImpactRing(coords.x, coords.y);
     };
 
     const handleTouchStart = (e: TouchEvent) => {
       lastTouchTime = Date.now();
       if (e.touches.length > 0) {
         const touch = e.touches[0];
-        touchStartX = touch.clientX;
-        touchStartY = touch.clientY;
+        const coords = getCanvasCoords(touch.clientX, touch.clientY);
+        touchStartX = coords.x;
+        touchStartY = coords.y;
         touchStartTime = Date.now();
         touchMoved = false;
-        targetMouseX = touch.clientX;
-        targetMouseY = touch.clientY;
-        lastValidPointerX = touch.clientX;
-        lastValidPointerY = touch.clientY;
+        targetMouseX = coords.x;
+        targetMouseY = coords.y;
+        mouseX = coords.x;
+        mouseY = coords.y;
+        lastValidPointerX = coords.x;
+        lastValidPointerY = coords.y;
       }
     };
 
@@ -140,11 +163,14 @@ export function TacticalCanvasBackground() {
       lastTouchTime = Date.now();
       if (e.touches.length > 0) {
         const touch = e.touches[0];
-        targetMouseX = touch.clientX;
-        targetMouseY = touch.clientY;
-        lastValidPointerX = touch.clientX;
-        lastValidPointerY = touch.clientY;
-        if (Math.hypot(touch.clientX - touchStartX, touch.clientY - touchStartY) > 10) {
+        const coords = getCanvasCoords(touch.clientX, touch.clientY);
+        targetMouseX = coords.x;
+        targetMouseY = coords.y;
+        mouseX = coords.x;
+        mouseY = coords.y;
+        lastValidPointerX = coords.x;
+        lastValidPointerY = coords.y;
+        if (Math.hypot(coords.x - touchStartX, coords.y - touchStartY) > 10) {
           touchMoved = true;
         }
       }
@@ -157,9 +183,14 @@ export function TacticalCanvasBackground() {
       if (!touchMoved && elapsed < 350) {
         if (e.changedTouches.length > 0) {
           const touch = e.changedTouches[0];
-          spawnImpactRing(touch.clientX, touch.clientY);
-          lastValidPointerX = touch.clientX;
-          lastValidPointerY = touch.clientY;
+          const coords = getCanvasCoords(touch.clientX, touch.clientY);
+          targetMouseX = coords.x;
+          targetMouseY = coords.y;
+          mouseX = coords.x;
+          mouseY = coords.y;
+          lastValidPointerX = coords.x;
+          lastValidPointerY = coords.y;
+          spawnImpactRing(coords.x, coords.y);
         }
       }
       // Reset target coordinates so Ramiel morph decays smoothly
@@ -181,6 +212,8 @@ export function TacticalCanvasBackground() {
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
     window.addEventListener("touchcancel", handleTouchCancel, { passive: true });
     window.addEventListener("mouseleave", handleTouchCancel);
+    window.visualViewport?.addEventListener("resize", handleResize);
+    window.visualViewport?.addEventListener("scroll", handleScroll);
 
     interface Particle {
       x: number;
@@ -231,11 +264,16 @@ export function TacticalCanvasBackground() {
 
     // --- RENDER LOOP ---
     const render = () => {
+      // Auto-calibrate canvas dimensions if mobile browser address bar shifted
+      if (typeof window !== "undefined" && (window.innerWidth !== width || Math.abs(window.innerHeight - height) > 2)) {
+        setupCanvasSize();
+      }
+
       time += 0.015;
       const isLight = themeRef.current === "light";
       const isMobile = width < 768;
 
-      // Smooth mouse position interpolation
+      // Smooth and responsive pointer interpolation
       const hasActivePointer = targetMouseX > -5000;
       if (!hasActivePointer) {
         mouseX = -9999;
@@ -245,8 +283,8 @@ export function TacticalCanvasBackground() {
           mouseX = targetMouseX;
           mouseY = targetMouseY;
         } else {
-          mouseX += (targetMouseX - mouseX) * 0.08;
-          mouseY += (targetMouseY - mouseY) * 0.08;
+          mouseX += (targetMouseX - mouseX) * 0.45;
+          mouseY += (targetMouseY - mouseY) * 0.45;
         }
       }
 
@@ -411,13 +449,14 @@ export function TacticalCanvasBackground() {
           bgCtx.restore();
         }
 
-        // Concentrated Laser Cannon Beam on Hover (Anchors smoothly to last valid on-screen coordinate)
+        // Concentrated Laser Cannon Beam on Hover (Anchors precisely to cursor/touch point)
         if (ramielMorph > 0.2) {
           bgCtx.save();
           bgCtx.globalAlpha = Math.min(1.0, (ramielMorph - 0.2) * 1.5);
 
-          const aimX = hasActivePointer ? mouseX : lastValidPointerX;
-          const aimY = hasActivePointer ? mouseY : lastValidPointerY;
+          const aimX = hasActivePointer ? targetMouseX : lastValidPointerX;
+          const aimY = hasActivePointer ? targetMouseY : lastValidPointerY;
+          const coreCenter = project3D(0, 0, 0, rotX, rotY, 420, cx, cy);
 
           bgCtx.strokeStyle = "#00ffff";
           bgCtx.lineWidth = 4 + Math.sin(time * 20) * 2;
@@ -425,7 +464,7 @@ export function TacticalCanvasBackground() {
           bgCtx.shadowBlur = isMobile ? 0 : 25;
 
           bgCtx.beginPath();
-          bgCtx.moveTo(cx, cy);
+          bgCtx.moveTo(coreCenter.x, coreCenter.y);
           bgCtx.lineTo(aimX, aimY);
           bgCtx.stroke();
 
@@ -434,10 +473,11 @@ export function TacticalCanvasBackground() {
           bgCtx.shadowColor = "#ff0055";
           bgCtx.shadowBlur = isMobile ? 0 : 30;
           bgCtx.beginPath();
-          bgCtx.moveTo(cx, cy);
+          bgCtx.moveTo(coreCenter.x, coreCenter.y);
           bgCtx.lineTo(aimX, aimY);
           bgCtx.stroke();
 
+          // Reticle Target Ring
           bgCtx.beginPath();
           bgCtx.arc(aimX, aimY, 15 + Math.sin(time * 15) * 5, 0, Math.PI * 2);
           bgCtx.strokeStyle = "#00ffff";
@@ -476,8 +516,8 @@ export function TacticalCanvasBackground() {
           bgCtx.beginPath();
           for (let i = 0; i < 8; i++) {
             const angle = (i * Math.PI) / 4 + time * 0.15;
-            const px = mouseX + Math.cos(angle) * atRadius;
-            const py = mouseY + Math.sin(angle) * atRadius;
+            const px = targetMouseX + Math.cos(angle) * atRadius;
+            const py = targetMouseY + Math.sin(angle) * atRadius;
             if (i === 0) bgCtx.moveTo(px, py);
             else bgCtx.lineTo(px, py);
           }
@@ -855,6 +895,8 @@ export function TacticalCanvasBackground() {
       window.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("touchcancel", handleTouchCancel);
       window.removeEventListener("mouseleave", handleTouchCancel);
+      window.visualViewport?.removeEventListener("resize", handleResize);
+      window.visualViewport?.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);
@@ -862,7 +904,7 @@ export function TacticalCanvasBackground() {
   return (
     <>
       {/* Background Canvas: Ramiel, Moon, Mouse-Follow Ripples & Particles at z-0 */}
-      <div className="fixed inset-0 pointer-events-none z-0 overflow-hidden select-none touch-none">
+      <div className="fixed inset-0 w-full h-full h-[100dvh] pointer-events-none z-0 overflow-hidden select-none touch-none">
         <canvas
           ref={bgCanvasRef}
           className="w-full h-full pointer-events-none opacity-90 transition-opacity duration-500 select-none"
@@ -870,7 +912,7 @@ export function TacticalCanvasBackground() {
       </div>
 
       {/* Foreground Overlay Canvas: ONLY Click AT-Field Impact Rings at z-[9998] */}
-      <div className="fixed inset-0 pointer-events-none z-[9998] overflow-hidden select-none touch-none">
+      <div className="fixed inset-0 w-full h-full h-[100dvh] pointer-events-none z-[9998] overflow-hidden select-none touch-none">
         <canvas
           ref={fgCanvasRef}
           className="w-full h-full pointer-events-none opacity-95 transition-opacity duration-500 select-none"
