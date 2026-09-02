@@ -226,3 +226,71 @@ canvas {
   background: var(--accent-red);
 }
 
+/* Tactical Entrance & Modal Animations */
+@keyframes hudModalOpen {
+  0% {
+    opacity: 0;
+    transform: scale(0.92) translateY(14px);
+    filter: brightness(1.4) blur(4px);
+  }
+  60% {
+    filter: brightness(1.15) blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: brightness(1);
+  }
+}
+
+@keyframes hudMenuSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-16px) scaleY(0.96);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes hudBackdropFade {
+  0% {
+    opacity: 0;
+    backdrop-filter: blur(0px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes scanlineFlash {
+  0% {
+    box-shadow: inset 0 0 15px var(--accent-orange-glow), 0 0 20px var(--accent-orange-glow);
+  }
+  50% {
+    box-shadow: inset 0 0 30px var(--accent-orange-glow), 0 0 35px var(--accent-orange-glow);
+  }
+  100% {
+    box-shadow: inset 0 0 15px var(--accent-orange-glow), 0 0 20px var(--accent-orange-glow);
+  }
+}
+
+.hud-modal-animate {
+  animation: hudModalOpen 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hud-menu-animate {
+  animation: hudMenuSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: top center;
+}
+
+.hud-backdrop-animate {
+  animation: hudBackdropFade 0.25s ease-out forwards;
+}
+
+.hud-glow-pulse {
+  animation: scanlineFlash 2.5s infinite ease-in-out;
+}
+

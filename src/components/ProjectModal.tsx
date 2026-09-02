@@ -30,14 +30,34 @@ export function ProjectModal({
 }) {
   const { language, t } = useLanguage();
 
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (project) {
+      window.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "unset";
+    };
+  }, [project, onClose]);
+
   if (!project) return null;
 
   const title = language === "pt" ? project.titlePt : project.titleEn;
   const description = language === "pt" ? project.fullDescPt : project.fullDescEn;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-md flex items-center justify-center p-3 sm:p-4">
-      <div className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] max-w-2xl w-full max-h-[90vh] overflow-y-auto hud-panel p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 relative shadow-[0_0_30px_var(--accent-orange-glow)] animate-in fade-in zoom-in-95 duration-200">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 bg-black/85 hud-backdrop-animate flex items-center justify-center p-3 sm:p-4 select-none"
+    >
+      <div
+        onClick={(e) => e.stopPropagation()}
+        className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] max-w-2xl w-full max-h-[90vh] overflow-y-auto hud-panel p-4 sm:p-6 md:p-8 space-y-5 sm:space-y-6 relative shadow-[0_0_35px_var(--accent-orange-glow)] hud-modal-animate hud-glow-pulse"
+      >
         {/* Header Ribbon */}
         <div className="flex justify-between items-start sm:items-center border-b border-[var(--border-grid)] pb-4 font-mono gap-3">
           <div className="min-w-0 flex-1">

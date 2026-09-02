@@ -22,6 +22,20 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    if (isOpen) {
+      window.addEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "hidden";
+    }
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "unset";
+    };
+  }, [isOpen, onClose]);
+
   const selectVariant = (variant: IconVariant, name: string) => {
     setCurrentMode(variant);
     if (typeof window !== "undefined") {
@@ -38,9 +52,13 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200 select-none">
+    <div
+      onClick={onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 hud-backdrop-animate select-none"
+    >
       <div 
-        className="w-full max-w-3xl bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] hud-panel shadow-[0_0_30px_var(--accent-orange-glow)] p-4 sm:p-6 space-y-5 text-[var(--text-primary)] font-mono overflow-y-auto max-h-[90vh]"
+        onClick={(e) => e.stopPropagation()}
+        className="w-full max-w-3xl bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] hud-panel shadow-[0_0_35px_var(--accent-orange-glow)] p-4 sm:p-6 space-y-5 text-[var(--text-primary)] font-mono overflow-y-auto max-h-[90vh] hud-modal-animate hud-glow-pulse"
         role="dialog"
         aria-modal="true"
       >

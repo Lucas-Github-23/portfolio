@@ -196,64 +196,72 @@ export function HUDHeader() {
 
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
-          <div className="lg:hidden bg-[var(--bg-main)]/95 backdrop-blur-xl border-b-2 border-[var(--accent-orange)] p-3 sm:p-4 shadow-2xl animate-in slide-in-from-top-2 duration-200 space-y-3">
-            <div className="grid grid-cols-2 gap-2 font-mono text-xs">
-              {navItems.map((item) => {
-                const isActive = activeSection === item.id;
-                return (
-                  <button
-                    key={item.id}
-                    onClick={() => handleNavClick(item.id)}
-                    className={`p-2.5 sm:p-3 text-left transition-all uppercase hud-button flex items-center justify-between text-xs ${
-                      isActive
-                        ? "bg-[var(--accent-orange)] text-black font-black shadow-[0_0_10px_var(--accent-orange-glow)]"
-                        : "bg-[var(--surface-panel)] text-[var(--text-secondary)] border border-[var(--border-grid)] hover:text-[var(--accent-orange)]"
-                    }`}
-                  >
-                    <span className="truncate">{item.label}</span>
-                    {isActive && <span className="text-[10px] font-black shrink-0 ml-1">●</span>}
-                  </button>
-                );
-              })}
+          <>
+            {/* Backdrop for outside click */}
+            <div
+              onClick={() => setMobileMenuOpen(false)}
+              className="lg:hidden fixed inset-0 top-[60px] md:top-[64px] bg-black/60 backdrop-blur-sm z-40 hud-backdrop-animate"
+            />
+
+            <div className="relative z-50 lg:hidden bg-[var(--bg-main)]/98 backdrop-blur-xl border-b-2 border-[var(--accent-orange)] p-3 sm:p-4 shadow-2xl hud-menu-animate space-y-3">
+              <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+                {navItems.map((item) => {
+                  const isActive = activeSection === item.id;
+                  return (
+                    <button
+                      key={item.id}
+                      onClick={() => handleNavClick(item.id)}
+                      className={`p-2.5 sm:p-3 text-left transition-all uppercase hud-button flex items-center justify-between text-xs active:scale-95 ${
+                        isActive
+                          ? "bg-[var(--accent-orange)] text-black font-black shadow-[0_0_12px_var(--accent-orange-glow)]"
+                          : "bg-[var(--surface-panel)] text-[var(--text-secondary)] border border-[var(--border-grid)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)]/50"
+                      }`}
+                    >
+                      <span className="truncate">{item.label}</span>
+                      {isActive && <span className="text-[10px] font-black shrink-0 ml-1">●</span>}
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Mobile Secondary Tactical Actions */}
+              <div className="flex items-center gap-2 pt-2 border-t border-[var(--border-grid)] font-mono text-xs">
+                <button
+                  onClick={() => {
+                    setIconModalOpen(true);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex-1 py-2 px-3 border border-[var(--accent-orange)] bg-[var(--surface-panel)] text-[var(--accent-orange)] font-bold text-xs uppercase hud-button flex items-center justify-center gap-1.5 active:scale-95 transition-transform"
+                >
+                  <LayersIcon className="w-3.5 h-3.5" />
+                  <span>ICONS PREVIEW</span>
+                </button>
+
+                <button
+                  onClick={toggleCrt}
+                  className={`flex-1 py-2 px-3 border hud-button flex items-center justify-center gap-1.5 text-xs font-bold uppercase transition-all active:scale-95 sm:hidden ${
+                    crtEnabled
+                      ? "border-[var(--accent-green)] text-[var(--accent-green)] bg-[var(--accent-green-glow)]"
+                      : "border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)]"
+                  }`}
+                >
+                  <MonitorIcon />
+                  <span>CRT: {crtEnabled ? "ON" : "OFF"}</span>
+                </button>
+
+                <button
+                  onClick={() => {
+                    toggleEmergency();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="flex-1 py-2 px-3 bg-[var(--accent-red)] text-black font-black text-xs uppercase hud-button flex items-center justify-center gap-1.5 shadow-[0_0_10px_var(--accent-red-glow)] active:scale-95 transition-transform sm:hidden"
+                >
+                  <ShieldAlertIcon className="w-3.5 h-3.5" />
+                  <span>{t.hud.emergency}</span>
+                </button>
+              </div>
             </div>
-
-            {/* Mobile Secondary Tactical Actions */}
-            <div className="flex items-center gap-2 pt-2 border-t border-[var(--border-grid)] font-mono text-xs">
-              <button
-                onClick={() => {
-                  setIconModalOpen(true);
-                  setMobileMenuOpen(false);
-                }}
-                className="flex-1 py-2 px-3 border border-[var(--accent-orange)] bg-[var(--surface-panel)] text-[var(--accent-orange)] font-bold text-xs uppercase hud-button flex items-center justify-center gap-1.5"
-              >
-                <LayersIcon className="w-3.5 h-3.5" />
-                <span>ICONS PREVIEW</span>
-              </button>
-
-              <button
-                onClick={toggleCrt}
-                className={`flex-1 py-2 px-3 border hud-button flex items-center justify-center gap-1.5 text-xs font-bold uppercase transition-colors sm:hidden ${
-                  crtEnabled
-                    ? "border-[var(--accent-green)] text-[var(--accent-green)] bg-[var(--accent-green-glow)]"
-                    : "border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)]"
-                }`}
-              >
-                <MonitorIcon />
-                <span>CRT: {crtEnabled ? "ON" : "OFF"}</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  toggleEmergency();
-                  setMobileMenuOpen(false);
-                }}
-                className="flex-1 py-2 px-3 bg-[var(--accent-red)] text-black font-black text-xs uppercase hud-button flex items-center justify-center gap-1.5 shadow-[0_0_10px_var(--accent-red-glow)] sm:hidden"
-              >
-                <ShieldAlertIcon className="w-3.5 h-3.5" />
-                <span>{t.hud.emergency}</span>
-              </button>
-            </div>
-          </div>
+          </>
         )}
       </header>
 

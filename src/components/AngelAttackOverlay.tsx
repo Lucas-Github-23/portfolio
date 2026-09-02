@@ -27,6 +27,10 @@ export function AngelAttackOverlay() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const expectedKey = KONAMI_CODE[konamiIndex];
+      if (e.key === "Escape" && active) {
+        setActive(false);
+        return;
+      }
       if (e.key.toLowerCase() === expectedKey.toLowerCase()) {
         const nextIndex = konamiIndex + 1;
         if (nextIndex === KONAMI_CODE.length) {
@@ -52,12 +56,12 @@ export function AngelAttackOverlay() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("nerv_angel_attack", handleSecretTrigger);
     };
-  }, [konamiIndex]);
+  }, [konamiIndex, active]);
 
   if (!active) return null;
 
   return (
-    <div className="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-lg flex flex-col justify-between p-4 overflow-hidden border-8 border-[var(--accent-red)] animate-pulse">
+    <div className="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-lg flex flex-col justify-between p-4 overflow-hidden border-8 border-[var(--accent-red)] hud-backdrop-animate select-none">
       {/* Top Banner Scrolling Warning */}
       <div className="w-full bg-[var(--accent-red)] text-black font-black font-mono text-sm md:text-base py-2 px-4 flex justify-between items-center tracking-widest uppercase shadow-lg">
         <span className="animate-pulse">EMERGENCY ALERT // MAGI SYSTEM</span>
@@ -66,7 +70,7 @@ export function AngelAttackOverlay() {
       </div>
 
       {/* Center Tactical Warning Display */}
-      <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6 font-mono text-[var(--accent-red)] my-auto p-4 sm:p-6 bg-[var(--surface-panel)] border-2 border-[var(--accent-red)] hud-panel shadow-[0_0_50px_var(--accent-red-glow)] max-h-[80vh] overflow-y-auto">
+      <div className="max-w-4xl mx-auto text-center space-y-4 sm:space-y-6 font-mono text-[var(--accent-red)] my-auto p-4 sm:p-6 bg-[var(--surface-panel)] border-2 border-[var(--accent-red)] hud-panel shadow-[0_0_50px_var(--accent-red-glow)] max-h-[80vh] overflow-y-auto hud-modal-animate">
         <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-1 bg-[var(--accent-red)] text-black font-black text-[10px] sm:text-xs uppercase hud-panel-sm tracking-widest">
           <ShieldAlertIcon className="w-4 h-4 sm:w-5 sm:h-5 shrink-0" />
           <span className="truncate">BLOOD TYPE: BLUE // ANGEL DETECTED</span>
