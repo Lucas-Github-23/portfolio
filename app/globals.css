@@ -226,31 +226,71 @@ canvas {
   background: var(--accent-red);
 }
 
-/* Tactical Entrance & Modal Animations */
-@keyframes hudModalOpen {
+/* Tactical Entrance & Modal Animations - Vertical Laser Streak + Horizontal Unfold */
+@keyframes hudLaserSplit {
   0% {
     opacity: 0;
-    transform: scale(0.92) translateY(14px);
-    filter: brightness(1.4) blur(4px);
+    clip-path: inset(50% 49.6% 50% 49.6%);
+    filter: brightness(3) drop-shadow(0 0 20px var(--accent-orange));
+    transform: scale(0.96);
   }
-  60% {
-    filter: brightness(1.15) blur(0px);
+  30% {
+    opacity: 1;
+    clip-path: inset(0% 49.6% 0% 49.6%);
+    filter: brightness(2.5) drop-shadow(0 0 35px var(--accent-orange));
+    transform: scale(0.98);
+  }
+  45% {
+    opacity: 1;
+    clip-path: inset(0% 47% 0% 47%);
+    filter: brightness(1.8) drop-shadow(0 0 25px var(--accent-orange));
+    transform: scale(1);
   }
   100% {
     opacity: 1;
-    transform: scale(1) translateY(0);
-    filter: brightness(1);
+    clip-path: inset(0% 0% 0% 0%);
+    filter: brightness(1) drop-shadow(0 0 15px var(--accent-orange-glow));
+    transform: scale(1);
   }
 }
 
-@keyframes hudMenuSlideDown {
+@keyframes hudLaserBeam {
   0% {
     opacity: 0;
-    transform: translateY(-16px) scaleY(0.96);
+    transform: translateX(-50%) scaleY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateX(-50%) scaleY(1);
+    width: 3px;
+  }
+  55% {
+    opacity: 0.85;
+    transform: translateX(-50%) scaleY(1);
+    width: 10px;
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) scaleY(1);
+    width: 0px;
+  }
+}
+
+@keyframes hudMenuLaserUnfold {
+  0% {
+    opacity: 0;
+    clip-path: inset(0% 49.5% 100% 49.5%);
+    filter: brightness(2.5);
+  }
+  35% {
+    opacity: 1;
+    clip-path: inset(0% 49.5% 0% 49.5%);
+    filter: brightness(2);
   }
   100% {
     opacity: 1;
-    transform: translateY(0) scaleY(1);
+    clip-path: inset(0% 0% 0% 0%);
+    filter: brightness(1);
   }
 }
 
@@ -278,11 +318,27 @@ canvas {
 }
 
 .hud-modal-animate {
-  animation: hudModalOpen 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  position: relative;
+  animation: hudLaserSplit 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hud-modal-animate::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+  background: #ffffff;
+  box-shadow: 0 0 15px var(--accent-orange), 0 0 25px #ffffff;
+  pointer-events: none;
+  z-index: 50;
+  animation: hudLaserBeam 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hud-menu-animate {
-  animation: hudMenuSlideDown 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: hudMenuLaserUnfold 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   transform-origin: top center;
 }
 
