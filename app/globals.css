@@ -52,31 +52,35 @@ body {
   background-size: 40px 40px;
 }
 
-/* CRT Scanlines Overlay - Softened for maximum visual comfort */
+/* CRT Scanlines Overlay - Fullscreen Coverage on all devices */
 .crt-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  height: 100dvh;
+  position: fixed !important;
+  inset: 0 !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  height: 100dvh !important;
+  min-height: 100% !important;
   pointer-events: none !important;
   user-select: none !important;
-  z-index: 9999;
+  z-index: 9999 !important;
   background: linear-gradient(
     rgba(18, 16, 16, 0) 50%, 
-    rgba(0, 0, 0, 0.12) 50%
-  );
-  background-size: 100% 4px;
+    rgba(0, 0, 0, 0.22) 50%
+  ) !important;
+  background-size: 100% 4px !important;
 }
 
 @media (max-width: 768px) {
   .crt-overlay {
-    background-size: 100% 3px;
     background: linear-gradient(
       rgba(18, 16, 16, 0) 50%, 
-      rgba(0, 0, 0, 0.05) 50%
-    );
+      rgba(0, 0, 0, 0.18) 50%
+    ) !important;
+    background-size: 100% 4px !important;
   }
 }
 

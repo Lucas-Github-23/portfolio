@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { SunIcon, MoonIcon, ShieldAlertIcon, MonitorIcon, LayersIcon } from "./Icons";
 import { IconPreviewModal } from "./IconPreviewModal";
+import { IconVariant } from "./DynamicFavicon";
 
 export function HUDHeader() {
   const {
@@ -23,6 +24,7 @@ export function HUDHeader() {
   const [logoClicks, setLogoClicks] = useState<number>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [iconModalOpen, setIconModalOpen] = useState<boolean>(false);
+  const [iconVariant, setIconVariant] = useState<IconVariant>("random");
 
   const handleLogoClick = () => {
     const nextClicks = logoClicks + 1;
@@ -50,6 +52,22 @@ export function HUDHeader() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const saved = (localStorage.getItem("nerv_fav_variant") as IconVariant) || "random";
+      setIconVariant(saved);
+    }
+
+    const handleIconChange = (e: CustomEvent<IconVariant>) => {
+      setIconVariant(e.detail);
+    };
+
+    window.addEventListener("nerv_change_icon" as never, handleIconChange as never);
+    return () => {
+      window.removeEventListener("nerv_change_icon" as never, handleIconChange as never);
+    };
+  }, []);
+
   const navItems = [
     { id: "status", label: t.nav.status },
     { id: "magi", label: "MAGI" },
@@ -61,7 +79,7 @@ export function HUDHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-[var(--bg-main)]/90 backdrop-blur-md border-b border-[var(--border-grid)] shadow-md transition-colors">
+      <header className="sticky top-0 z-50 bg-[var(--bg-main)]/90 backdrop-blur-md border-b border-[var(--border-grid)] shadow-md transition-colors relative">
         {/* Top Warning Ribbon */}
         <div className="w-full bg-[var(--accent-orange)] text-black font-mono text-[10px] md:text-xs py-0.5 px-3 md:px-4 flex justify-between items-center font-bold tracking-widest uppercase overflow-hidden">
           <span className="truncate pr-2">
@@ -120,14 +138,14 @@ export function HUDHeader() {
             {/* Mobile Menu Toggle Button */}
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden px-2.5 py-1.5 border border-[var(--accent-orange)] bg-[var(--surface-panel)] text-[var(--accent-orange)] font-mono text-xs font-extrabold hud-panel-sm flex items-center gap-1.5 hover:bg-[var(--accent-orange)] hover:text-black transition-all shadow-[0_0_8px_var(--accent-orange-glow)]"
-              aria-label="Toggle Mobile HUD Menu"
+              className="lg:hidden px-2.5 py-1.5 bg-[var(--surface-panel)] border border-[var(--border-grid)] text-[var(--accent-orange)] font-bold text-xs uppercase hud-panel-sm hover:border-[var(--accent-orange)] transition-colors flex items-center gap-1 active:scale-95"
+              aria-label="Toggle Mobile Navigation"
             >
-              <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-orange)] animate-pulse" />
-              <span>{mobileMenuOpen ? "CLOSE" : "MENU"}</span>
+              <span className="text-[10px]">{mobileMenuOpen ? "✕" : "☰"}</span>
+              <span>MENU</span>
             </button>
 
-            {/* Icon Preview / Selector Button */}
+            {/* Icon Preview / Selector Button (Desktop) */}
             <button
               onClick={() => setIconModalOpen(true)}
               className="p-1.5 px-2 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm flex items-center gap-1.5 text-[10px] font-bold"
@@ -135,6 +153,15 @@ export function HUDHeader() {
             >
               <LayersIcon className="w-3.5 h-3.5 text-[var(--accent-orange)]" />
               <span className="hidden sm:inline">ICONS</span>
+              {iconVariant === "random" ? (
+                <span className="hidden md:inline px-1 py-0.2 bg-[var(--accent-green)] text-black text-[8px] font-black rounded-sm shadow-[0_0_6px_var(--accent-green-glow)]">
+                  RANDOM
+                </span>
+              ) : (
+                <span className="hidden md:inline px-1 py-0.2 bg-[var(--accent-orange)] text-black text-[8px] font-black rounded-sm uppercase">
+                  {iconVariant}
+                </span>
+              )}
             </button>
 
             {/* Language Switcher */}
@@ -200,70 +227,85 @@ export function HUDHeader() {
             {/* Backdrop for outside click */}
             <div
               onClick={() => setMobileMenuOpen(false)}
-              className="lg:hidden fixed inset-0 top-[60px] md:top-[64px] bg-black/60 backdrop-blur-sm z-40 hud-backdrop-animate"
+              className="lg:hidden fixed inset-0 top-[76px] bg-black/75 backdrop-blur-sm z-40 hud-backdrop-animate"
             />
 
-            <div className="relative z-50 lg:hidden hud-menu-wrapper">
-              <div className="bg-[var(--bg-main)]/98 backdrop-blur-xl border-b-2 border-[var(--accent-orange)] p-3 sm:p-4 shadow-2xl space-y-3">
+            <div className="absolute top-full left-0 right-0 w-full z-50 lg:hidden hud-menu-wrapper shadow-2xl">
+              <div className="bg-[var(--bg-main)]/98 backdrop-blur-xl border-b-2 border-[var(--accent-orange)] p-3 sm:p-4 space-y-3">
                 <div className="grid grid-cols-2 gap-2 font-mono text-xs">
-                {navItems.map((item) => {
-                  const isActive = activeSection === item.id;
-                  return (
+                  {navItems.map((item) => {
+                    const isActive = activeSection === item.id;
+                    return (
+                      <button
+                        key={item.id}
+                        onClick={() => handleNavClick(item.id)}
+                        className={`p-2.5 sm:p-3 text-left transition-all uppercase hud-button flex items-center justify-between text-xs active:scale-95 ${
+                          isActive
+                            ? "bg-[var(--accent-orange)] text-black font-black shadow-[0_0_12px_var(--accent-orange-glow)]"
+                            : "bg-[var(--surface-panel)] text-[var(--text-secondary)] border border-[var(--border-grid)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)]/50"
+                        }`}
+                      >
+                        <span className="truncate">{item.label}</span>
+                        {isActive && <span className="text-[10px] font-black shrink-0 ml-1">●</span>}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Mobile Secondary Tactical Actions */}
+                <div className="flex flex-col gap-2 pt-2 border-t border-[var(--border-grid)] font-mono text-xs">
+                  {/* Icon Selector Button with Active Status Visibility */}
+                  <button
+                    onClick={() => {
+                      setIconModalOpen(true);
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full py-2.5 px-3 border border-[var(--accent-orange)] bg-[var(--surface-panel)] text-[var(--text-primary)] font-bold text-xs uppercase hud-button flex items-center justify-between gap-2 active:scale-95 transition-transform"
+                  >
+                    <div className="flex items-center gap-2">
+                      <LayersIcon className="w-4 h-4 text-[var(--accent-orange)] shrink-0" />
+                      <span>{language === "pt" ? "SELETOR DE ÍCONES" : "ICONS PREVIEW"}</span>
+                    </div>
+                    {iconVariant === "random" ? (
+                      <span className="px-2 py-0.5 bg-[var(--accent-green)] text-black text-[9px] font-black tracking-wider flex items-center gap-1.5 rounded-sm shadow-[0_0_8px_var(--accent-green-glow)]">
+                        <span className="w-1.5 h-1.5 rounded-full bg-black animate-ping" />
+                        {language === "pt" ? "ALEATÓRIO: ON" : "RANDOM: ON"}
+                      </span>
+                    ) : (
+                      <span className="px-2 py-0.5 bg-[var(--accent-orange)] text-black text-[9px] font-black tracking-wider uppercase rounded-sm">
+                        {language === "pt" ? `FIXO: ${iconVariant.toUpperCase()}` : `FIXED: ${iconVariant.toUpperCase()}`}
+                      </span>
+                    )}
+                  </button>
+
+                  <div className="flex items-center gap-2">
                     <button
-                      key={item.id}
-                      onClick={() => handleNavClick(item.id)}
-                      className={`p-2.5 sm:p-3 text-left transition-all uppercase hud-button flex items-center justify-between text-xs active:scale-95 ${
-                        isActive
-                          ? "bg-[var(--accent-orange)] text-black font-black shadow-[0_0_12px_var(--accent-orange-glow)]"
-                          : "bg-[var(--surface-panel)] text-[var(--text-secondary)] border border-[var(--border-grid)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)]/50"
+                      onClick={toggleCrt}
+                      className={`flex-1 py-2 px-3 border hud-button flex items-center justify-center gap-1.5 text-xs font-bold uppercase transition-all active:scale-95 sm:hidden ${
+                        crtEnabled
+                          ? "border-[var(--accent-green)] text-[var(--accent-green)] bg-[var(--accent-green-glow)]"
+                          : "border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)]"
                       }`}
                     >
-                      <span className="truncate">{item.label}</span>
-                      {isActive && <span className="text-[10px] font-black shrink-0 ml-1">●</span>}
+                      <MonitorIcon />
+                      <span>CRT: {crtEnabled ? "ON" : "OFF"}</span>
                     </button>
-                  );
-                })}
-              </div>
 
-              {/* Mobile Secondary Tactical Actions */}
-              <div className="flex items-center gap-2 pt-2 border-t border-[var(--border-grid)] font-mono text-xs">
-                <button
-                  onClick={() => {
-                    setIconModalOpen(true);
-                    setMobileMenuOpen(false);
-                  }}
-                  className="flex-1 py-2 px-3 border border-[var(--accent-orange)] bg-[var(--surface-panel)] text-[var(--accent-orange)] font-bold text-xs uppercase hud-button flex items-center justify-center gap-1.5 active:scale-95 transition-transform"
-                >
-                  <LayersIcon className="w-3.5 h-3.5" />
-                  <span>ICONS PREVIEW</span>
-                </button>
-
-                <button
-                  onClick={toggleCrt}
-                  className={`flex-1 py-2 px-3 border hud-button flex items-center justify-center gap-1.5 text-xs font-bold uppercase transition-all active:scale-95 sm:hidden ${
-                    crtEnabled
-                      ? "border-[var(--accent-green)] text-[var(--accent-green)] bg-[var(--accent-green-glow)]"
-                      : "border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)]"
-                  }`}
-                >
-                  <MonitorIcon />
-                  <span>CRT: {crtEnabled ? "ON" : "OFF"}</span>
-                </button>
-
-                <button
-                  onClick={() => {
-                    toggleEmergency();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="flex-1 py-2 px-3 bg-[var(--accent-red)] text-black font-black text-xs uppercase hud-button flex items-center justify-center gap-1.5 shadow-[0_0_10px_var(--accent-red-glow)] active:scale-95 transition-transform sm:hidden"
-                >
-                  <ShieldAlertIcon className="w-3.5 h-3.5" />
-                  <span>{t.hud.emergency}</span>
-                </button>
+                    <button
+                      onClick={() => {
+                        toggleEmergency();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex-1 py-2 px-3 bg-[var(--accent-red)] text-black font-black text-xs uppercase hud-button flex items-center justify-center gap-1.5 shadow-[0_0_10px_var(--accent-red-glow)] active:scale-95 transition-transform sm:hidden"
+                    >
+                      <ShieldAlertIcon className="w-3.5 h-3.5" />
+                      <span>{t.hud.emergency}</span>
+                    </button>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </>
+          </>
         )}
       </header>
 

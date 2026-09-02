@@ -96,16 +96,36 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
           )}
 
           {/* Global Mode Option: Random Rotation */}
-          <div className="p-3.5 bg-[var(--bg-main)] border border-[var(--border-grid)] hud-panel-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded bg-[var(--surface-panel)] border border-[var(--border-grid)] flex items-center justify-center shrink-0">
-                <ShuffleIcon className="w-4 h-4 text-[var(--accent-orange)]" />
+          <div
+            className={`p-4 border-2 hud-panel flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all ${
+              currentMode === "random"
+                ? "bg-[var(--surface-panel)] border-[var(--accent-green)] shadow-[0_0_25px_var(--accent-green-glow)]"
+                : "bg-[var(--bg-main)] border-[var(--border-grid)] hover:border-[var(--border-bright)]"
+            }`}
+          >
+            <div className="flex items-center gap-3.5">
+              <div
+                className={`w-10 h-10 rounded hud-panel-sm flex items-center justify-center shrink-0 transition-colors ${
+                  currentMode === "random"
+                    ? "bg-[var(--accent-green-glow)] border border-[var(--accent-green)] text-[var(--accent-green)]"
+                    : "bg-[var(--surface-panel)] border border-[var(--border-grid)] text-[var(--text-secondary)]"
+                }`}
+              >
+                <ShuffleIcon className="w-5 h-5" />
               </div>
               <div>
-                <span className="font-bold text-xs block text-[var(--text-primary)]">
-                  {language === "pt" ? "MODO ROTAÇÃO DINÂMICA (ALEATÓRIA)" : "DYNAMIC RANDOM ROTATION"}
-                </span>
-                <span className="text-[10px] text-[var(--text-secondary)]">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="font-extrabold text-xs text-[var(--text-primary)]">
+                    {language === "pt" ? "MODO ROTAÇÃO DINÂMICA (ALEATÓRIA)" : "DYNAMIC RANDOM ROTATION"}
+                  </span>
+                  {currentMode === "random" && (
+                    <span className="px-2 py-0.5 bg-[var(--accent-green)] text-black text-[9px] font-black rounded-sm tracking-wider uppercase flex items-center gap-1">
+                      <span className="w-1.5 h-1.5 rounded-full bg-black animate-ping" />
+                      {language === "pt" ? "MODO ATIVO" : "ACTIVE MODE"}
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] text-[var(--text-secondary)] block mt-0.5">
                   {language === "pt"
                     ? "Sorteia automaticamente um dos 3 ícones táticos a cada carregamento de página"
                     : "Automatically picks one of the 3 tactical icons on every page refresh"}
@@ -114,19 +134,19 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
             </div>
             <button
               onClick={() => selectVariant("random", language === "pt" ? "Modo Aleatório" : "Random Mode")}
-              className={`px-3.5 py-1.5 text-xs font-black uppercase hud-button transition-all shrink-0 ${
+              className={`w-full sm:w-auto px-4 py-2 text-xs font-black uppercase hud-button transition-all shrink-0 flex items-center justify-center gap-1.5 ${
                 currentMode === "random"
-                  ? "bg-[var(--accent-green)] text-black shadow-[0_0_10px_var(--accent-green-glow)]"
-                  : "bg-[var(--surface-panel)] text-[var(--text-primary)] border border-[var(--border-grid)] hover:border-[var(--accent-green)] hover:text-[var(--accent-green)]"
+                  ? "bg-[var(--accent-green)] text-black shadow-[0_0_12px_var(--accent-green-glow)] cursor-default"
+                  : "bg-[var(--surface-panel)] text-[var(--accent-green)] border border-[var(--accent-green)] hover:bg-[var(--accent-green)] hover:text-black"
               }`}
             >
               {currentMode === "random" ? (
-                <span className="flex items-center gap-1.5">
-                  <CheckIcon className="w-3.5 h-3.5" />
-                  {language === "pt" ? "ATIVO" : "ACTIVE"}
-                </span>
+                <>
+                  <CheckIcon className="w-4 h-4 stroke-[3]" />
+                  <span>{language === "pt" ? "SELECIONADO (ATIVO)" : "ACTIVE"}</span>
+                </>
               ) : (
-                <span>{language === "pt" ? "ATIVAR MODO" : "ENABLE"}</span>
+                <span>{language === "pt" ? "ATIVAR MODO ALEATÓRIO" : "ENABLE RANDOM"}</span>
               )}
             </button>
           </div>
