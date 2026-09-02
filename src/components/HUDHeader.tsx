@@ -203,8 +203,9 @@ export function HUDHeader() {
               className="lg:hidden fixed inset-0 top-[60px] md:top-[64px] bg-black/60 backdrop-blur-sm z-40 hud-backdrop-animate"
             />
 
-            <div className="relative z-50 lg:hidden bg-[var(--bg-main)]/98 backdrop-blur-xl border-b-2 border-[var(--accent-orange)] p-3 sm:p-4 shadow-2xl hud-menu-animate space-y-3">
-              <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+            <div className="relative z-50 lg:hidden hud-menu-wrapper">
+              <div className="bg-[var(--bg-main)]/98 backdrop-blur-xl border-b-2 border-[var(--accent-orange)] p-3 sm:p-4 shadow-2xl space-y-3">
+                <div className="grid grid-cols-2 gap-2 font-mono text-xs">
                 {navItems.map((item) => {
                   const isActive = activeSection === item.id;
                   return (
@@ -261,7 +262,8 @@ export function HUDHeader() {
                 </button>
               </div>
             </div>
-          </>
+          </div>
+        </>
         )}
       </header>
 

@@ -56,14 +56,15 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
       onClick={onClose}
       className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 hud-backdrop-animate select-none"
     >
-      <div 
-        onClick={(e) => e.stopPropagation()}
-        className="w-full max-w-3xl bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] hud-panel shadow-[0_0_35px_var(--accent-orange-glow)] p-4 sm:p-6 relative text-[var(--text-primary)] font-mono overflow-y-auto max-h-[90vh] hud-modal-animate"
-        role="dialog"
-        aria-modal="true"
-      >
-        <div className="hud-modal-content space-y-5">
-          {/* Header */}
+      <div className="w-full max-w-3xl hud-modal-wrapper">
+        <div 
+          onClick={(e) => e.stopPropagation()}
+          className="w-full bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] hud-panel shadow-[0_0_35px_var(--accent-orange-glow)] p-4 sm:p-6 relative text-[var(--text-primary)] font-mono overflow-y-auto max-h-[90vh]"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="hud-modal-content space-y-5">
+            {/* Header */}
           <div className="flex items-center justify-between border-b border-[var(--border-grid)] pb-3">
             <div className="flex items-center gap-2.5">
               <span className="w-3 h-3 bg-[var(--accent-orange)] rotate-45 inline-block" />
@@ -222,5 +223,6 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 }

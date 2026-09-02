@@ -226,132 +226,160 @@ canvas {
   background: var(--accent-red);
 }
 
-/* Tactical Entrance & Modal Animations - Vertical Laser Streak + Horizontal Unfold */
+/* Tactical Entrance & Modal Animations - Zero-Lag Hardware-Accelerated 120fps Laser Unfold */
 @keyframes hudModalLaserUnfold {
-  0% {
-    opacity: 0;
-    transform: scaleX(0.002) scaleY(0);
-    box-shadow: 0 0 40px var(--accent-orange), 0 0 60px #ffffff;
-    filter: brightness(3.5);
-  }
-  28% {
+  0%, 35% {
+    transform: scaleX(0.003) scaleY(1) translateZ(0);
     opacity: 1;
-    transform: scaleX(0.002) scaleY(1);
-    box-shadow: 0 0 40px var(--accent-orange), 0 0 60px #ffffff;
-    filter: brightness(3);
   }
-  48% {
+  65% {
+    transform: scaleX(0.4) scaleY(1) translateZ(0);
     opacity: 1;
-    transform: scaleX(0.15) scaleY(1);
-    box-shadow: 0 0 35px var(--accent-orange);
-    filter: brightness(2);
   }
   100% {
+    transform: scaleX(1) scaleY(1) translateZ(0);
     opacity: 1;
-    transform: scaleX(1) scaleY(1);
-    box-shadow: 0 0 35px var(--accent-orange-glow);
-    filter: brightness(1);
   }
 }
 
-@keyframes hudLaserBeamVertical {
+@keyframes hudLaserBeamStreak {
   0% {
+    transform: translate(-50%, -50%) scaleY(0) translateZ(0);
     opacity: 0;
-    transform: translate(-50%, -50%) scaleY(0);
   }
-  28% {
+  5% {
     opacity: 1;
-    transform: translate(-50%, -50%) scaleY(1);
-    width: 4px;
-    box-shadow: 0 0 20px #ffffff, 0 0 40px var(--accent-orange);
   }
-  55% {
-    opacity: 0.85;
-    transform: translate(-50%, -50%) scaleY(1);
-    width: 14px;
-    box-shadow: 0 0 35px var(--accent-orange);
+  30%, 38% {
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 1;
+  }
+  70% {
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 0.3;
   }
   100% {
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
     opacity: 0;
-    transform: translate(-50%, -50%) scaleY(1);
-    width: 0px;
   }
 }
 
-@keyframes hudContentReveal {
-  0%, 28% {
+@keyframes hudContentFadeIn {
+  0%, 38% {
     opacity: 0;
-    transform: scale(0.96);
-  }
-  60% {
-    opacity: 0.85;
   }
   100% {
     opacity: 1;
-    transform: scale(1);
   }
 }
 
 @keyframes hudMenuLaserUnfold {
-  0% {
-    opacity: 0;
-    transform: scaleX(0.01) scaleY(0);
-    filter: brightness(3);
-  }
-  35% {
+  0%, 35% {
+    transform: scaleX(0.003) scaleY(1) translateZ(0);
     opacity: 1;
-    transform: scaleX(0.01) scaleY(1);
-    filter: brightness(2.5);
+  }
+  65% {
+    transform: scaleX(0.45) scaleY(1) translateZ(0);
+    opacity: 1;
   }
   100% {
+    transform: scaleX(1) scaleY(1) translateZ(0);
     opacity: 1;
-    transform: scaleX(1) scaleY(1);
-    filter: brightness(1);
+  }
+}
+
+@keyframes hudMenuBeamStreak {
+  0% {
+    transform: translateX(-50%) scaleY(0) translateZ(0);
+    transform-origin: top center;
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  30%, 38% {
+    transform: translateX(-50%) scaleY(1) translateZ(0);
+    transform-origin: top center;
+    opacity: 1;
+  }
+  70% {
+    transform: translateX(-50%) scaleY(1) translateZ(0);
+    transform-origin: top center;
+    opacity: 0.3;
+  }
+  100% {
+    transform: translateX(-50%) scaleY(1) translateZ(0);
+    transform-origin: top center;
+    opacity: 0;
   }
 }
 
 @keyframes hudBackdropFade {
   0% {
     opacity: 0;
-    backdrop-filter: blur(0px);
   }
   100% {
     opacity: 1;
-    backdrop-filter: blur(8px);
   }
 }
 
-.hud-modal-animate {
-  position: relative !important;
-  transform-origin: center center !important;
-  animation: hudModalLaserUnfold 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+.hud-modal-wrapper {
+  position: relative;
+  width: 100%;
+  transform-origin: center center;
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: hudModalLaserUnfold 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.hud-modal-animate::after {
+.hud-modal-wrapper::after {
   content: "";
   position: absolute;
   top: 50%;
   left: 50%;
   height: 100%;
-  width: 2px;
-  transform: translate(-50%, -50%);
+  width: 3px;
   background: #ffffff;
-  box-shadow: 0 0 15px var(--accent-orange), 0 0 30px #ffffff;
+  box-shadow: 0 0 12px var(--accent-orange), 0 0 20px #ffffff;
   pointer-events: none;
-  z-index: 100;
-  animation: hudLaserBeamVertical 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+  z-index: 60;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  animation: hudLaserBeamStreak 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hud-modal-content {
-  animation: hudContentReveal 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  will-change: opacity;
+  animation: hudContentFadeIn 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
-.hud-menu-animate {
-  animation: hudMenuLaserUnfold 0.32s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.hud-menu-wrapper {
+  position: relative;
+  width: 100%;
   transform-origin: top center;
+  will-change: transform;
+  backface-visibility: hidden;
+  animation: hudMenuLaserUnfold 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hud-menu-wrapper::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 50%;
+  height: 100%;
+  width: 3px;
+  background: #ffffff;
+  box-shadow: 0 0 12px var(--accent-orange), 0 0 20px #ffffff;
+  pointer-events: none;
+  z-index: 60;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  animation: hudMenuBeamStreak 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hud-backdrop-animate {
-  animation: hudBackdropFade 0.25s ease-out forwards;
+  will-change: opacity;
+  animation: hudBackdropFade 0.2s ease-out forwards;
 }
 
