@@ -4,6 +4,7 @@ import "./globals.css";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { ScanlineOverlay } from "@/components/ScanlineOverlay";
 import { AngelAttackOverlay } from "@/components/AngelAttackOverlay";
+import { DynamicFavicon } from "@/components/DynamicFavicon";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,6 +20,12 @@ export const metadata: Metadata = {
   title: "Lucas | NERV Tactical Interface Portfolio",
   description: "Full-Stack Software Engineer portfolio designed in Evangelion NERV / MAGI tactical interface style.",
   keywords: ["Software Engineer", "Next.js", "React", "TypeScript", "Tailwind CSS", "Developer Portfolio", "NERV", "MAGI"],
+  icons: {
+    icon: [
+      { url: "/icons/icon-tactical-l.svg", type: "image/svg+xml" },
+    ],
+    apple: "/icons/icon-tactical-l.svg",
+  },
 };
 
 export default function RootLayout({
@@ -33,6 +40,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col nerv-grid-bg">
         <LanguageProvider>
+          <DynamicFavicon />
           <ScanlineOverlay />
           <AngelAttackOverlay />
           {children}
