@@ -87,6 +87,12 @@ export function TacticalCanvasBackground() {
     // Handle Scroll
     const handleScroll = () => {
       scrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+      // If user is actively scrolling on mobile, disengage laser target so scrolling remains 100% fluid
+      if (Date.now() - touchStartTime < 800) {
+        touchMoved = true;
+        targetMouseX = -9999;
+        targetMouseY = -9999;
+      }
     };
 
     interface ATImpact {
@@ -124,31 +130,29 @@ export function TacticalCanvasBackground() {
     const handleClick = (e: MouseEvent) => {
       // Ignore click if it was simulated from a mobile touch tap in the last 600ms
       if (Date.now() - lastTouchTime < 600) return;
-      const coords = getCanvasCoords(e.clientX, e.clientY);
-      targetMouseX = coords.x;
-      targetMouseY = coords.y;
-      mouseX = coords.x;
-      mouseY = coords.y;
-      lastValidPointerX = coords.x;
-      lastValidPointerY = coords.y;
-      spawnImpactRing(coords.x, coords.y);
+      targetMouseX = e.clientX;
+      targetMouseY = e.clientY;
+      lastValidPointerX = e.clientX;
+      lastValidPointerY = e.clientY;
+      spawnImpactRing(e.clientX, e.clientY);
     };
 
     const handleTouchStart = (e: TouchEvent) => {
       lastTouchTime = Date.now();
       if (e.touches.length > 0) {
         const touch = e.touches[0];
-        const coords = getCanvasCoords(touch.clientX, touch.clientY);
-        touchStartX = coords.x;
-        touchStartY = coords.y;
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
         touchStartTime = Date.now();
         touchMoved = false;
-        targetMouseX = coords.x;
-        targetMouseY = coords.y;
-        mouseX = coords.x;
-        mouseY = coords.y;
-        lastValidPointerX = coords.x;
-        lastValidPointerY = coords.y;
+
+        // Only activate laser focus if touch starts in the top hero area where Ramiel is visible
+        if (scrollY < 160) {
+          targetMouseX = touch.clientX;
+          targetMouseY = touch.clientY;
+          lastValidPointerX = touch.clientX;
+          lastValidPointerY = touch.clientY;
+        }
       }
     };
 
@@ -156,15 +160,23 @@ export function TacticalCanvasBackground() {
       lastTouchTime = Date.now();
       if (e.touches.length > 0) {
         const touch = e.touches[0];
-        const coords = getCanvasCoords(touch.clientX, touch.clientY);
-        targetMouseX = coords.x;
-        targetMouseY = coords.y;
-        mouseX = coords.x;
-        mouseY = coords.y;
-        lastValidPointerX = coords.x;
-        lastValidPointerY = coords.y;
-        if (Math.hypot(coords.x - touchStartX, coords.y - touchStartY) > 10) {
+        const deltaX = Math.abs(touch.clientX - touchStartX);
+        const deltaY = Math.abs(touch.clientY - touchStartY);
+
+        // If the finger moves to scroll, immediately disengage laser aim so scrolling is 100% fluid!
+        if (deltaY > 8 || deltaX > 15) {
           touchMoved = true;
+          targetMouseX = -9999;
+          targetMouseY = -9999;
+          return;
+        }
+
+        // Only track if user is holding still without scrolling
+        if (!touchMoved && scrollY < 160) {
+          targetMouseX = touch.clientX;
+          targetMouseY = touch.clientY;
+          lastValidPointerX = touch.clientX;
+          lastValidPointerY = touch.clientY;
         }
       }
     };
@@ -172,18 +184,14 @@ export function TacticalCanvasBackground() {
     const handleTouchEnd = (e: TouchEvent) => {
       lastTouchTime = Date.now();
       const elapsed = Date.now() - touchStartTime;
-      // Only spawn impact ring if user genuinely tapped without dragging or scrolling!
+
+      // Only spawn impact ring if user genuinely tapped without scrolling!
       if (!touchMoved && elapsed < 350) {
         if (e.changedTouches.length > 0) {
           const touch = e.changedTouches[0];
-          const coords = getCanvasCoords(touch.clientX, touch.clientY);
-          targetMouseX = coords.x;
-          targetMouseY = coords.y;
-          mouseX = coords.x;
-          mouseY = coords.y;
-          lastValidPointerX = coords.x;
-          lastValidPointerY = coords.y;
-          spawnImpactRing(coords.x, coords.y);
+          spawnImpactRing(touch.clientX, touch.clientY);
+          lastValidPointerX = touch.clientX;
+          lastValidPointerY = touch.clientY;
         }
       }
       // Reset target coordinates so Ramiel morph decays smoothly
@@ -192,6 +200,7 @@ export function TacticalCanvasBackground() {
     };
 
     const handleTouchCancel = () => {
+      touchMoved = true;
       targetMouseX = -9999;
       targetMouseY = -9999;
     };
