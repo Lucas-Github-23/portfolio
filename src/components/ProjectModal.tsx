@@ -54,13 +54,18 @@ export function ProjectModal({
       onClick={onClose}
       className="fixed inset-0 z-50 bg-black/85 hud-backdrop-animate flex items-center justify-center p-3 sm:p-4 select-none"
     >
-      <div className="w-full max-w-2xl hud-modal-wrapper">
-        <div
-          onClick={(e) => e.stopPropagation()}
-          className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] w-full max-h-[90vh] overflow-y-auto hud-panel p-4 sm:p-6 md:p-8 relative shadow-[0_0_35px_var(--accent-orange-glow)]"
-        >
-          <div className="hud-modal-content space-y-5 sm:space-y-6">
-            {/* Header Ribbon */}
+      <div className="w-full max-w-2xl relative">
+        {/* Central laser beam: grows from center point up & down in 0.3s */}
+        <div className="hud-laser-beam" />
+
+        {/* Modal body: expands sideways only after 0.3s */}
+        <div className="hud-laser-expand w-full">
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] w-full max-h-[90vh] overflow-y-auto hud-panel p-4 sm:p-6 md:p-8 relative shadow-[0_0_35px_var(--accent-orange-glow)]"
+          >
+            <div className="space-y-5 sm:space-y-6">
+              {/* Header Ribbon */}
           <div className="flex justify-between items-start sm:items-center border-b border-[var(--border-grid)] pb-4 font-mono gap-3">
             <div className="min-w-0 flex-1">
               <div className="text-[10px] text-[var(--accent-orange)] font-bold tracking-widest uppercase flex items-center gap-1.5 flex-wrap">
@@ -148,5 +153,6 @@ export function ProjectModal({
       </div>
     </div>
   </div>
+</div>
 );
 }

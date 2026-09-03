@@ -230,9 +230,14 @@ export function HUDHeader() {
               className="lg:hidden fixed inset-0 top-[76px] bg-black/75 backdrop-blur-sm z-40 hud-backdrop-animate"
             />
 
-            <div className="absolute top-full left-0 right-0 w-full z-50 lg:hidden hud-menu-wrapper shadow-2xl">
-              <div className="bg-[var(--bg-main)]/98 backdrop-blur-xl border-b-2 border-[var(--accent-orange)] p-3 sm:p-4 space-y-3">
-                <div className="grid grid-cols-2 gap-2 font-mono text-xs">
+            <div className="absolute top-full left-0 right-0 w-full z-50 lg:hidden shadow-2xl relative">
+              {/* Central laser beam: grows from center point up & down in 0.3s */}
+              <div className="hud-laser-beam" />
+
+              {/* Menu body: expands sideways only after 0.3s */}
+              <div className="hud-laser-expand w-full">
+                <div className="bg-[var(--bg-main)]/98 backdrop-blur-xl border-b-2 border-[var(--accent-orange)] p-3 sm:p-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-2 font-mono text-xs">
                   {navItems.map((item) => {
                     const isActive = activeSection === item.id;
                     return (
@@ -305,7 +310,8 @@ export function HUDHeader() {
                 </div>
               </div>
             </div>
-          </>
+          </div>
+        </>
         )}
       </header>
 

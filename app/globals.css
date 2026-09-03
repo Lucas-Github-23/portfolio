@@ -230,23 +230,8 @@ canvas {
   background: var(--accent-red);
 }
 
-/* Tactical Entrance & Modal Animations - Zero-Lag Hardware-Accelerated 120fps Laser Unfold */
-@keyframes hudModalLaserUnfold {
-  0%, 35% {
-    transform: scaleX(0.003) scaleY(1) translateZ(0);
-    opacity: 1;
-  }
-  65% {
-    transform: scaleX(0.4) scaleY(1) translateZ(0);
-    opacity: 1;
-  }
-  100% {
-    transform: scaleX(1) scaleY(1) translateZ(0);
-    opacity: 1;
-  }
-}
-
-@keyframes hudLaserBeamStreak {
+/* Tactical Entrance & Modal Animations - Exact 2-Phase: 0.3s Center Laser Growth -> Side Unfold */
+@keyframes hudLaserGrowVertical {
   0% {
     transform: translate(-50%, -50%) scaleY(0) translateZ(0);
     opacity: 0;
@@ -254,67 +239,33 @@ canvas {
   5% {
     opacity: 1;
   }
-  30%, 38% {
-    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
-    opacity: 1;
-  }
-  70% {
-    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
-    opacity: 0.3;
-  }
   100% {
     transform: translate(-50%, -50%) scaleY(1) translateZ(0);
-    opacity: 0;
-  }
-}
-
-@keyframes hudContentFadeIn {
-  0%, 38% {
-    opacity: 0;
-  }
-  100% {
     opacity: 1;
   }
 }
 
-@keyframes hudMenuLaserUnfold {
-  0%, 35% {
-    transform: scaleX(0.003) scaleY(1) translateZ(0);
-    opacity: 1;
-  }
-  65% {
-    transform: scaleX(0.45) scaleY(1) translateZ(0);
-    opacity: 1;
-  }
-  100% {
-    transform: scaleX(1) scaleY(1) translateZ(0);
-    opacity: 1;
-  }
-}
-
-@keyframes hudMenuBeamStreak {
+@keyframes hudLaserFadeOut {
   0% {
-    transform: translateX(-50%) scaleY(0) translateZ(0);
-    transform-origin: top center;
-    opacity: 0;
-  }
-  5% {
     opacity: 1;
-  }
-  30%, 38% {
-    transform: translateX(-50%) scaleY(1) translateZ(0);
-    transform-origin: top center;
-    opacity: 1;
-  }
-  70% {
-    transform: translateX(-50%) scaleY(1) translateZ(0);
-    transform-origin: top center;
-    opacity: 0.3;
   }
   100% {
-    transform: translateX(-50%) scaleY(1) translateZ(0);
-    transform-origin: top center;
     opacity: 0;
+  }
+}
+
+@keyframes hudMenuExpandHorizontal {
+  0% {
+    transform: scaleX(0) translateZ(0);
+    opacity: 0;
+  }
+  1% {
+    transform: scaleX(0) translateZ(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1) translateZ(0);
+    opacity: 1;
   }
 }
 
@@ -327,59 +278,39 @@ canvas {
   }
 }
 
-.hud-modal-wrapper {
-  position: relative;
-  width: 100%;
-  transform-origin: center center;
-  will-change: transform;
-  backface-visibility: hidden;
-  animation: hudModalLaserUnfold 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.hud-modal-wrapper::after {
-  content: "";
+.hud-laser-beam {
   position: absolute;
   top: 50%;
   left: 50%;
-  height: 100%;
   width: 3px;
+  height: 100%;
+  transform: translate(-50%, -50%) scaleY(0);
+  transform-origin: center center;
   background: #ffffff;
-  box-shadow: 0 0 12px var(--accent-orange), 0 0 20px #ffffff;
+  box-shadow: 0 0 10px #ffffff, 0 0 20px var(--accent-orange), 0 0 35px var(--accent-orange);
   pointer-events: none;
-  z-index: 60;
+  z-index: 70;
   will-change: transform, opacity;
   backface-visibility: hidden;
-  animation: hudLaserBeamStreak 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: 
+    hudLaserGrowVertical 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards,
+    hudLaserFadeOut 0.25s ease-out 0.3s forwards;
 }
 
-.hud-modal-content {
-  will-change: opacity;
-  animation: hudContentFadeIn 0.48s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+.hud-laser-expand {
+  width: 100%;
+  transform: scaleX(0);
+  transform-origin: center center;
+  opacity: 0;
+  will-change: transform, opacity;
+  backface-visibility: hidden;
+  animation: hudMenuExpandHorizontal 0.28s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
 }
 
+.hud-modal-wrapper,
 .hud-menu-wrapper {
   position: relative;
   width: 100%;
-  transform-origin: top center;
-  will-change: transform;
-  backface-visibility: hidden;
-  animation: hudMenuLaserUnfold 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.hud-menu-wrapper::after {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 50%;
-  height: 100%;
-  width: 3px;
-  background: #ffffff;
-  box-shadow: 0 0 12px var(--accent-orange), 0 0 20px #ffffff;
-  pointer-events: none;
-  z-index: 60;
-  will-change: transform, opacity;
-  backface-visibility: hidden;
-  animation: hudMenuBeamStreak 0.42s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hud-backdrop-animate {
