@@ -237,18 +237,28 @@ canvas {
     transform: translate(-50%, -50%) scaleY(0) translateZ(0);
     opacity: 0;
   }
-  5% {
+  4% {
     opacity: 1;
   }
-  43% {
+  31.5% {
     left: 50%;
     transform: translate(-50%, -50%) scaleY(1) translateZ(0);
     opacity: 1;
   }
-  78% {
+  58% {
     left: 0%;
     transform: translate(-50%, -50%) scaleY(1) translateZ(0);
     opacity: 1;
+  }
+  68% {
+    left: 0%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 1;
+  }
+  84% {
+    left: 0%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 0.5;
   }
   100% {
     left: 0%;
@@ -263,18 +273,28 @@ canvas {
     transform: translate(-50%, -50%) scaleY(0) translateZ(0);
     opacity: 0;
   }
-  5% {
+  4% {
     opacity: 1;
   }
-  43% {
+  31.5% {
     left: 50%;
     transform: translate(-50%, -50%) scaleY(1) translateZ(0);
     opacity: 1;
   }
-  78% {
+  58% {
     left: 100%;
     transform: translate(-50%, -50%) scaleY(1) translateZ(0);
     opacity: 1;
+  }
+  68% {
+    left: 100%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 1;
+  }
+  84% {
+    left: 100%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 0.5;
   }
   100% {
     left: 100%;
@@ -390,11 +410,11 @@ canvas {
 }
 
 .hud-laser-line-left {
-  animation: hudLaserSplitLeft 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: hudLaserSplitLeft 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 .hud-laser-line-right {
-  animation: hudLaserSplitRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  animation: hudLaserSplitRight 0.95s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* Reverse Closing Overrides */
