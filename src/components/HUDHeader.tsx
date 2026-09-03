@@ -261,7 +261,7 @@ export function HUDHeader() {
 
               {/* Menu body: expands sideways only after 0.3s */}
               <div className="hud-laser-expand w-full">
-                <div className="bg-[var(--bg-main)]/98 backdrop-blur-xl border-b-2 border-[var(--accent-orange)] p-3 sm:p-4 space-y-3">
+                <div className="bg-[var(--bg-main)]/98 backdrop-blur-xl border-2 border-[var(--accent-orange)] hud-panel p-3 sm:p-4 space-y-3">
                   <div className="grid grid-cols-2 gap-2 font-mono text-xs">
                   {navItems.map((item) => {
                     const isActive = activeSection === item.id;

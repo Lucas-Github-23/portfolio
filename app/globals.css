@@ -374,12 +374,12 @@ canvas {
   }
 }
 
-/* Laser Line Base Styles */
+/* Laser Line Base Styles - Matches the exact visual height of the HUD panel lateral edges (excluding 12px cut corners) */
 .hud-laser-line {
   position: absolute;
   top: 50%;
   width: 3px;
-  height: 100%;
+  height: calc(100% - 24px);
   transform-origin: center center;
   background: #ffffff;
   box-shadow: 0 0 10px #ffffff, 0 0 20px var(--accent-orange), 0 0 35px var(--accent-orange);
