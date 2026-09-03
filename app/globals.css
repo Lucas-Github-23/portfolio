@@ -230,26 +230,55 @@ canvas {
   background: var(--accent-red);
 }
 
-/* Tactical Entrance & Modal Animations - Exact 2-Phase: 0.3s Center Laser Growth -> Side Unfold */
-@keyframes hudLaserGrowVertical {
+/* Tactical Entrance & Exit Animations - Evangelion HUD Split-Edge Laser Unfold & Reverse Close */
+@keyframes hudLaserSplitLeft {
   0% {
+    left: 50%;
     transform: translate(-50%, -50%) scaleY(0) translateZ(0);
     opacity: 0;
   }
   5% {
     opacity: 1;
   }
-  100% {
+  43% {
+    left: 50%;
     transform: translate(-50%, -50%) scaleY(1) translateZ(0);
     opacity: 1;
   }
-}
-
-@keyframes hudLaserFadeOut {
-  0% {
+  78% {
+    left: 0%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
     opacity: 1;
   }
   100% {
+    left: 0%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 0;
+  }
+}
+
+@keyframes hudLaserSplitRight {
+  0% {
+    left: 50%;
+    transform: translate(-50%, -50%) scaleY(0) translateZ(0);
+    opacity: 0;
+  }
+  5% {
+    opacity: 1;
+  }
+  43% {
+    left: 50%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 1;
+  }
+  78% {
+    left: 100%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 1;
+  }
+  100% {
+    left: 100%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
     opacity: 0;
   }
 }
@@ -269,7 +298,65 @@ canvas {
   }
 }
 
-@keyframes hudBackdropFade {
+/* Reverse Closing Keyframes */
+@keyframes hudLaserCloseLeft {
+  0% {
+    left: 0%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 1;
+  }
+  50% {
+    left: 50%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    left: 50%;
+    transform: translate(-50%, -50%) scaleY(0) translateZ(0);
+    opacity: 0;
+  }
+}
+
+@keyframes hudLaserCloseRight {
+  0% {
+    left: 100%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 1;
+  }
+  50% {
+    left: 50%;
+    transform: translate(-50%, -50%) scaleY(1) translateZ(0);
+    opacity: 1;
+  }
+  95% {
+    opacity: 1;
+  }
+  100% {
+    left: 50%;
+    transform: translate(-50%, -50%) scaleY(0) translateZ(0);
+    opacity: 0;
+  }
+}
+
+@keyframes hudMenuCollapseHorizontal {
+  0% {
+    transform: scaleX(1) translateZ(0);
+    opacity: 1;
+  }
+  99% {
+    transform: scaleX(0) translateZ(0);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(0) translateZ(0);
+    opacity: 0;
+  }
+}
+
+@keyframes hudBackdropFadeIn {
   0% {
     opacity: 0;
   }
@@ -278,23 +365,45 @@ canvas {
   }
 }
 
-.hud-laser-beam {
+@keyframes hudBackdropFadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+/* Laser Line Base Styles */
+.hud-laser-line {
   position: absolute;
   top: 50%;
-  left: 50%;
   width: 3px;
   height: 100%;
-  transform: translate(-50%, -50%) scaleY(0);
   transform-origin: center center;
   background: #ffffff;
   box-shadow: 0 0 10px #ffffff, 0 0 20px var(--accent-orange), 0 0 35px var(--accent-orange);
   pointer-events: none;
   z-index: 70;
-  will-change: transform, opacity;
+  will-change: left, transform, opacity;
   backface-visibility: hidden;
-  animation: 
-    hudLaserGrowVertical 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards,
-    hudLaserFadeOut 0.25s ease-out 0.3s forwards;
+}
+
+.hud-laser-line-left {
+  animation: hudLaserSplitLeft 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.hud-laser-line-right {
+  animation: hudLaserSplitRight 0.7s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Reverse Closing Overrides */
+.hud-laser-closing .hud-laser-line-left {
+  animation: hudLaserCloseLeft 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+}
+
+.hud-laser-closing .hud-laser-line-right {
+  animation: hudLaserCloseRight 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 .hud-laser-expand {
@@ -304,7 +413,11 @@ canvas {
   opacity: 0;
   will-change: transform, opacity;
   backface-visibility: hidden;
-  animation: hudMenuExpandHorizontal 0.28s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+  animation: hudMenuExpandHorizontal 0.25s cubic-bezier(0.16, 1, 0.3, 1) 0.3s forwards;
+}
+
+.hud-laser-closing .hud-laser-expand {
+  animation: hudMenuCollapseHorizontal 0.18s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
 }
 
 .hud-modal-wrapper,
@@ -315,6 +428,10 @@ canvas {
 
 .hud-backdrop-animate {
   will-change: opacity;
-  animation: hudBackdropFade 0.2s ease-out forwards;
+  animation: hudBackdropFadeIn 0.2s ease-out forwards;
+}
+
+.hud-backdrop-closing {
+  animation: hudBackdropFadeOut 0.35s ease-out forwards !important;
 }
 

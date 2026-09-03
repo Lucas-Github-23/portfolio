@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { ICON_VARIANTS, IconInfo, IconVariant } from "./DynamicFavicon";
 import { ShuffleIcon, CheckIcon, TargetIcon, XIcon } from "./Icons";
@@ -14,6 +14,16 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
   const { language } = useLanguage();
   const [currentMode, setCurrentMode] = useState<IconVariant>("random");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [isClosing, setIsClosing] = useState<boolean>(false);
+
+  const handleClose = useCallback(() => {
+    if (isClosing) return;
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+      setIsClosing(false);
+    }, 350);
+  }, [isClosing, onClose]);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -24,7 +34,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     };
     if (isOpen) {
       window.addEventListener("keydown", handleKeyDown);
@@ -34,7 +44,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "unset";
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, handleClose]);
 
   const selectVariant = (variant: IconVariant, name: string) => {
     setCurrentMode(variant);
@@ -49,16 +59,19 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  if (!isOpen) return null;
+  if (!isOpen && !isClosing) return null;
 
   return (
     <div
-      onClick={onClose}
-      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 hud-backdrop-animate select-none"
+      onClick={handleClose}
+      className={`fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 select-none ${
+        isClosing ? "hud-backdrop-closing" : "hud-backdrop-animate"
+      }`}
     >
-      <div className="w-full max-w-3xl relative">
-        {/* Central laser beam: grows from center point up & down in 0.3s */}
-        <div className="hud-laser-beam" />
+      <div className={`w-full max-w-3xl relative ${isClosing ? "hud-laser-closing" : ""}`}>
+        {/* Dual split laser lines: start merged at center, grow up & down, split outwards tracking the borders */}
+        <div className="hud-laser-line hud-laser-line-left" />
+        <div className="hud-laser-line hud-laser-line-right" />
 
         {/* Modal body: expands sideways only after 0.3s */}
         <div className="hud-laser-expand w-full">
@@ -85,7 +98,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
               </div>
             </div>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="p-1.5 border border-[var(--border-grid)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-colors hud-panel-sm"
               aria-label="Close icon modal"
             >
@@ -237,7 +250,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={onClose}
+                onClick={handleClose}
                 className="px-4 py-1.5 bg-[var(--surface-dark)] border border-[var(--border-grid)] text-[var(--text-primary)] hover:bg-[var(--surface-panel)] text-xs font-bold uppercase transition-colors flex items-center gap-1.5"
               >
                 <CheckIcon className="w-3.5 h-3.5 text-[var(--accent-green)]" />

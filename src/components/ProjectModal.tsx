@@ -29,12 +29,31 @@ export function ProjectModal({
   onClose: () => void;
 }) {
   const { language, t } = useLanguage();
+  const [activeProject, setActiveProject] = React.useState<ProjectData | null>(project);
+  const [isClosing, setIsClosing] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    if (project) {
+      setActiveProject(project);
+      setIsClosing(false);
+    }
+  }, [project]);
+
+  const handleClose = React.useCallback(() => {
+    if (isClosing || !activeProject) return;
+    setIsClosing(true);
+    setTimeout(() => {
+      onClose();
+      setActiveProject(null);
+      setIsClosing(false);
+    }, 350);
+  }, [isClosing, activeProject, onClose]);
 
   React.useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
+      if (e.key === "Escape") handleClose();
     };
-    if (project) {
+    if (activeProject) {
       window.addEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "hidden";
     }
@@ -42,21 +61,24 @@ export function ProjectModal({
       window.removeEventListener("keydown", handleKeyDown);
       document.body.style.overflow = "unset";
     };
-  }, [project, onClose]);
+  }, [activeProject, handleClose]);
 
-  if (!project) return null;
+  if (!activeProject) return null;
 
-  const title = language === "pt" ? project.titlePt : project.titleEn;
-  const description = language === "pt" ? project.fullDescPt : project.fullDescEn;
+  const title = language === "pt" ? activeProject.titlePt : activeProject.titleEn;
+  const description = language === "pt" ? activeProject.fullDescPt : activeProject.fullDescEn;
 
   return (
     <div
-      onClick={onClose}
-      className="fixed inset-0 z-50 bg-black/85 hud-backdrop-animate flex items-center justify-center p-3 sm:p-4 select-none"
+      onClick={handleClose}
+      className={`fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-3 sm:p-4 select-none ${
+        isClosing ? "hud-backdrop-closing" : "hud-backdrop-animate"
+      }`}
     >
-      <div className="w-full max-w-2xl relative">
-        {/* Central laser beam: grows from center point up & down in 0.3s */}
-        <div className="hud-laser-beam" />
+      <div className={`w-full max-w-2xl relative ${isClosing ? "hud-laser-closing" : ""}`}>
+        {/* Dual split laser lines: start merged at center, grow up & down, split outwards tracking the borders */}
+        <div className="hud-laser-line hud-laser-line-left" />
+        <div className="hud-laser-line hud-laser-line-right" />
 
         {/* Modal body: expands sideways only after 0.3s */}
         <div className="hud-laser-expand w-full">
@@ -70,8 +92,8 @@ export function ProjectModal({
             <div className="min-w-0 flex-1">
               <div className="text-[10px] text-[var(--accent-orange)] font-bold tracking-widest uppercase flex items-center gap-1.5 flex-wrap">
                 <ShieldAlertIcon className="w-4 h-4 text-[var(--accent-orange)] shrink-0" />
-                <span>{project.clearance}</span>
-                {project.isPlaceholder && (
+                <span>{activeProject.clearance}</span>
+                {activeProject.isPlaceholder && (
                   <span className="placeholder-tag">
                     {t.projects.placeholderTagFull}
                   </span>
@@ -82,7 +104,7 @@ export function ProjectModal({
               </h3>
             </div>
             <button
-              onClick={onClose}
+              onClick={handleClose}
               className="px-3 py-1.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs tracking-wider uppercase hud-button hover:bg-orange-600 transition-colors shrink-0"
             >
               {t.projects.closeModal}
@@ -92,17 +114,17 @@ export function ProjectModal({
           {/* Status Tag & Category */}
           <div className="flex items-center gap-3 font-mono text-xs">
             <span className="px-2.5 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] font-bold uppercase">
-              STATUS: {project.status}
+              STATUS: {activeProject.status}
             </span>
             <span className="text-[var(--text-secondary)] uppercase">
-              CATEGORY: {project.category}
+              CATEGORY: {activeProject.category}
             </span>
           </div>
 
           {/* Detailed Narrative */}
           <div className="space-y-3 font-mono text-sm text-[var(--text-primary)] leading-relaxed">
             <p className="border-l-2 border-[var(--accent-orange)] pl-3 italic text-[var(--text-secondary)]">
-              &quot;Classified operational dossier details for deployment {project.id}. All technical specifications verified.&quot;
+              &quot;Classified operational dossier details for deployment {activeProject.id}. All technical specifications verified.&quot;
             </p>
             <p>{description}</p>
           </div>
@@ -113,7 +135,7 @@ export function ProjectModal({
               TECHNOLOGY STACK INTEGRATION:
             </span>
             <div className="flex flex-wrap gap-2">
-              {project.techStack.map((tech) => (
+              {activeProject.techStack.map((tech) => (
                 <span
                   key={tech}
                   className="px-2.5 py-1 bg-[var(--bg-main)] border border-[var(--border-grid)] text-[var(--accent-orange)] text-xs font-bold uppercase"
@@ -126,9 +148,9 @@ export function ProjectModal({
 
           {/* Links */}
           <div className="flex flex-wrap gap-3 pt-4 border-t border-[var(--border-grid)] font-mono">
-            {project.liveUrl && (
+            {activeProject.liveUrl && (
               <a
-                href={project.liveUrl}
+                href={activeProject.liveUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-5 py-2.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs uppercase hud-button flex items-center gap-2 hover:bg-orange-600 transition-all shadow-[0_0_15px_var(--accent-orange-glow)] active:scale-95"
@@ -137,9 +159,9 @@ export function ProjectModal({
                 <span>{t.projects.liveDemo}</span>
               </a>
             )}
-            {project.repoUrl && (
+            {activeProject.repoUrl && (
               <a
-                href={project.repoUrl}
+                href={activeProject.repoUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-5 py-2.5 bg-[var(--bg-main)] border-2 border-[var(--accent-green)] text-[var(--accent-green)] hover:bg-[var(--accent-green)] hover:text-black font-extrabold text-xs uppercase hud-button flex items-center gap-2 transition-all shadow-[0_0_10px_var(--accent-green-glow)] active:scale-95"

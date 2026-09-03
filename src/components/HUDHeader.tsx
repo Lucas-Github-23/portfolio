@@ -23,8 +23,31 @@ export function HUDHeader() {
   const [timeString, setTimeString] = useState<string>("");
   const [logoClicks, setLogoClicks] = useState<number>(0);
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
+  const [isMenuClosing, setIsMenuClosing] = useState<boolean>(false);
   const [iconModalOpen, setIconModalOpen] = useState<boolean>(false);
   const [iconVariant, setIconVariant] = useState<IconVariant>("random");
+
+  const closeMobileMenu = (callback?: () => void) => {
+    if (isMenuClosing) return;
+    if (!mobileMenuOpen) {
+      if (callback) callback();
+      return;
+    }
+    setIsMenuClosing(true);
+    setTimeout(() => {
+      setMobileMenuOpen(false);
+      setIsMenuClosing(false);
+      if (callback) callback();
+    }, 350);
+  };
+
+  const toggleMobileMenu = () => {
+    if (mobileMenuOpen) {
+      closeMobileMenu();
+    } else {
+      setMobileMenuOpen(true);
+    }
+  };
 
   const handleLogoClick = () => {
     const nextClicks = logoClicks + 1;
@@ -36,8 +59,7 @@ export function HUDHeader() {
   };
 
   const handleNavClick = (id: (typeof navItems)[number]["id"]) => {
-    setActiveSection(id);
-    setMobileMenuOpen(false);
+    closeMobileMenu(() => setActiveSection(id));
   };
 
   useEffect(() => {
@@ -137,7 +159,7 @@ export function HUDHeader() {
           <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-xs shrink-0 whitespace-nowrap">
             {/* Mobile Menu Toggle Button */}
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              onClick={toggleMobileMenu}
               className="lg:hidden px-2.5 py-1.5 bg-[var(--surface-panel)] border border-[var(--border-grid)] text-[var(--accent-orange)] font-bold text-xs uppercase hud-panel-sm hover:border-[var(--accent-orange)] transition-colors flex items-center gap-1 active:scale-95"
               aria-label="Toggle Mobile Navigation"
             >
@@ -222,17 +244,20 @@ export function HUDHeader() {
         </div>
 
         {/* Mobile Navigation Drawer */}
-        {mobileMenuOpen && (
+        {(mobileMenuOpen || isMenuClosing) && (
           <>
             {/* Backdrop for outside click */}
             <div
-              onClick={() => setMobileMenuOpen(false)}
-              className="lg:hidden fixed inset-0 top-[76px] bg-black/75 backdrop-blur-sm z-40 hud-backdrop-animate"
+              onClick={() => closeMobileMenu()}
+              className={`lg:hidden fixed inset-0 top-[76px] bg-black/75 backdrop-blur-sm z-40 ${
+                isMenuClosing ? "hud-backdrop-closing" : "hud-backdrop-animate"
+              }`}
             />
 
-            <div className="absolute top-full left-0 right-0 w-full z-50 lg:hidden shadow-2xl relative">
-              {/* Central laser beam: grows from center point up & down in 0.3s */}
-              <div className="hud-laser-beam" />
+            <div className={`absolute top-full left-0 right-0 w-full z-50 lg:hidden shadow-2xl relative ${isMenuClosing ? "hud-laser-closing" : ""}`}>
+              {/* Dual split laser lines: start merged at center, grow up & down, split outwards tracking the borders */}
+              <div className="hud-laser-line hud-laser-line-left" />
+              <div className="hud-laser-line hud-laser-line-right" />
 
               {/* Menu body: expands sideways only after 0.3s */}
               <div className="hud-laser-expand w-full">
@@ -262,8 +287,7 @@ export function HUDHeader() {
                   {/* Icon Selector Button with Active Status Visibility */}
                   <button
                     onClick={() => {
-                      setIconModalOpen(true);
-                      setMobileMenuOpen(false);
+                      closeMobileMenu(() => setIconModalOpen(true));
                     }}
                     className="w-full py-2.5 px-3 border border-[var(--accent-orange)] bg-[var(--surface-panel)] text-[var(--text-primary)] font-bold text-xs uppercase hud-button flex items-center justify-between gap-2 active:scale-95 transition-transform"
                   >
@@ -298,8 +322,7 @@ export function HUDHeader() {
 
                     <button
                       onClick={() => {
-                        toggleEmergency();
-                        setMobileMenuOpen(false);
+                        closeMobileMenu(() => toggleEmergency());
                       }}
                       className="flex-1 py-2 px-3 bg-[var(--accent-red)] text-black font-black text-xs uppercase hud-button flex items-center justify-center gap-1.5 shadow-[0_0_10px_var(--accent-red-glow)] active:scale-95 transition-transform sm:hidden"
                     >
