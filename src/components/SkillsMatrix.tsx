@@ -41,7 +41,7 @@ export function SkillsMatrix() {
   };
 
   return (
-    <section id="skills" className="py-16 border-b border-[var(--border-grid)]">
+    <section id="skills" className="py-12 sm:py-16">
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="mb-10 text-center max-w-2xl mx-auto">

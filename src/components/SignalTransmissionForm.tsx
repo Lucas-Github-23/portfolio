@@ -28,7 +28,7 @@ export function SignalTransmissionForm() {
   };
 
   return (
-    <section id="contact" className="py-16 border-b border-[var(--border-grid)] bg-[var(--bg-main)]">
+    <section id="contact" className="py-12 sm:py-16">
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="mb-12 text-center max-w-2xl mx-auto">

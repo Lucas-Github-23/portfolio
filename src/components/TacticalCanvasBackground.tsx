@@ -57,9 +57,17 @@ export function TacticalCanvasBackground() {
     let lastValidPointerY = height * 0.5;
 
     let scrollY = window.scrollY || 0;
+    let smoothHeight = height;
 
-    // Handle Window Resize
+    // Handle Window Resize (ignore mobile URL bar toggles to prevent jarring teleports)
     const handleResize = () => {
+      const newWidth = window.innerWidth;
+      const newHeight = window.innerHeight;
+      const isMobile = newWidth < 768;
+      const isAddressBarToggle = isMobile && Math.abs(newWidth - width) < 5 && Math.abs(newHeight - height) < 150;
+      if (isAddressBarToggle) {
+        return;
+      }
       setupCanvasSize();
     };
 
@@ -214,8 +222,6 @@ export function TacticalCanvasBackground() {
     window.addEventListener("touchend", handleTouchEnd, { passive: true });
     window.addEventListener("touchcancel", handleTouchCancel, { passive: true });
     window.addEventListener("mouseleave", handleTouchCancel);
-    window.visualViewport?.addEventListener("resize", handleResize);
-    window.visualViewport?.addEventListener("scroll", handleScroll);
 
     interface Particle {
       x: number;
@@ -285,6 +291,8 @@ export function TacticalCanvasBackground() {
         }
       }
 
+      smoothHeight += (height - smoothHeight) * 0.05;
+
       bgCtx.clearRect(0, 0, width, height);
       fgCtx.clearRect(0, 0, width, height);
 
@@ -299,10 +307,10 @@ export function TacticalCanvasBackground() {
         bgCtx.save();
         bgCtx.globalAlpha = ramielOpacity * (isLight ? 0.95 : 0.9);
 
-        // Position Ramiel on left-center side clear of Sync widget
+        // Position Ramiel on left-center side clear of Sync widget (using smoothHeight to prevent mobile jitter)
         const cx = width > 1024 ? width * 0.32 : isMobile ? width * 0.50 : width * 0.40;
-        const cy = width > 1024 ? height * 0.38 : isMobile ? height * 0.30 : height * 0.35;
-        const radius = Math.min(width, height) * (width > 1024 ? 0.16 : isMobile ? 0.22 : 0.18);
+        const cy = width > 1024 ? smoothHeight * 0.38 : isMobile ? smoothHeight * 0.30 : smoothHeight * 0.35;
+        const radius = Math.min(width, smoothHeight) * (width > 1024 ? 0.16 : isMobile ? 0.22 : 0.18);
 
         // Proximity / Hover Detection (Only when user pointer is actually active on screen)
         const distToMouse = hasActivePointer ? Math.hypot(mouseX - cx, mouseY - cy) : 99999;
@@ -532,8 +540,8 @@ export function TacticalCanvasBackground() {
 
         const isMobileScreen = width < 768;
         const moonX = width > 1024 ? width * 0.68 : isMobileScreen ? width * 0.50 : width * 0.55;
-        const moonY = height * (isMobileScreen ? 0.65 : 0.60);
-        const moonRadius = Math.min(width, height) * (isMobileScreen ? 0.25 : 0.22);
+        const moonY = smoothHeight * (isMobileScreen ? 0.65 : 0.60);
+        const moonRadius = Math.min(width, smoothHeight) * (isMobileScreen ? 0.25 : 0.22);
 
         bgCtx.beginPath();
         bgCtx.arc(moonX, moonY, moonRadius, 0, Math.PI * 2);
@@ -892,8 +900,6 @@ export function TacticalCanvasBackground() {
       window.removeEventListener("touchend", handleTouchEnd);
       window.removeEventListener("touchcancel", handleTouchCancel);
       window.removeEventListener("mouseleave", handleTouchCancel);
-      window.visualViewport?.removeEventListener("resize", handleResize);
-      window.visualViewport?.removeEventListener("scroll", handleScroll);
       cancelAnimationFrame(animationFrameId);
     };
   }, []);

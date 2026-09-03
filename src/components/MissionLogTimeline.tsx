@@ -60,7 +60,7 @@ export function MissionLogTimeline() {
   ];
 
   return (
-    <section id="experience" className="py-16 border-b border-[var(--border-grid)] bg-[var(--bg-main)]">
+    <section id="experience" className="py-12 sm:py-16">
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
         <div className="mb-12 text-center max-w-2xl mx-auto">
@@ -77,7 +77,7 @@ export function MissionLogTimeline() {
         </div>
 
         {/* Vertical Tactical Timeline */}
-        <div className="max-w-4xl mx-auto relative pl-5 sm:pl-6 md:pl-8 border-l-2 border-[var(--accent-orange)] space-y-8 sm:space-y-10 font-mono ml-3 sm:ml-auto">
+        <div className="max-w-4xl mx-auto relative pl-5 sm:pl-6 md:pl-8 border-l-2 border-[var(--accent-orange)] space-y-8 sm:space-y-10 font-mono">
           {timelineData.map((item) => {
             const year = language === "pt" ? item.yearPt : item.yearEn;
             const org = language === "pt" ? item.orgPt : item.orgEn;
