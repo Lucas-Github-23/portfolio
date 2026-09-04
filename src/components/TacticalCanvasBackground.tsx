@@ -31,6 +31,7 @@ export function TacticalCanvasBackground() {
     let dpr = Math.min(typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1, 1.5);
     let width = typeof window !== "undefined" ? window.innerWidth : 1200;
     let height = typeof window !== "undefined" ? window.innerHeight : 800;
+    let smoothHeight = height;
 
     const setupCanvasSize = () => {
       if (!bgCanvas || !fgCanvas || !bgCtx || !fgCtx) return;
@@ -62,7 +63,6 @@ export function TacticalCanvasBackground() {
     let lastValidPointerY = height * 0.5;
 
     let scrollY = window.scrollY || 0;
-    let smoothHeight = height;
 
     // Handle Window Resize (ignore mobile URL bar toggles to prevent jarring teleports)
     const handleResize = () => {
