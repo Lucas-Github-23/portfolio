@@ -23,8 +23,8 @@ export function MissionLogTimeline() {
   const timelineData: TimelineItem[] = [
     {
       id: "LOG-CURRENT",
-      yearEn: "IN PROGRESS",
-      yearPt: "EM ANDAMENTO",
+      yearEn: "2026 - PRESENT",
+      yearPt: "2026 - PRESENTE",
       roleEn: "Software Engineering Degree",
       rolePt: "Bacharelado em Engenharia de Software",
       orgEn: "UNICESUMAR",
