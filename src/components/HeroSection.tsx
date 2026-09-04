@@ -5,8 +5,13 @@ import { useLanguage } from "@/context/LanguageContext";
 import { CpuIcon, ActivityIcon, TerminalIcon } from "./Icons";
 
 export function HeroSection() {
-  const { t } = useLanguage();
+  const { t, setActiveSection } = useLanguage();
   const [syncRate, setSyncRate] = useState<number>(98.4);
+
+  const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: "projects" | "contact") => {
+    e.preventDefault();
+    setActiveSection(id);
+  };
 
   useEffect(() => {
     // Subtle organic fluctuation in sync rate for tactical feel
@@ -54,14 +59,16 @@ export function HeroSection() {
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 font-mono">
             <a
               href="#projects"
-              className="w-full sm:w-auto px-6 py-3.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs md:text-sm tracking-wider uppercase hud-button hover:bg-orange-600 transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_var(--accent-orange-glow)] text-center"
+              onClick={(e) => handleScrollTo(e, "projects")}
+              className="w-full sm:w-auto px-6 py-3.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs md:text-sm tracking-wider uppercase hud-button hover:bg-orange-600 transition-all flex items-center justify-center gap-2 shadow-[0_0_15px_var(--accent-orange-glow)] text-center cursor-pointer"
             >
               <CpuIcon className="w-4 h-4" />
               {t.hero.ctaProjects}
             </a>
             <a
               href="#contact"
-              className="w-full sm:w-auto px-6 py-3.5 bg-[var(--surface-panel)] border border-[var(--border-bright)] text-[var(--text-primary)] font-bold text-xs md:text-sm tracking-wider uppercase hud-button hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-all flex items-center justify-center gap-2 text-center"
+              onClick={(e) => handleScrollTo(e, "contact")}
+              className="w-full sm:w-auto px-6 py-3.5 bg-[var(--surface-panel)] border border-[var(--border-bright)] text-[var(--text-primary)] font-bold text-xs md:text-sm tracking-wider uppercase hud-button hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] transition-all flex items-center justify-center gap-2 text-center cursor-pointer"
             >
               <TerminalIcon className="w-4 h-4" />
               {t.hero.ctaContact}
