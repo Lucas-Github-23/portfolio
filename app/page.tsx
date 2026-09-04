@@ -13,7 +13,7 @@ import { TacticalCanvasBackground } from "@/components/TacticalCanvasBackground"
 
 export default function Home() {
   return (
-    <div className="relative min-h-screen flex flex-col selection:bg-[var(--accent-orange)] selection:text-black overflow-x-hidden">
+    <div className="relative min-h-screen flex flex-col selection:bg-[var(--accent-orange)] selection:text-black overflow-x-clip">
       <TacticalCanvasBackground />
       <HUDHeader />
 

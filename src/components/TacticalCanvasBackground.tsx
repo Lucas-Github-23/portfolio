@@ -36,7 +36,12 @@ export function TacticalCanvasBackground() {
       if (!bgCanvas || !fgCanvas || !bgCtx || !fgCtx) return;
       dpr = Math.min(window.devicePixelRatio || 1, 1.5);
       width = window.innerWidth;
-      height = window.innerHeight;
+      const isMobile = width < 768;
+      // On mobile, lock height to the largest stable viewport so address bar show/hide NEVER shifts 3D coordinates
+      height = isMobile
+        ? Math.max(window.innerHeight, window.screen?.height ? Math.min(window.screen.height, window.innerHeight + 150) : window.innerHeight)
+        : window.innerHeight;
+      smoothHeight = height;
 
       bgCanvas.width = Math.floor(width * dpr);
       bgCanvas.height = Math.floor(height * dpr);
@@ -62,10 +67,10 @@ export function TacticalCanvasBackground() {
     // Handle Window Resize (ignore mobile URL bar toggles to prevent jarring teleports)
     const handleResize = () => {
       const newWidth = window.innerWidth;
-      const newHeight = window.innerHeight;
       const isMobile = newWidth < 768;
-      const isAddressBarToggle = isMobile && Math.abs(newWidth - width) < 5 && Math.abs(newHeight - height) < 150;
-      if (isAddressBarToggle) {
+      // On mobile, completely ignore height fluctuations caused by browser address bar show/hide
+      // Only re-setup if width actually changes (e.g. screen orientation change)
+      if (isMobile && Math.abs(newWidth - width) < 20) {
         return;
       }
       setupCanvasSize();
@@ -291,12 +296,12 @@ export function TacticalCanvasBackground() {
         }
       }
 
-      smoothHeight += (height - smoothHeight) * 0.05;
+      smoothHeight = height;
 
       bgCtx.clearRect(0, 0, width, height);
       fgCtx.clearRect(0, 0, width, height);
 
-      const maxScroll = Math.max(1, document.body.scrollHeight - window.innerHeight);
+      const maxScroll = Math.max(1, document.body.scrollHeight - height);
       const actualRatio = Math.min(1, Math.max(0, scrollY / maxScroll));
       currentRatio += (actualRatio - currentRatio) * 0.08;
       const scrollRatio = currentRatio;
@@ -907,7 +912,7 @@ export function TacticalCanvasBackground() {
   return (
     <>
       {/* Background Canvas: Ramiel, Moon, Mouse-Follow Ripples & Particles at z-0 */}
-      <div className="fixed inset-0 w-full h-full h-[100dvh] pointer-events-none z-0 overflow-hidden select-none touch-none">
+      <div className="fixed top-0 left-0 w-full h-screen h-[100lvh] pointer-events-none z-0 overflow-hidden select-none touch-none">
         <canvas
           ref={bgCanvasRef}
           className="w-full h-full pointer-events-none opacity-90 transition-opacity duration-500 select-none"
@@ -915,7 +920,7 @@ export function TacticalCanvasBackground() {
       </div>
 
       {/* Foreground Overlay Canvas: ONLY Click AT-Field Impact Rings at z-[9998] */}
-      <div className="fixed inset-0 w-full h-full h-[100dvh] pointer-events-none z-[9998] overflow-hidden select-none touch-none">
+      <div className="fixed top-0 left-0 w-full h-screen h-[100lvh] pointer-events-none z-[9998] overflow-hidden select-none touch-none">
         <canvas
           ref={fgCanvasRef}
           className="w-full h-full pointer-events-none opacity-95 transition-opacity duration-500 select-none"

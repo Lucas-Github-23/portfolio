@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { SunIcon, MoonIcon, ShieldAlertIcon, MonitorIcon, LayersIcon } from "./Icons";
 import { IconPreviewModal } from "./IconPreviewModal";
@@ -27,6 +27,59 @@ export function HUDHeader() {
   const [iconModalOpen, setIconModalOpen] = useState<boolean>(false);
   const [iconVariant, setIconVariant] = useState<IconVariant>("random");
 
+  const [headerVisible, setHeaderVisible] = useState<boolean>(true);
+  const lastScrollY = useRef<number>(0);
+  const scrollLockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Lock body scroll when mobile menu is open so interacting with menu doesn't scroll page underneath
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
+
+  // Smart Header Scroll: appears on scroll up, hides on scroll down, always visible at top or when menu is open
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = Math.max(0, window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0);
+
+      // Keep header visible when mobile menu is active
+      if (mobileMenuOpen || isMenuClosing) {
+        setHeaderVisible(true);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      // Always visible near the top
+      if (currentScrollY <= 40) {
+        setHeaderVisible(true);
+        lastScrollY.current = currentScrollY;
+        return;
+      }
+
+      const delta = currentScrollY - lastScrollY.current;
+
+      // Scrolling down significantly -> hide header
+      if (delta > 6 && currentScrollY > 70) {
+        setHeaderVisible(false);
+      }
+      // Scrolling up -> reveal header immediately!
+      else if (delta < -6) {
+        setHeaderVisible(true);
+      }
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [mobileMenuOpen, isMenuClosing]);
+
   const closeMobileMenu = (callback?: () => void) => {
     if (isMenuClosing) return;
     if (!mobileMenuOpen) {
@@ -45,6 +98,7 @@ export function HUDHeader() {
     if (mobileMenuOpen) {
       closeMobileMenu();
     } else {
+      setHeaderVisible(true);
       setMobileMenuOpen(true);
     }
   };
@@ -59,7 +113,15 @@ export function HUDHeader() {
   };
 
   const handleNavClick = (id: (typeof navItems)[number]["id"]) => {
-    closeMobileMenu(() => setActiveSection(id));
+    setHeaderVisible(true);
+    closeMobileMenu(() => {
+      setActiveSection(id);
+      setHeaderVisible(true);
+      if (scrollLockTimeoutRef.current) clearTimeout(scrollLockTimeoutRef.current);
+      scrollLockTimeoutRef.current = setTimeout(() => {
+        lastScrollY.current = Math.max(0, window.scrollY || 0);
+      }, 1000);
+    });
   };
 
   useEffect(() => {
@@ -101,7 +163,11 @@ export function HUDHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 bg-[var(--bg-main)]/90 backdrop-blur-md border-b border-[var(--border-grid)] shadow-md transition-colors relative">
+      <header
+        className={`fixed top-0 left-0 right-0 z-50 bg-[var(--bg-main)]/90 backdrop-blur-md border-b border-[var(--border-grid)] shadow-md transition-transform duration-300 ease-in-out ${
+          headerVisible ? "translate-y-0" : "-translate-y-full"
+        }`}
+      >
         {/* Top Warning Ribbon */}
         <div className="w-full bg-[var(--accent-orange)] text-black font-mono text-[10px] md:text-xs py-0.5 px-3 md:px-4 flex justify-between items-center font-bold tracking-widest uppercase overflow-hidden">
           <span className="truncate pr-2">
@@ -254,14 +320,14 @@ export function HUDHeader() {
               }`}
             />
 
-            <div className={`absolute top-full left-0 right-0 w-full z-50 lg:hidden shadow-2xl relative ${isMenuClosing ? "hud-laser-closing" : ""}`}>
+            <div className={`absolute top-full left-0 right-0 w-full z-50 lg:hidden shadow-2xl ${isMenuClosing ? "hud-laser-closing" : ""}`}>
               {/* Dual split laser lines: start merged at center, grow up & down, split outwards tracking the borders */}
               <div className="hud-laser-line hud-laser-line-left" />
               <div className="hud-laser-line hud-laser-line-right" />
 
               {/* Menu body: expands sideways only after 0.3s */}
               <div className="hud-laser-expand w-full">
-                <div className="bg-[var(--bg-main)]/98 backdrop-blur-xl border-2 border-[var(--accent-orange)] hud-panel p-3 sm:p-4 space-y-3">
+                <div className="bg-[var(--bg-main)]/98 backdrop-blur-xl border-2 border-[var(--accent-orange)] hud-panel p-3 sm:p-4 space-y-3 max-h-[calc(100vh-85px)] max-h-[calc(100lvh-85px)] overflow-y-auto">
                   <div className="grid grid-cols-2 gap-2 font-mono text-xs">
                   {navItems.map((item) => {
                     const isActive = activeSection === item.id;
@@ -337,6 +403,9 @@ export function HUDHeader() {
         </>
         )}
       </header>
+
+      {/* Header Spacer to preserve natural flow layout and hero clearance */}
+      <div className="h-[76px] sm:h-[80px] md:h-[84px] w-full shrink-0 pointer-events-none" aria-hidden="true" />
 
       {/* Interactive Icon Selector & Live Preview Modal */}
       <IconPreviewModal
