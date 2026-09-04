@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage, EvaUnit } from "@/context/LanguageContext";
 import { ShieldAlertIcon } from "./Icons";
 
 // Konami Code sequence: Up, Up, Down, Down, Left, Right, Left, Right, b, a
@@ -18,12 +18,49 @@ const KONAMI_CODE = [
   "a",
 ];
 
+interface PilotInfo {
+  name: string;
+  unit: string;
+  sync: string;
+}
+
+const THEMED_PILOTS: Record<Exclude<EvaUnit, "nerv">, PilotInfo> = {
+  "eva-01": { name: "SHINJI IKARI", unit: "EVA-01 TEST TYPE", sync: "99.8%" },
+  "eva-02": { name: "ASUKA LANGLEY", unit: "EVA-02 PRODUCTION", sync: "102.4%" },
+  "eva-00": { name: "REI AYANAMI", unit: "EVA-00 PROTOTYPE", sync: "89.5%" },
+};
+
+const RANDOM_NERV_PILOTS: PilotInfo[] = [
+  { name: "SHINJI IKARI", unit: "EVA-01 TEST TYPE", sync: "99.8%" },
+  { name: "ASUKA LANGLEY", unit: "EVA-02 PRODUCTION", sync: "102.4%" },
+  { name: "REI AYANAMI", unit: "EVA-00 PROTOTYPE", sync: "89.5%" },
+  { name: "KAWORU NAGISA", unit: "EVA MARK.06", sync: "100.0%" },
+  { name: "MARI MAKINAMI", unit: "EVA-08 PRODUCTION", sync: "95.2%" },
+  { name: "TOJI SUZUHARA", unit: "EVA-03 ARMED", sync: "64.1%" },
+];
+
+function getPilotForTheme(unit: EvaUnit): PilotInfo {
+  if (unit !== "nerv" && THEMED_PILOTS[unit]) {
+    return THEMED_PILOTS[unit];
+  }
+  const randomIndex = Math.floor(Math.random() * RANDOM_NERV_PILOTS.length);
+  return RANDOM_NERV_PILOTS[randomIndex];
+}
+
 export function AngelAttackOverlay() {
-  const { language } = useLanguage();
+  const { language, evaUnit } = useLanguage();
   const [active, setActive] = useState<boolean>(false);
   const [konamiIndex, setKonamiIndex] = useState<number>(0);
+  const [currentPilot, setCurrentPilot] = useState<PilotInfo>(() => getPilotForTheme(evaUnit));
 
-  // Listen for Konami Code sequence
+  // Update or randomize pilot whenever overlay activates or theme changes
+  useEffect(() => {
+    if (active) {
+      setCurrentPilot(getPilotForTheme(evaUnit));
+    }
+  }, [active, evaUnit]);
+
+  // Listen for Konami Code sequence and secret triggers
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       const expectedKey = KONAMI_CODE[konamiIndex];
@@ -63,10 +100,10 @@ export function AngelAttackOverlay() {
   return (
     <div className="fixed inset-0 z-[10000] bg-black/95 backdrop-blur-lg flex flex-col justify-between p-4 overflow-hidden border-8 border-[var(--accent-red)] hud-backdrop-animate select-none">
       {/* Top Banner Scrolling Warning */}
-      <div className="w-full bg-[var(--accent-red)] text-black font-black font-mono text-sm md:text-base py-2 px-4 flex justify-between items-center tracking-widest uppercase shadow-lg">
+      <div className="w-full bg-[var(--accent-red)] text-black font-black font-mono text-xs sm:text-sm md:text-base py-2 px-4 flex justify-between items-center tracking-widest uppercase shadow-lg">
         <span className="animate-pulse">EMERGENCY ALERT // MAGI SYSTEM</span>
-        <span>PATTERN BLUE IDENTIFIED</span>
-        <span className="hidden sm:inline">NERV HQ LEVEL 1 LOCKDOWN</span>
+        <span className="hidden sm:inline">PATTERN BLUE IDENTIFIED</span>
+        <span>NERV HQ LEVEL 1 LOCKDOWN</span>
       </div>
 
       {/* Center Tactical Warning Display */}
@@ -82,15 +119,23 @@ export function AngelAttackOverlay() {
 
         <p className="text-sm md:text-lg text-gray-200 leading-relaxed max-w-2xl mx-auto">
           {language === "pt"
-            ? "ALERTA MÁXIMO! Objeto não identificado cruzando a barreira de defesa do Geofront. Barreira de AT-Field ativada pelo Comando NERV."
-            : "MAXIMUM ALERT! Unidentified object penetrating Geofront defense barrier. AT-Field containment activated by NERV Command."}
+            ? `ALERTA MÁXIMO! Objeto não identificado cruzando a barreira de defesa do Geofront. Barreira de AT-Field ativada pelo Comando NERV. Piloto designado: ${currentPilot.name} (${currentPilot.unit}).`
+            : `MAXIMUM ALERT! Unidentified object penetrating Geofront defense barrier. AT-Field containment activated by NERV Command. Designated pilot: ${currentPilot.name} (${currentPilot.unit}).`}
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 py-4 text-xs font-bold text-black">
-          <div className="p-3 bg-[var(--accent-red)] hud-panel-sm">TARGET: RAMIEL</div>
-          <div className="p-3 bg-[var(--accent-orange)] hud-panel-sm">CODE: PATTERN BLUE</div>
-          <div className="p-3 bg-[var(--accent-green)] hud-panel-sm">SYNC: 99.8% READY</div>
-          <div className="p-3 bg-yellow-400 hud-panel-sm">PILOT: SHINJI</div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-3 py-3 sm:py-4 text-[10px] sm:text-xs font-bold text-black">
+          <div className="p-2.5 sm:p-3 bg-[var(--accent-red)] hud-panel-sm truncate">
+            {language === "pt" ? "ALVO: RAMIEL" : "TARGET: RAMIEL"}
+          </div>
+          <div className="p-2.5 sm:p-3 bg-[var(--accent-orange)] hud-panel-sm truncate">
+            {language === "pt" ? "CÓDIGO: PADRÃO AZUL" : "CODE: PATTERN BLUE"}
+          </div>
+          <div className="p-2.5 sm:p-3 bg-[var(--accent-green)] hud-panel-sm truncate">
+            {language === "pt" ? `SINCRO: ${currentPilot.sync} PRONTO` : `SYNC: ${currentPilot.sync} READY`}
+          </div>
+          <div className="p-2.5 sm:p-3 bg-yellow-400 hud-panel-sm truncate" title={currentPilot.name}>
+            {language === "pt" ? `PILOTO: ${currentPilot.name}` : `PILOT: ${currentPilot.name}`}
+          </div>
         </div>
 
         <div className="pt-4 flex flex-col sm:flex-row justify-center items-center gap-4">
@@ -104,8 +149,9 @@ export function AngelAttackOverlay() {
       </div>
 
       {/* Bottom Banner Warning */}
-      <div className="w-full bg-[var(--accent-red)] text-black font-black font-mono text-xs py-1.5 px-4 flex justify-between items-center tracking-widest uppercase">
+      <div className="w-full bg-[var(--accent-red)] text-black font-black font-mono text-[10px] sm:text-xs py-1.5 px-4 flex justify-between items-center tracking-widest uppercase">
         <span>NERV SECRET PROTOCOL UNLOCKED</span>
+        <span className="hidden sm:inline">UNIT INTERFACE: {currentPilot.unit}</span>
         <span>EASTER EGG ACTIVATED</span>
       </div>
     </div>
