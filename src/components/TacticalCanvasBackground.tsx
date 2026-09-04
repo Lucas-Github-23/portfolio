@@ -76,9 +76,14 @@ export function TacticalCanvasBackground() {
       setupCanvasSize();
     };
 
-    // Clean coordinate mapping
+    // Precise coordinate mapping from viewport client coordinates to canvas internal coordinates
     const getCanvasCoords = (clientX: number, clientY: number) => {
-      return { x: clientX, y: clientY };
+      const rect = fgCanvas.getBoundingClientRect();
+      if (!rect.width || !rect.height) return { x: clientX, y: clientY };
+      return {
+        x: (clientX - rect.left) * (width / rect.width),
+        y: (clientY - rect.top) * (height / rect.height),
+      };
     };
 
     let touchStartX = 0;
@@ -123,12 +128,13 @@ export function TacticalCanvasBackground() {
     const spawnImpactRing = (x: number, y: number) => {
       const isTopArea = y < 85;
       const isLight = themeRef.current === "light";
+      const isMobile = width < 768;
       atImpacts.push({
         x,
         y,
-        radius: isTopArea ? 4 : 8,
-        maxRadius: isTopArea ? 32 + Math.random() * 12 : 75 + Math.random() * 35,
-        opacity: isTopArea ? 0.45 : 0.9,
+        radius: isTopArea ? 3 : 5,
+        maxRadius: isTopArea ? 22 + Math.random() * 6 : isMobile ? 40 + Math.random() * 10 : 50 + Math.random() * 12,
+        opacity: isTopArea ? 0.45 : 0.85,
         color: isTopArea
           ? isLight ? "#008833" : "#00ff66"
           : Math.random() > 0.4
@@ -143,17 +149,19 @@ export function TacticalCanvasBackground() {
     const handleClick = (e: MouseEvent) => {
       // Ignore click if it was simulated from a mobile touch tap in the last 600ms
       if (Date.now() - lastTouchTime < 600) return;
-      targetMouseX = e.clientX;
-      targetMouseY = e.clientY;
-      lastValidPointerX = e.clientX;
-      lastValidPointerY = e.clientY;
-      spawnImpactRing(e.clientX, e.clientY);
+      const coords = getCanvasCoords(e.clientX, e.clientY);
+      targetMouseX = coords.x;
+      targetMouseY = coords.y;
+      lastValidPointerX = coords.x;
+      lastValidPointerY = coords.y;
+      spawnImpactRing(coords.x, coords.y);
     };
 
     const handleTouchStart = (e: TouchEvent) => {
       lastTouchTime = Date.now();
       if (e.touches.length > 0) {
         const touch = e.touches[0];
+        const coords = getCanvasCoords(touch.clientX, touch.clientY);
         touchStartX = touch.clientX;
         touchStartY = touch.clientY;
         touchStartTime = Date.now();
@@ -161,10 +169,10 @@ export function TacticalCanvasBackground() {
 
         // Only activate laser focus if touch starts in the top hero area where Ramiel is visible
         if (scrollY < 160) {
-          targetMouseX = touch.clientX;
-          targetMouseY = touch.clientY;
-          lastValidPointerX = touch.clientX;
-          lastValidPointerY = touch.clientY;
+          targetMouseX = coords.x;
+          targetMouseY = coords.y;
+          lastValidPointerX = coords.x;
+          lastValidPointerY = coords.y;
         }
       }
     };
@@ -186,10 +194,11 @@ export function TacticalCanvasBackground() {
 
         // Only track if user is holding still without scrolling
         if (!touchMoved && scrollY < 160) {
-          targetMouseX = touch.clientX;
-          targetMouseY = touch.clientY;
-          lastValidPointerX = touch.clientX;
-          lastValidPointerY = touch.clientY;
+          const coords = getCanvasCoords(touch.clientX, touch.clientY);
+          targetMouseX = coords.x;
+          targetMouseY = coords.y;
+          lastValidPointerX = coords.x;
+          lastValidPointerY = coords.y;
         }
       }
     };
@@ -202,9 +211,10 @@ export function TacticalCanvasBackground() {
       if (!touchMoved && elapsed < 350) {
         if (e.changedTouches.length > 0) {
           const touch = e.changedTouches[0];
-          spawnImpactRing(touch.clientX, touch.clientY);
-          lastValidPointerX = touch.clientX;
-          lastValidPointerY = touch.clientY;
+          const coords = getCanvasCoords(touch.clientX, touch.clientY);
+          spawnImpactRing(coords.x, coords.y);
+          lastValidPointerX = coords.x;
+          lastValidPointerY = coords.y;
         }
       }
       // Reset target coordinates so Ramiel morph decays smoothly
@@ -868,8 +878,8 @@ export function TacticalCanvasBackground() {
         fgCtx.globalAlpha = imp.opacity;
         fgCtx.strokeStyle = imp.color;
         fgCtx.shadowColor = imp.color;
-        fgCtx.shadowBlur = isMobile ? 0 : (imp.isTopArea ? 8 : 16);
-        fgCtx.lineWidth = imp.isTopArea ? 1.2 : 2.2;
+        fgCtx.shadowBlur = isMobile ? 0 : (imp.isTopArea ? 6 : 12);
+        fgCtx.lineWidth = imp.isTopArea ? 1.0 : (isMobile ? 1.4 : 1.8);
 
         const ringCount = imp.isTopArea ? 1 : 2;
         for (let ring = 0; ring < ringCount; ring++) {
