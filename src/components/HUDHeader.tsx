@@ -182,22 +182,22 @@ export function HUDHeader() {
         </div>
 
         {/* Main HUD Bar */}
-        <div className="max-w-7xl mx-auto px-3 md:px-4 py-2.5 min-h-[60px] md:min-h-[64px] flex items-center justify-between gap-2 md:gap-4">
+        <div className="max-w-7xl mx-auto px-2.5 sm:px-3 md:px-4 py-2 min-h-[56px] sm:min-h-[60px] md:min-h-[64px] flex items-center justify-between gap-2 md:gap-4">
           {/* Brand / Logo */}
-          <div className="flex items-center gap-2 md:gap-3 shrink-0">
+          <div className="flex items-center gap-2 md:gap-3 min-w-0 shrink">
             <div
               onClick={handleLogoClick}
-              className="w-8 h-8 bg-[var(--accent-orange)] text-black font-black text-xs flex items-center justify-center hud-panel-sm font-mono shadow-[0_0_10px_var(--accent-orange-glow)] cursor-pointer select-none hover:scale-105 active:scale-95 transition-transform shrink-0"
+              className="w-7 h-7 sm:w-8 sm:h-8 bg-[var(--accent-orange)] text-black font-black text-xs flex items-center justify-center hud-panel-sm font-mono shadow-[0_0_10px_var(--accent-orange-glow)] cursor-pointer select-none hover:scale-105 active:scale-95 transition-transform shrink-0"
               title="NERV HQ LOGO (Secret Click x5)"
             >
               NERV
             </div>
-            <div>
-              <div className="font-mono text-xs sm:text-sm md:text-base font-extrabold tracking-wider text-[var(--text-primary)] flex items-center gap-1.5 whitespace-nowrap">
-                LUCAS // {evaUnit === "nerv" ? "DEV-02" : evaUnit.toUpperCase()}
-                <span className="inline-block w-2 h-2 rounded-full bg-[var(--accent-green)] animate-ping" />
+            <div className="min-w-0">
+              <div className="font-mono text-xs sm:text-sm md:text-base font-extrabold tracking-wider text-[var(--text-primary)] flex items-center gap-1 sm:gap-1.5 whitespace-nowrap truncate">
+                <span className="truncate">LUCAS // {evaUnit === "nerv" ? "DEV-02" : evaUnit.toUpperCase()}</span>
+                <span className="inline-block w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[var(--accent-green)] animate-ping shrink-0" />
               </div>
-              <div className="font-mono text-[9px] sm:text-[10px] text-[var(--text-secondary)] tracking-widest uppercase whitespace-nowrap">
+              <div className="font-mono text-[8px] sm:text-[9px] md:text-[10px] text-[var(--text-secondary)] tracking-widest uppercase whitespace-nowrap truncate">
                 {t.hud.location}
               </div>
             </div>
@@ -225,20 +225,10 @@ export function HUDHeader() {
 
           {/* Controls: Language, Theme, EVA Sync, Icons, CRT & Mobile Menu */}
           <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-xs shrink-0 whitespace-nowrap">
-            {/* Mobile Menu Toggle Button */}
-            <button
-              onClick={toggleMobileMenu}
-              className="lg:hidden px-2.5 py-1.5 bg-[var(--surface-panel)] border border-[var(--border-grid)] text-[var(--accent-orange)] font-bold text-xs uppercase hud-panel-sm hover:border-[var(--accent-orange)] transition-colors flex items-center gap-1 active:scale-95"
-              aria-label="Toggle Mobile Navigation"
-            >
-              <span className="text-[10px]">{mobileMenuOpen ? "✕" : "☰"}</span>
-              <span>MENU</span>
-            </button>
-
-            {/* EVA Unit Sync Selector Button (Desktop) */}
+            {/* EVA Unit Sync Selector Button (Desktop & Tablet only) */}
             <button
               onClick={() => setEvaModalOpen(true)}
-              className="p-1.5 px-2 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm flex items-center gap-1.5 text-[10px] font-bold"
+              className="hidden md:flex p-1.5 px-2 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm items-center gap-1.5 text-[10px] font-bold"
               title={language === "pt" ? "Sincronização de Unidade EVA" : "EVA Unit Synchronization"}
             >
               <span className="w-2 h-2 rounded-full bg-[var(--accent-orange)] animate-pulse" />
@@ -248,10 +238,10 @@ export function HUDHeader() {
               </span>
             </button>
 
-            {/* Icon Preview / Selector Button (Desktop) */}
+            {/* Icon Preview / Selector Button (Desktop & Tablet only) */}
             <button
               onClick={() => setIconModalOpen(true)}
-              className="p-1.5 px-2 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm flex items-center gap-1.5 text-[10px] font-bold"
+              className="hidden md:flex p-1.5 px-2 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm items-center gap-1.5 text-[10px] font-bold"
               title={language === "pt" ? "Visualizar e Trocar Ícones HUD" : "View & Switch HUD Icons"}
             >
               <LayersIcon className="w-3.5 h-3.5 text-[var(--accent-orange)]" />
@@ -320,6 +310,16 @@ export function HUDHeader() {
             >
               <ShieldAlertIcon className="w-3.5 h-3.5" />
               <span>{t.hud.emergency}</span>
+            </button>
+
+            {/* Mobile Menu Toggle Button (Rightmost on Mobile) */}
+            <button
+              onClick={toggleMobileMenu}
+              className="lg:hidden px-2.5 py-1.5 bg-[var(--surface-panel)] border border-[var(--border-grid)] text-[var(--accent-orange)] font-bold text-xs uppercase hud-panel-sm hover:border-[var(--accent-orange)] transition-colors flex items-center gap-1 active:scale-95"
+              aria-label="Toggle Mobile Navigation"
+            >
+              <span className="text-[10px]">{mobileMenuOpen ? "✕" : "☰"}</span>
+              <span>MENU</span>
             </button>
           </div>
         </div>
