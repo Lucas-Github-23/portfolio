@@ -1,7 +1,8 @@
 "use client";
 
 import React, { createContext, useContext, useState, useEffect } from "react";
-import { Language, translations } from "@/data/translations";
+import { translations, Language } from "@/data/translations";
+import { safeGetItem, safeSetItem } from "@/utils/storage";
 
 export type SectionId = "status" | "magi" | "projects" | "skills" | "experience" | "contact";
 
@@ -31,21 +32,21 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
 
   useEffect(() => {
-    const savedLang = localStorage.getItem("nerv_lang") as Language;
+    const savedLang = safeGetItem("nerv_lang") as Language;
     if (savedLang === "en" || savedLang === "pt") {
       setLanguageState(savedLang);
     }
 
-    const savedTheme = localStorage.getItem("nerv_theme") as "dark" | "light";
-    if (savedTheme) {
+    const savedTheme = safeGetItem("nerv_theme") as "dark" | "light";
+    if (savedTheme === "dark" || savedTheme === "light") {
       setTheme(savedTheme);
       if (savedTheme === "light") {
         document.documentElement.classList.add("light");
       }
     }
 
-    const savedCrt = localStorage.getItem("nerv_crt");
-    if (savedCrt !== null) {
+    const savedCrt = safeGetItem("nerv_crt");
+    if (savedCrt) {
       setCrtEnabled(savedCrt === "true");
     }
 
@@ -77,7 +78,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
-    localStorage.setItem("nerv_lang", lang);
+    safeSetItem("nerv_lang", lang);
   };
 
   const setActiveSection = (sec: SectionId) => {
@@ -108,7 +109,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const toggleTheme = () => {
     const nextTheme = theme === "dark" ? "light" : "dark";
     setTheme(nextTheme);
-    localStorage.setItem("nerv_theme", nextTheme);
+    safeSetItem("nerv_theme", nextTheme);
     if (nextTheme === "light") {
       document.documentElement.classList.add("light");
     } else {
@@ -119,7 +120,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const toggleCrt = () => {
     const nextCrt = !crtEnabled;
     setCrtEnabled(nextCrt);
-    localStorage.setItem("nerv_crt", String(nextCrt));
+    safeSetItem("nerv_crt", String(nextCrt));
   };
 
   const toggleEmergency = () => {

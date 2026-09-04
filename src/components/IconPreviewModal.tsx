@@ -4,6 +4,7 @@ import React, { useState, useEffect, useCallback } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { ICON_VARIANTS, IconInfo, IconVariant } from "./DynamicFavicon";
 import { ShuffleIcon, CheckIcon, TargetIcon, XIcon } from "./Icons";
+import { safeGetItem } from "@/utils/storage";
 
 interface IconPreviewModalProps {
   isOpen: boolean;
@@ -26,10 +27,8 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
   }, [isClosing, onClose]);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = (localStorage.getItem("nerv_fav_variant") as IconVariant) || "random";
-      setCurrentMode(saved);
-    }
+    const saved = safeGetItem("nerv_fav_variant", "random") as IconVariant;
+    setCurrentMode(saved);
   }, [isOpen]);
 
   useEffect(() => {

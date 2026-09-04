@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { safeGetItem, safeSetItem } from "@/utils/storage";
 
 export type IconVariant = "random" | "tactical-l" | "ramiel" | "magi";
 
@@ -78,7 +79,7 @@ export function DynamicFavicon() {
 
   useEffect(() => {
     // Read saved preference or default to random
-    const saved = (localStorage.getItem("nerv_fav_variant") as IconVariant) || "random";
+    const saved = safeGetItem("nerv_fav_variant", "random") as IconVariant;
     setSelectedVariant(saved);
 
     let chosen: IconInfo;
@@ -96,7 +97,7 @@ export function DynamicFavicon() {
     const handleIconChange = (e: CustomEvent<IconVariant>) => {
       const variant = e.detail;
       setSelectedVariant(variant);
-      localStorage.setItem("nerv_fav_variant", variant);
+      safeSetItem("nerv_fav_variant", variant);
 
       let target: IconInfo;
       if (variant === "random") {

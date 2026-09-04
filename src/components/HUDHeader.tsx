@@ -5,6 +5,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { SunIcon, MoonIcon, ShieldAlertIcon, MonitorIcon, LayersIcon } from "./Icons";
 import { IconPreviewModal } from "./IconPreviewModal";
 import { IconVariant } from "./DynamicFavicon";
+import { safeGetItem } from "@/utils/storage";
 
 export function HUDHeader() {
   const {
@@ -29,7 +30,7 @@ export function HUDHeader() {
 
   const [headerVisible, setHeaderVisible] = useState<boolean>(true);
   const lastScrollY = useRef<number>(0);
-  const scrollLockTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const scrollLockTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Lock body scroll when mobile menu is open so interacting with menu doesn't scroll page underneath
   useEffect(() => {
@@ -137,10 +138,8 @@ export function HUDHeader() {
   }, []);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const saved = (localStorage.getItem("nerv_fav_variant") as IconVariant) || "random";
-      setIconVariant(saved);
-    }
+    const saved = safeGetItem("nerv_fav_variant", "random") as IconVariant;
+    setIconVariant(saved);
 
     const handleIconChange = (e: CustomEvent<IconVariant>) => {
       setIconVariant(e.detail);
