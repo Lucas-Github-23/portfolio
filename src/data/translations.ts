@@ -16,6 +16,31 @@ export const translations = {
       crtScanlines: "CRT OVERLAY",
       themeDark: "DARK HQ",
       themeLight: "LIGHT FILE",
+      evaSync: "EVA SYNC",
+      evaModalTitle: "EVA UNIT SYNCHRONIZATION // PALETTE MATRIX",
+      evaModalSubtitle: "Synchronize interface telemetry with classic Evangelion unit armor palettes",
+      evaUnits: {
+        nerv: {
+          name: "NERV HQ-01",
+          pilot: "BASE DEFENSE // STANDARD",
+          desc: "Tactical Hazard Orange & Obsidian Carbon armor",
+        },
+        eva01: {
+          name: "EVA-01 TEST TYPE",
+          pilot: "PILOT: SHINJI IKARI",
+          desc: "Obsidian Violet armor & Fluorescent Acid Neon Green",
+        },
+        eva02: {
+          name: "EVA-02 PRODUCTION MODEL",
+          pilot: "PILOT: ASUKA LANGLEY",
+          desc: "Combat Crimson Scarlet & Solar Flare Gold highlights",
+        },
+        eva00: {
+          name: "EVA-00 PROTOTYPE",
+          pilot: "PILOT: REI AYANAMI",
+          desc: "Midnight Geofront Cobalt & Prototype Amber Gold",
+        },
+      },
     },
     hero: {
       clearance: "CLEARANCE: LEVEL A-01",
@@ -123,6 +148,31 @@ export const translations = {
       crtScanlines: "MÓDULO CRT",
       themeDark: "MODO QUARTEL",
       themeLight: "MODO ARQUIVO",
+      evaSync: "SINCRO EVA",
+      evaModalTitle: "SINCRONIZAÇÃO DE UNIDADE EVA // MATRIZ DE CORES",
+      evaModalSubtitle: "Sincronize a telemetria da interface com as paletas clássicas das unidades Evangelion",
+      evaUnits: {
+        nerv: {
+          name: "NERV HQ-01",
+          pilot: "DEFESA BASE // PADRÃO",
+          desc: "Laranja Tático NERV & Carvão Obsidiana",
+        },
+        eva01: {
+          name: "EVA-01 TIPO TESTE",
+          pilot: "PILOTO: SHINJI IKARI",
+          desc: "Blindagem Roxo Obsidiana & Verde Neon Ácido",
+        },
+        eva02: {
+          name: "EVA-02 MODELO DE PRODUÇÃO",
+          pilot: "PILOTO: ASUKA LANGLEY",
+          desc: "Vermelho Escarlate de Combate & Ouro Solar",
+        },
+        eva00: {
+          name: "EVA-00 PROTÓTIPO",
+          pilot: "PILOTO: REI AYANAMI",
+          desc: "Azul Cobalto Geofront & Âmbar Dourado",
+        },
+      },
     },
     hero: {
       clearance: "CREDENCIAL: NÍVEL A-01",

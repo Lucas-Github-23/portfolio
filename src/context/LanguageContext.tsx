@@ -5,6 +5,7 @@ import { translations, Language } from "@/data/translations";
 import { safeGetItem, safeSetItem } from "@/utils/storage";
 
 export type SectionId = "status" | "magi" | "projects" | "skills" | "experience" | "contact";
+export type EvaUnit = "nerv" | "eva-01" | "eva-02" | "eva-00";
 
 interface LanguageContextType {
   language: Language;
@@ -18,6 +19,8 @@ interface LanguageContextType {
   toggleEmergency: () => void;
   activeSection: SectionId;
   setActiveSection: (sec: SectionId) => void;
+  evaUnit: EvaUnit;
+  setEvaUnit: (unit: EvaUnit) => void;
   isTransitioning: boolean;
 }
 
@@ -29,6 +32,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [crtEnabled, setCrtEnabled] = useState<boolean>(false);
   const [emergencyActive, setEmergencyActive] = useState<boolean>(false);
   const [activeSection, setActiveSectionState] = useState<SectionId>("status");
+  const [evaUnit, setEvaUnitState] = useState<EvaUnit>("nerv");
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
 
   useEffect(() => {
@@ -48,6 +52,14 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const savedCrt = safeGetItem("nerv_crt");
     if (savedCrt) {
       setCrtEnabled(savedCrt === "true");
+    }
+
+    const savedEva = safeGetItem("nerv_eva_unit") as EvaUnit;
+    if (savedEva && ["nerv", "eva-01", "eva-02", "eva-00"].includes(savedEva)) {
+      setEvaUnitState(savedEva);
+      document.documentElement.setAttribute("data-eva", savedEva);
+    } else {
+      document.documentElement.setAttribute("data-eva", "nerv");
     }
 
     // Auto-update activeSection on manual scroll via IntersectionObserver
@@ -128,6 +140,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setEmergencyActive((prev) => !prev);
   };
 
+  const setEvaUnit = (unit: EvaUnit) => {
+    setEvaUnitState(unit);
+    safeSetItem("nerv_eva_unit", unit);
+    document.documentElement.setAttribute("data-eva", unit);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("nerv_eva_change", { detail: unit }));
+    }
+  };
+
   const t = translations[language];
 
   return (
@@ -144,6 +165,8 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         toggleEmergency,
         activeSection,
         setActiveSection,
+        evaUnit,
+        setEvaUnit,
         isTransitioning,
       }}
     >

@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { SunIcon, MoonIcon, ShieldAlertIcon, MonitorIcon, LayersIcon } from "./Icons";
 import { IconPreviewModal } from "./IconPreviewModal";
+import { EvaSyncModal } from "./EvaSyncModal";
 import { IconVariant } from "./DynamicFavicon";
 import { safeGetItem } from "@/utils/storage";
 
@@ -19,6 +20,7 @@ export function HUDHeader() {
     toggleEmergency,
     activeSection,
     setActiveSection,
+    evaUnit,
   } = useLanguage();
 
   const [timeString, setTimeString] = useState<string>("");
@@ -26,6 +28,7 @@ export function HUDHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
   const [isMenuClosing, setIsMenuClosing] = useState<boolean>(false);
   const [iconModalOpen, setIconModalOpen] = useState<boolean>(false);
+  const [evaModalOpen, setEvaModalOpen] = useState<boolean>(false);
   const [iconVariant, setIconVariant] = useState<IconVariant>("random");
 
   const [headerVisible, setHeaderVisible] = useState<boolean>(true);
@@ -191,7 +194,7 @@ export function HUDHeader() {
             </div>
             <div>
               <div className="font-mono text-xs sm:text-sm md:text-base font-extrabold tracking-wider text-[var(--text-primary)] flex items-center gap-1.5 whitespace-nowrap">
-                LUCAS // DEV-02
+                LUCAS // {evaUnit === "nerv" ? "DEV-02" : evaUnit.toUpperCase()}
                 <span className="inline-block w-2 h-2 rounded-full bg-[var(--accent-green)] animate-ping" />
               </div>
               <div className="font-mono text-[9px] sm:text-[10px] text-[var(--text-secondary)] tracking-widest uppercase whitespace-nowrap">
@@ -220,7 +223,7 @@ export function HUDHeader() {
             })}
           </nav>
 
-          {/* Controls: Language, Theme, Icons, CRT & Mobile Menu */}
+          {/* Controls: Language, Theme, EVA Sync, Icons, CRT & Mobile Menu */}
           <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-xs shrink-0 whitespace-nowrap">
             {/* Mobile Menu Toggle Button */}
             <button
@@ -230,6 +233,19 @@ export function HUDHeader() {
             >
               <span className="text-[10px]">{mobileMenuOpen ? "✕" : "☰"}</span>
               <span>MENU</span>
+            </button>
+
+            {/* EVA Unit Sync Selector Button (Desktop) */}
+            <button
+              onClick={() => setEvaModalOpen(true)}
+              className="p-1.5 px-2 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm flex items-center gap-1.5 text-[10px] font-bold"
+              title={language === "pt" ? "Sincronização de Unidade EVA" : "EVA Unit Synchronization"}
+            >
+              <span className="w-2 h-2 rounded-full bg-[var(--accent-orange)] animate-pulse" />
+              <span className="hidden sm:inline">EVA:</span>
+              <span className="px-1 py-0.2 bg-[var(--accent-orange)] text-black text-[8px] font-black rounded-sm uppercase">
+                {evaUnit === "nerv" ? "NERV" : evaUnit.replace("eva-", "0")}
+              </span>
             </button>
 
             {/* Icon Preview / Selector Button (Desktop) */}
@@ -349,6 +365,22 @@ export function HUDHeader() {
 
                 {/* Mobile Secondary Tactical Actions */}
                 <div className="flex flex-col gap-2 pt-2 border-t border-[var(--border-grid)] font-mono text-xs">
+                  {/* EVA Unit Sync Selector Button (Mobile) */}
+                  <button
+                    onClick={() => {
+                      closeMobileMenu(() => setEvaModalOpen(true));
+                    }}
+                    className="w-full py-2.5 px-3 border border-[var(--accent-orange)] bg-[var(--surface-panel)] text-[var(--text-primary)] font-bold text-xs uppercase hud-button flex items-center justify-between gap-2 active:scale-95 transition-transform"
+                  >
+                    <div className="flex items-center gap-2">
+                      <span className="w-2.5 h-2.5 rounded-full bg-[var(--accent-orange)] animate-pulse" />
+                      <span>{t.hud.evaSync}</span>
+                    </div>
+                    <span className="px-2 py-0.5 bg-[var(--accent-orange)] text-black text-[9px] font-black tracking-wider uppercase rounded-sm">
+                      {evaUnit === "nerv" ? "NERV HQ" : evaUnit.toUpperCase()}
+                    </span>
+                  </button>
+
                   {/* Icon Selector Button with Active Status Visibility */}
                   <button
                     onClick={() => {
@@ -410,6 +442,12 @@ export function HUDHeader() {
       <IconPreviewModal
         isOpen={iconModalOpen}
         onClose={() => setIconModalOpen(false)}
+      />
+
+      {/* EVA Unit Neural Synchronization Modal */}
+      <EvaSyncModal
+        isOpen={evaModalOpen}
+        onClose={() => setEvaModalOpen(false)}
       />
     </>
   );

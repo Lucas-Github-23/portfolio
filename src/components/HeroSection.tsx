@@ -5,7 +5,7 @@ import { useLanguage } from "@/context/LanguageContext";
 import { CpuIcon, ActivityIcon, TerminalIcon } from "./Icons";
 
 export function HeroSection() {
-  const { t, setActiveSection } = useLanguage();
+  const { t, setActiveSection, evaUnit } = useLanguage();
   const [syncRate, setSyncRate] = useState<number>(98.4);
 
   const handleScrollTo = (e: React.MouseEvent<HTMLAnchorElement>, id: "projects" | "contact") => {
@@ -26,7 +26,7 @@ export function HeroSection() {
     <section id="status" className="relative py-12 sm:py-16 md:py-24 border-b border-[var(--border-grid)] overflow-hidden select-none">
       {/* Decorative Grid Lines & NERV Stamps */}
       <div className="absolute top-3 right-3 sm:top-4 sm:right-4 font-mono text-[9px] sm:text-[10px] text-[var(--text-secondary)] tracking-widest pointer-events-none opacity-40 select-none text-right">
-        <div>SYS_ID: EVA-01 // MAGI-LINK</div>
+        <div>SYS_ID: {evaUnit === "nerv" ? "NERV-HQ" : evaUnit.toUpperCase()} // MAGI-LINK</div>
         <div>PILOT_STATUS: READY</div>
       </div>
 
