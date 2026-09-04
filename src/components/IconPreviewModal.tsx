@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { ICON_VARIANTS, IconInfo, IconVariant } from "./DynamicFavicon";
 import { ShuffleIcon, CheckIcon, TargetIcon, XIcon } from "./Icons";
@@ -16,6 +17,11 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
   const [currentMode, setCurrentMode] = useState<IconVariant>("random");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState<boolean>(false);
+  const [mounted, setMounted] = useState<boolean>(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleClose = useCallback(() => {
     if (isClosing) return;
@@ -58,12 +64,12 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  if (!isOpen && !isClosing) return null;
+  if ((!isOpen && !isClosing) || !mounted) return null;
 
-  return (
+  return createPortal(
     <div
       onClick={handleClose}
-      className={`fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 select-none ${
+      className={`fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/85 select-none ${
         isClosing ? "hud-backdrop-closing" : "hud-backdrop-animate"
       }`}
     >
@@ -261,6 +267,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
       </div>
     </div>
   </div>
-</div>
+</div>,
+document.body
 );
 }

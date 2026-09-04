@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { createPortal } from "react-dom";
 import { useLanguage } from "@/context/LanguageContext";
 import { ExternalLinkIcon, GithubIcon, ShieldAlertIcon } from "./Icons";
 
@@ -31,6 +32,11 @@ export function ProjectModal({
   const { language, t } = useLanguage();
   const [activeProject, setActiveProject] = React.useState<ProjectData | null>(project);
   const [isClosing, setIsClosing] = React.useState<boolean>(false);
+  const [mounted, setMounted] = React.useState<boolean>(false);
+
+  React.useEffect(() => {
+    setMounted(true);
+  }, []);
 
   React.useEffect(() => {
     if (project) {
@@ -63,15 +69,15 @@ export function ProjectModal({
     };
   }, [activeProject, handleClose]);
 
-  if (!activeProject) return null;
+  if (!activeProject || !mounted) return null;
 
   const title = language === "pt" ? activeProject.titlePt : activeProject.titleEn;
   const description = language === "pt" ? activeProject.fullDescPt : activeProject.fullDescEn;
 
-  return (
+  return createPortal(
     <div
       onClick={handleClose}
-      className={`fixed inset-0 z-50 bg-black/85 flex items-center justify-center p-3 sm:p-4 select-none ${
+      className={`fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-3 sm:p-4 select-none ${
         isClosing ? "hud-backdrop-closing" : "hud-backdrop-animate"
       }`}
     >
@@ -170,11 +176,12 @@ export function ProjectModal({
                 <span>{t.projects.sourceCode}</span>
               </a>
             )}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-</div>
+  </div>,
+  document.body
 );
 }
