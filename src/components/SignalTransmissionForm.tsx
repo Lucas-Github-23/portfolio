@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { TerminalIcon, MailIcon, GithubIcon, LinkedinIcon } from "./Icons";
+import { TerminalIcon, MailIcon, GithubIcon, LinkedinIcon, CopyIcon, CheckIcon } from "./Icons";
 
 export function SignalTransmissionForm() {
   const { language, t } = useLanguage();
@@ -14,6 +14,30 @@ export function SignalTransmissionForm() {
   });
 
   const [status, setStatus] = useState<"idle" | "transmitting" | "success">("idle");
+  const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
+
+  const handleCopyEmail = async () => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText("kukagabriel@hotmail.com");
+      } else {
+        const textArea = document.createElement("textarea");
+        textArea.value = "kukagabriel@hotmail.com";
+        textArea.style.position = "fixed";
+        textArea.style.opacity = "0";
+        document.body.appendChild(textArea);
+        textArea.focus();
+        textArea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textArea);
+      }
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 3000);
+    } catch {
+      setCopiedEmail(true);
+      setTimeout(() => setCopiedEmail(false), 3000);
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -169,18 +193,60 @@ export function SignalTransmissionForm() {
                   </div>
                 </a>
 
-                <a
-                  href="mailto:kukagabriel@hotmail.com"
-                  className="flex items-center gap-3 p-3 bg-[var(--bg-main)] border border-[var(--border-grid)] hover:border-[var(--accent-orange)] transition-colors text-[var(--text-primary)]"
+                <button
+                  type="button"
+                  onClick={handleCopyEmail}
+                  title={
+                    copiedEmail
+                      ? language === "pt"
+                        ? "E-mail copiado!"
+                        : "Email copied!"
+                      : language === "pt"
+                        ? "Clique para copiar o e-mail"
+                        : "Click to copy email"
+                  }
+                  className={`w-full flex items-center justify-between p-3 bg-[var(--bg-main)] border transition-all text-left group cursor-pointer ${
+                    copiedEmail
+                      ? "border-[var(--accent-green)] shadow-[0_0_12px_var(--accent-green-glow)] bg-[var(--accent-green-glow)]/10"
+                      : "border-[var(--border-grid)] hover:border-[var(--accent-orange)]"
+                  }`}
                 >
-                  <MailIcon className="w-5 h-5 text-[var(--accent-orange)]" />
-                  <div>
-                    <span className="block text-xs font-bold">{t.contact.emailDirectLabel}</span>
-                    <span className="text-[10px] text-[var(--accent-orange)] font-bold">
-                      kukagabriel@hotmail.com
-                    </span>
+                  <div className="flex items-center gap-3 min-w-0">
+                    {copiedEmail ? (
+                      <CheckIcon className="w-5 h-5 text-[var(--accent-green)] shrink-0 transition-transform scale-110" />
+                    ) : (
+                      <MailIcon className="w-5 h-5 text-[var(--accent-orange)] shrink-0 group-hover:scale-110 transition-transform" />
+                    )}
+                    <div className="min-w-0">
+                      <span className="block text-xs font-bold text-[var(--text-primary)]">
+                        {t.contact.emailDirectLabel}
+                      </span>
+                      <span
+                        className={`text-[10px] font-bold font-mono transition-colors break-all ${
+                          copiedEmail
+                            ? "text-[var(--accent-green)]"
+                            : "text-[var(--accent-orange)]"
+                        }`}
+                      >
+                        kukagabriel@hotmail.com
+                      </span>
+                    </div>
                   </div>
-                </a>
+
+                  <div className="shrink-0 ml-2">
+                    {copiedEmail ? (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] text-[9px] font-bold uppercase font-mono tracking-wider animate-pulse">
+                        <CheckIcon className="w-3 h-3" />
+                        {language === "pt" ? "COPIADO!" : "COPIED!"}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[var(--surface-panel)] text-[var(--text-secondary)] border border-[var(--border-grid)] group-hover:text-[var(--accent-orange)] group-hover:border-[var(--accent-orange)] text-[9px] font-bold uppercase font-mono tracking-wider transition-colors">
+                        <CopyIcon className="w-3 h-3" />
+                        {language === "pt" ? "COPIAR" : "COPY"}
+                      </span>
+                    )}
+                  </div>
+                </button>
               </div>
             </div>
 
