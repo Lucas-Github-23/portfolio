@@ -16,9 +16,9 @@ export const translations = {
       crtScanlines: "CRT OVERLAY",
       themeDark: "DARK HQ",
       themeLight: "LIGHT FILE",
-      evaSync: "EVA SYNC",
-      evaModalTitle: "EVA UNIT SYNCHRONIZATION // PALETTE MATRIX",
-      evaModalSubtitle: "Synchronize interface telemetry with classic Evangelion unit armor palettes",
+      evaSync: "COLOR PALETTES",
+      evaModalTitle: "COLOR PALETTES // THEME MATRIX",
+      evaModalSubtitle: "Switch interface color schemes inspired by classic Evangelion armor palettes",
       evaUnits: {
         nerv: {
           name: "NERV HQ-01",
@@ -148,9 +148,9 @@ export const translations = {
       crtScanlines: "MÓDULO CRT",
       themeDark: "MODO QUARTEL",
       themeLight: "MODO ARQUIVO",
-      evaSync: "SINCRO EVA",
-      evaModalTitle: "SINCRONIZAÇÃO DE UNIDADE EVA // MATRIZ DE CORES",
-      evaModalSubtitle: "Sincronize a telemetria da interface com as paletas clássicas das unidades Evangelion",
+      evaSync: "PALETA DE CORES",
+      evaModalTitle: "PALETAS DE CORES // MATRIZ DE TEMAS",
+      evaModalSubtitle: "Alterne as cores da interface inspiradas nas blindagens clássicas das unidades Evangelion",
       evaUnits: {
         nerv: {
           name: "NERV HQ-01",

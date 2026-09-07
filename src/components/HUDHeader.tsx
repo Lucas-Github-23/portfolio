@@ -313,11 +313,11 @@ export function HUDHeader() {
                     ? "border-[var(--accent-orange)] text-[var(--accent-orange)] bg-[var(--surface-panel)] shadow-[0_0_12px_var(--accent-orange-glow)]"
                     : "border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)]"
                 }`}
-                title={language === "pt" ? "Menu Tático do Sistema (EVA, Ícones, CRT, Emergência)" : "Tactical System Menu (EVA, Icons, CRT, Emergency)"}
+                title={language === "pt" ? "Menu Tático (Cores, Ícones, CRT, Emergência)" : "Tactical Menu (Colors, Icons, CRT, Emergency)"}
                 aria-expanded={systemMenuOpen}
               >
                 <span className="w-2 h-2 rounded-full bg-[var(--accent-orange)] animate-pulse" />
-                <span className="tracking-wider">SYSTEM</span>
+                <span className="tracking-wider">MENU</span>
                 <span className="px-1 py-0.2 bg-[var(--accent-orange)] text-black text-[8px] font-black rounded-sm uppercase">
                   {evaUnit === "nerv" ? "NERV" : evaUnit.replace("eva-", "0")}
                 </span>
@@ -340,7 +340,7 @@ export function HUDHeader() {
                       <div className="flex items-center justify-between border-b border-[var(--border-grid)] pb-2 text-[10px]">
                         <span className="text-[var(--accent-orange)] font-bold tracking-widest uppercase flex items-center gap-1.5">
                           <TerminalIcon className="w-3.5 h-3.5" />
-                          TACTICAL CONTROLS
+                          TACTICAL MENU
                         </span>
                         <span className="text-[var(--text-secondary)] text-[8px]">SYS-OP // 01</span>
                       </div>
@@ -359,7 +359,7 @@ export function HUDHeader() {
                               {t.hud.evaSync}
                             </span>
                             <span className="text-[9px] text-[var(--text-secondary)]">
-                              {language === "pt" ? "Sincronia de Piloto & Cores" : "Pilot & Palette Sync"}
+                              {language === "pt" ? "Alterar cores do tema (EVA)" : "Switch theme colors (EVA)"}
                             </span>
                           </div>
                         </div>
