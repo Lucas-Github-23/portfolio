@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { useLanguage } from "@/context/LanguageContext";
-import { SunIcon, MoonIcon, ShieldAlertIcon, MonitorIcon, LayersIcon } from "./Icons";
+import { SunIcon, MoonIcon, ShieldAlertIcon, MonitorIcon, LayersIcon, TerminalIcon } from "./Icons";
 import { IconPreviewModal } from "./IconPreviewModal";
 import { EvaSyncModal } from "./EvaSyncModal";
 import { IconVariant } from "./DynamicFavicon";
@@ -30,10 +30,56 @@ export function HUDHeader() {
   const [iconModalOpen, setIconModalOpen] = useState<boolean>(false);
   const [evaModalOpen, setEvaModalOpen] = useState<boolean>(false);
   const [iconVariant, setIconVariant] = useState<IconVariant>("random");
+  const [systemMenuOpen, setSystemMenuOpen] = useState<boolean>(false);
+  const [isSystemMenuClosing, setIsSystemMenuClosing] = useState<boolean>(false);
+  const systemMenuRef = useRef<HTMLDivElement>(null);
+
+  const closeSystemMenu = (callback?: () => void) => {
+    if (isSystemMenuClosing) return;
+    if (!systemMenuOpen) {
+      if (callback) callback();
+      return;
+    }
+    setIsSystemMenuClosing(true);
+    setTimeout(() => {
+      setSystemMenuOpen(false);
+      setIsSystemMenuClosing(false);
+      if (callback) callback();
+    }, 350);
+  };
+
+  const toggleSystemMenu = () => {
+    if (systemMenuOpen) {
+      closeSystemMenu();
+    } else {
+      setSystemMenuOpen(true);
+    }
+  };
 
   const [headerVisible, setHeaderVisible] = useState<boolean>(true);
   const lastScrollY = useRef<number>(0);
   const scrollLockTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Close desktop system menu on outside click or Escape key
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (systemMenuRef.current && !systemMenuRef.current.contains(e.target as Node)) {
+        closeSystemMenu();
+      }
+    };
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeSystemMenu();
+    };
+
+    if (systemMenuOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+      window.addEventListener("keydown", handleKeyDown);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [systemMenuOpen, isSystemMenuClosing]);
 
   // Lock body scroll when mobile menu is open so interacting with menu doesn't scroll page underneath
   useEffect(() => {
@@ -223,40 +269,8 @@ export function HUDHeader() {
             })}
           </nav>
 
-          {/* Controls: Language, Theme, EVA Sync, Icons, CRT & Mobile Menu */}
+          {/* Controls: Language, Theme & Desktop Tactical System Menu (or Mobile Menu) */}
           <div className="flex items-center gap-1.5 sm:gap-2 font-mono text-xs shrink-0 whitespace-nowrap">
-            {/* EVA Unit Sync Selector Button (Desktop & Tablet only) */}
-            <button
-              onClick={() => setEvaModalOpen(true)}
-              className="hidden md:flex p-1.5 px-2 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm items-center gap-1.5 text-[10px] font-bold"
-              title={language === "pt" ? "Sincronização de Unidade EVA" : "EVA Unit Synchronization"}
-            >
-              <span className="w-2 h-2 rounded-full bg-[var(--accent-orange)] animate-pulse" />
-              <span className="hidden sm:inline">EVA:</span>
-              <span className="px-1 py-0.2 bg-[var(--accent-orange)] text-black text-[8px] font-black rounded-sm uppercase">
-                {evaUnit === "nerv" ? "NERV" : evaUnit.replace("eva-", "0")}
-              </span>
-            </button>
-
-            {/* Icon Preview / Selector Button (Desktop & Tablet only) */}
-            <button
-              onClick={() => setIconModalOpen(true)}
-              className="hidden md:flex p-1.5 px-2 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm items-center gap-1.5 text-[10px] font-bold"
-              title={language === "pt" ? "Visualizar e Trocar Ícones HUD" : "View & Switch HUD Icons"}
-            >
-              <LayersIcon className="w-3.5 h-3.5 text-[var(--accent-orange)]" />
-              <span className="hidden sm:inline">ICONS</span>
-              {iconVariant === "random" ? (
-                <span className="hidden md:inline px-1 py-0.2 bg-[var(--accent-green)] text-black text-[8px] font-black rounded-sm shadow-[0_0_6px_var(--accent-green-glow)]">
-                  RANDOM
-                </span>
-              ) : (
-                <span className="hidden md:inline px-1 py-0.2 bg-[var(--accent-orange)] text-black text-[8px] font-black rounded-sm uppercase">
-                  {iconVariant}
-                </span>
-              )}
-            </button>
-
             {/* Language Switcher */}
             <div className="flex border border-[var(--border-grid)] p-0.5 hud-panel-sm bg-[var(--surface-panel)]">
               <button
@@ -284,38 +298,156 @@ export function HUDHeader() {
             {/* Theme Toggle */}
             <button
               onClick={toggleTheme}
-              className="p-1.5 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] transition-colors hud-panel-sm"
+              className="p-1.5 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] transition-colors hud-panel-sm cursor-pointer"
               title={theme === "dark" ? t.hud.themeLight : t.hud.themeDark}
             >
               {theme === "dark" ? <SunIcon /> : <MoonIcon />}
             </button>
 
-            {/* CRT Overlay Toggle (Desktop) */}
-            <button
-              onClick={toggleCrt}
-              className={`hidden sm:flex p-1.5 border hud-panel-sm transition-colors ${
-                crtEnabled
-                  ? "border-[var(--accent-green)] text-[var(--accent-green)] bg-[var(--accent-green-glow)]"
-                  : "border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)]"
-              }`}
-              title={t.hud.crtScanlines}
-            >
-              <MonitorIcon />
-            </button>
+            {/* Desktop Tactical System Menu (EVA, Icons, CRT, Emergency Compressed) */}
+            <div className="relative hidden lg:block" ref={systemMenuRef}>
+              <button
+                onClick={toggleSystemMenu}
+                className={`p-1.5 px-2.5 border hud-panel-sm flex items-center gap-2 text-[11px] font-bold transition-all cursor-pointer select-none ${
+                  systemMenuOpen
+                    ? "border-[var(--accent-orange)] text-[var(--accent-orange)] bg-[var(--surface-panel)] shadow-[0_0_12px_var(--accent-orange-glow)]"
+                    : "border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] hover:border-[var(--accent-orange)]"
+                }`}
+                title={language === "pt" ? "Menu Tático do Sistema (EVA, Ícones, CRT, Emergência)" : "Tactical System Menu (EVA, Icons, CRT, Emergency)"}
+                aria-expanded={systemMenuOpen}
+              >
+                <span className="w-2 h-2 rounded-full bg-[var(--accent-orange)] animate-pulse" />
+                <span className="tracking-wider">SYSTEM</span>
+                <span className="px-1 py-0.2 bg-[var(--accent-orange)] text-black text-[8px] font-black rounded-sm uppercase">
+                  {evaUnit === "nerv" ? "NERV" : evaUnit.replace("eva-", "0")}
+                </span>
+                <span className="text-[9px] text-[var(--text-secondary)]">
+                  {systemMenuOpen ? "▲" : "▼"}
+                </span>
+              </button>
 
-            {/* Emergency Alert Button (Desktop) */}
-            <button
-              onClick={toggleEmergency}
-              className="hidden sm:flex items-center gap-1 px-2.5 sm:px-3 py-1.5 bg-[var(--accent-red)] text-black font-extrabold text-[10px] tracking-wider uppercase hud-button hover:opacity-90 transition-opacity shadow-[0_0_10px_var(--accent-red-glow)]"
-            >
-              <ShieldAlertIcon className="w-3.5 h-3.5" />
-              <span>{t.hud.emergency}</span>
-            </button>
+              {/* Tactical Dropdown Menu with Sci-Fi Laser Unfold & Reverse Collapse */}
+              {(systemMenuOpen || isSystemMenuClosing) && (
+                <div className={`absolute right-0 top-full mt-2 w-72 z-50 shadow-2xl ${isSystemMenuClosing ? "hud-laser-closing" : ""}`}>
+                  {/* Dual split laser lines */}
+                  <div className="hud-laser-line hud-laser-line-left" />
+                  <div className="hud-laser-line hud-laser-line-right" />
+
+                  {/* 2-Phase laser expand body */}
+                  <div className="hud-laser-expand w-full">
+                    <div className="bg-[var(--bg-main)]/98 backdrop-blur-xl border-2 border-[var(--accent-orange)] hud-panel p-3.5 space-y-2.5 shadow-2xl font-mono">
+                      {/* Header */}
+                      <div className="flex items-center justify-between border-b border-[var(--border-grid)] pb-2 text-[10px]">
+                        <span className="text-[var(--accent-orange)] font-bold tracking-widest uppercase flex items-center gap-1.5">
+                          <TerminalIcon className="w-3.5 h-3.5" />
+                          TACTICAL CONTROLS
+                        </span>
+                        <span className="text-[var(--text-secondary)] text-[8px]">SYS-OP // 01</span>
+                      </div>
+
+                      {/* 1. EVA Unit Neural Sync */}
+                      <button
+                        onClick={() => {
+                          closeSystemMenu(() => setEvaModalOpen(true));
+                        }}
+                        className="w-full p-2.5 bg-[var(--surface-panel)] border border-[var(--border-grid)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm flex items-center justify-between text-left group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-2 h-2 rounded-full bg-[var(--accent-orange)] animate-pulse shrink-0" />
+                          <div>
+                            <span className="block text-xs font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-orange)] transition-colors">
+                              {t.hud.evaSync}
+                            </span>
+                            <span className="text-[9px] text-[var(--text-secondary)]">
+                              {language === "pt" ? "Sincronia de Piloto & Cores" : "Pilot & Palette Sync"}
+                            </span>
+                          </div>
+                        </div>
+                        <span className="px-1.5 py-0.5 bg-[var(--accent-orange)] text-black text-[9px] font-black uppercase rounded-sm shrink-0">
+                          {evaUnit === "nerv" ? "NERV HQ" : evaUnit.toUpperCase()}
+                        </span>
+                      </button>
+
+                      {/* 2. HUD Favicon / Icon Matrix */}
+                      <button
+                        onClick={() => {
+                          closeSystemMenu(() => setIconModalOpen(true));
+                        }}
+                        className="w-full p-2.5 bg-[var(--surface-panel)] border border-[var(--border-grid)] hover:border-[var(--accent-orange)] transition-colors hud-panel-sm flex items-center justify-between text-left group cursor-pointer"
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <LayersIcon className="w-4 h-4 text-[var(--accent-orange)] shrink-0" />
+                          <div>
+                            <span className="block text-xs font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-orange)] transition-colors">
+                              {language === "pt" ? "SELETOR DE ÍCONES" : "ICONS PREVIEW"}
+                            </span>
+                            <span className="text-[9px] text-[var(--text-secondary)]">
+                              {language === "pt" ? "Visualizar e alternar ícones" : "Preview & switch icons"}
+                            </span>
+                          </div>
+                        </div>
+                        {iconVariant === "random" ? (
+                          <span className="px-1.5 py-0.5 bg-[var(--accent-green)] text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_6px_var(--accent-green-glow)] shrink-0">
+                            RANDOM
+                          </span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 bg-[var(--accent-orange)] text-black text-[9px] font-black uppercase rounded-sm shrink-0">
+                            {iconVariant.toUpperCase()}
+                          </span>
+                        )}
+                      </button>
+
+                      {/* 3. CRT Scanlines Overlay Toggle */}
+                      <button
+                        onClick={toggleCrt}
+                        className={`w-full p-2.5 border hud-panel-sm flex items-center justify-between text-left transition-all cursor-pointer ${
+                          crtEnabled
+                            ? "border-[var(--accent-green)] bg-[var(--accent-green-glow)]/15 text-[var(--text-primary)]"
+                            : "border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:border-[var(--accent-orange)] hover:text-[var(--text-primary)]"
+                        }`}
+                      >
+                        <div className="flex items-center gap-2.5">
+                          <MonitorIcon className={`w-4 h-4 shrink-0 ${crtEnabled ? "text-[var(--accent-green)]" : "text-[var(--text-secondary)]"}`} />
+                          <div>
+                            <span className="block text-xs font-bold">
+                              {t.hud.crtScanlines}
+                            </span>
+                            <span className="text-[9px] text-[var(--text-secondary)]">
+                              {language === "pt" ? "Filtro retrô de fósforo CRT" : "Retro CRT phosphor overlay"}
+                            </span>
+                          </div>
+                        </div>
+                        <span
+                          className={`px-1.5 py-0.5 text-[9px] font-black uppercase rounded-sm border shrink-0 ${
+                            crtEnabled
+                              ? "bg-[var(--accent-green)] text-black border-[var(--accent-green)] shadow-[0_0_6px_var(--accent-green-glow)]"
+                              : "bg-[var(--surface-panel)] text-[var(--text-secondary)] border-[var(--border-grid)]"
+                          }`}
+                        >
+                          {crtEnabled ? "ON" : "OFF"}
+                        </span>
+                      </button>
+
+                      {/* 4. Emergency Alert Protocol */}
+                      <button
+                        onClick={() => {
+                          closeSystemMenu(() => toggleEmergency());
+                        }}
+                        className="w-full py-2.5 px-3 bg-[var(--accent-red)] text-black font-extrabold text-xs tracking-wider uppercase hud-button hover:opacity-90 transition-opacity shadow-[0_0_12px_var(--accent-red-glow)] flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <ShieldAlertIcon className="w-4 h-4 shrink-0" />
+                        <span>{t.hud.emergency}</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
 
             {/* Mobile Menu Toggle Button (Rightmost on Mobile) */}
             <button
               onClick={toggleMobileMenu}
-              className="lg:hidden px-2.5 py-1.5 bg-[var(--surface-panel)] border border-[var(--border-grid)] text-[var(--accent-orange)] font-bold text-xs uppercase hud-panel-sm hover:border-[var(--accent-orange)] transition-colors flex items-center gap-1 active:scale-95"
+              className="lg:hidden px-2.5 py-1.5 bg-[var(--surface-panel)] border border-[var(--border-grid)] text-[var(--accent-orange)] font-bold text-xs uppercase hud-panel-sm hover:border-[var(--accent-orange)] transition-colors flex items-center gap-1 active:scale-95 cursor-pointer"
               aria-label="Toggle Mobile Navigation"
             >
               <span className="text-[10px]">{mobileMenuOpen ? "✕" : "☰"}</span>
@@ -407,7 +539,7 @@ export function HUDHeader() {
                   <div className="flex items-center gap-2">
                     <button
                       onClick={toggleCrt}
-                      className={`flex-1 py-2 px-3 border hud-button flex items-center justify-center gap-1.5 text-xs font-bold uppercase transition-all active:scale-95 sm:hidden ${
+                      className={`flex-1 py-2 px-3 border hud-button flex items-center justify-center gap-1.5 text-xs font-bold uppercase transition-all active:scale-95 ${
                         crtEnabled
                           ? "border-[var(--accent-green)] text-[var(--accent-green)] bg-[var(--accent-green-glow)]"
                           : "border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)]"
@@ -421,7 +553,7 @@ export function HUDHeader() {
                       onClick={() => {
                         closeMobileMenu(() => toggleEmergency());
                       }}
-                      className="flex-1 py-2 px-3 bg-[var(--accent-red)] text-black font-black text-xs uppercase hud-button flex items-center justify-center gap-1.5 shadow-[0_0_10px_var(--accent-red-glow)] active:scale-95 transition-transform sm:hidden"
+                      className="flex-1 py-2 px-3 bg-[var(--accent-red)] text-black font-black text-xs uppercase hud-button flex items-center justify-center gap-1.5 shadow-[0_0_10px_var(--accent-red-glow)] active:scale-95 transition-transform"
                     >
                       <ShieldAlertIcon className="w-3.5 h-3.5" />
                       <span>{t.hud.emergency}</span>
