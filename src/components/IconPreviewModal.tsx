@@ -37,17 +37,25 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
     setCurrentMode(saved);
   }, [isOpen]);
 
+  // Lock body scroll stably without scrollbar flicker
   useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "unset";
+      };
+    }
+  }, [isOpen]);
+
+  // Keyboard listener for Escape key
+  useEffect(() => {
+    if (!isOpen) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") handleClose();
     };
-    if (isOpen) {
-      window.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden";
-    }
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
     };
   }, [isOpen, handleClose]);
 

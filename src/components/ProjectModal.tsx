@@ -55,17 +55,25 @@ export function ProjectModal({
     }, 350);
   }, [isClosing, activeProject, onClose]);
 
+  // Lock body scroll stably while modal is active without flickering
   React.useEffect(() => {
+    if (activeProject) {
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = "unset";
+      };
+    }
+  }, [Boolean(activeProject)]);
+
+  // Keyboard listener for Escape key
+  React.useEffect(() => {
+    if (!activeProject) return;
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") handleClose();
     };
-    if (activeProject) {
-      window.addEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "hidden";
-    }
+    window.addEventListener("keydown", handleKeyDown);
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
-      document.body.style.overflow = "unset";
     };
   }, [activeProject, handleClose]);
 
