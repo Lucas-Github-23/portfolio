@@ -101,6 +101,11 @@ export const translations = {
       closeModal: "CLOSE",
       placeholderTag: "[PLACEHOLDER]",
       placeholderTagFull: "[PLACEHOLDER // EDIT WITH YOUR PROJECT]",
+      viewMore: "VIEW MORE PROJECTS",
+      viewLess: "COLLAPSE ARCHIVE",
+      repoFrontend: "FRONTEND REPO",
+      repoBackend: "BACKEND REPO",
+      inDevNote: "IN DEVELOPMENT // LOCAL ENVIRONMENT",
     },
     experience: {
       title: "EXPERIENCE & EDUCATION",
@@ -129,7 +134,7 @@ export const translations = {
       securityProtocolDesc: "Direct communication relay. Transmissions are delivered directly to Lucas' personal inbox.",
     },
     footer: {
-      copyright: "NERV HQ OPERATIONAL • ALL RIGHTS RESERVED",
+      copyright: "LUCAS PEREIRA • ALL RIGHTS RESERVED",
       status: "DEFENSE SYSTEM ACTIVE",
     },
   },
@@ -233,6 +238,11 @@ export const translations = {
       closeModal: "FECHAR",
       placeholderTag: "[PLACEHOLDER]",
       placeholderTagFull: "[PLACEHOLDER // EDITE COM SEU PROJETO]",
+      viewMore: "VER MAIS PROJETOS",
+      viewLess: "RECOLHER ARQUIVO",
+      repoFrontend: "REPO FRONTEND",
+      repoBackend: "REPO BACKEND",
+      inDevNote: "EM DESENVOLVIMENTO // AMBIENTE LOCAL",
     },
     experience: {
       title: "EXPERIÊNCIA & FORMAÇÃO",
@@ -261,7 +271,7 @@ export const translations = {
       securityProtocolDesc: "Terminal de comunicação direta. As mensagens são enviadas diretamente para o e-mail pessoal de Lucas.",
     },
     footer: {
-      copyright: "NERV HQ OPERACIONAL • TODOS OS DIREITOS RESERVADOS",
+      copyright: "LUCAS PEREIRA • TODOS OS DIREITOS RESERVADOS",
       status: "SISTEMA DE DEFESA ATIVO",
     },
   },

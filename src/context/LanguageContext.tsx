@@ -95,7 +95,11 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const setActiveSection = (sec: SectionId) => {
     setActiveSectionState(sec);
-    window.history.replaceState(null, "", `#${sec}`);
+
+    // Keep browser address bar clean without hash fragments (#)
+    if (typeof window !== "undefined" && window.location.hash) {
+      window.history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
 
     const element = document.getElementById(sec);
     if (element) {

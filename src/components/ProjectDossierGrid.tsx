@@ -3,11 +3,19 @@
 import React, { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import { ProjectData, ProjectModal } from "./ProjectModal";
-import { TerminalIcon, ExternalLinkIcon, GithubIcon } from "./Icons";
+import {
+  TerminalIcon,
+  ExternalLinkIcon,
+  GithubIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+} from "./Icons";
 
 export function ProjectDossierGrid() {
   const { language, t } = useLanguage();
   const [activeFilter, setActiveFilter] = useState<string>("all");
+  const [isExpanded, setIsExpanded] = useState<boolean>(false);
+  const [isCollapsing, setIsCollapsing] = useState<boolean>(false);
   const [selectedProject, setSelectedProject] = useState<ProjectData | null>(null);
 
   const projects: ProjectData[] = [
@@ -75,12 +83,56 @@ export function ProjectDossierGrid() {
       status: "COMPLETED",
       isPlaceholder: false,
     },
+    {
+      id: "OPERATION-05",
+      titleEn: "dotMSG — .MSG EMAIL DASHBOARD",
+      titlePt: "dotMSG — DASHBOARD DE ARQUIVOS .MSG",
+      category: "fullstack",
+      clearance: "CLEARANCE LEVEL B-02",
+      shortDescEn: "Fullstack analytics & parsing dashboard for Outlook .msg files combining a .NET (C#) Web API with a React 19 interface for automated message ingestion and metadata extraction.",
+      shortDescPt: "Dashboard fullstack para processamento e visualização de e-mails do Outlook (.msg), combinando Web API em .NET (C#) com interface em React 19 para extração automatizada de dados.",
+      fullDescEn: "Engineered a unified fullstack software solution for parsing, organizing, and visualizing Microsoft Outlook .msg binary email files without requiring desktop Outlook installations. The backend (.NET / C# Web API) executes automated batch ingestion, multipart stream extraction, header analysis, sender/receiver telemetry, and timestamp parsing. The frontend (React 19, Vite, Modern CSS) presents an interactive administrative dashboard with real-time payload filtering, detailed inspection views, search capabilities, and tabular data mapping.",
+      fullDescPt: "Solução de software fullstack unificada para leitura, extração e visualização de arquivos de e-mail do Microsoft Outlook (.msg) sem necessidade de instalação local do cliente de e-mail. O backend (.NET / C# Web API) realiza a ingestão e parsing automatizado dos arquivos binários de e-mail, decodificando metadados, anexos, cabeçalhos, remetentes, destinatários e corpos de mensagem via REST. O frontend (React 19, Vite) fornece uma interface gráfica moderna e responsiva com filtragem de mensagens em tempo real, painel de métricas, busca avançada e visualização limpa de conteúdos.",
+      techStack: [".NET (C#)", "Web API", "React 19", "JavaScript", "Vite", "Outlook .MSG Parsing", "REST API"],
+      repoFrontendUrl: "https://github.com/Lucas-Github-23/msg-dashboard-front-end",
+      repoBackendUrl: "https://github.com/Lucas-Github-23/msg-dashboard-back-end",
+      status: "IN DEVELOPMENT",
+      statusEn: "IN DEVELOPMENT",
+      statusPt: "EM DESENVOLVIMENTO",
+      isPlaceholder: false,
+    },
   ];
+
+  const handleToggleExpand = () => {
+    if (isCollapsing) return;
+    if (isExpanded) {
+      setIsCollapsing(true);
+      setTimeout(() => {
+        setIsExpanded(false);
+        setIsCollapsing(false);
+        // Smooth scroll back to projects section if user was scrolled past
+        const el = document.getElementById("projects");
+        if (el) {
+          const top = el.getBoundingClientRect().top + window.scrollY - 70;
+          if (window.scrollY > top) {
+            window.scrollTo({ top, behavior: "smooth" });
+          }
+        }
+      }, 280);
+    } else {
+      setIsExpanded(true);
+    }
+  };
 
   const filteredProjects = projects.filter((p) => {
     if (activeFilter === "all") return true;
     return p.category === activeFilter;
   });
+
+  const displayedProjects =
+    isExpanded || isCollapsing
+      ? filteredProjects
+      : filteredProjects.slice(0, 4);
 
   return (
     <section id="projects" className="py-12 sm:py-16">
@@ -109,8 +161,10 @@ export function ProjectDossierGrid() {
           ].map((filter) => (
             <button
               key={filter.id}
-              onClick={() => setActiveFilter(filter.id)}
-              className={`px-4 py-2 text-xs font-bold tracking-wider uppercase hud-button transition-all ${
+              onClick={() => {
+                setActiveFilter(filter.id);
+              }}
+              className={`px-4 py-2 text-xs font-bold tracking-wider uppercase hud-button transition-all cursor-pointer ${
                 activeFilter === filter.id
                   ? "bg-[var(--accent-orange)] text-black shadow-[0_0_15px_var(--accent-orange-glow)]"
                   : "bg-[var(--surface-panel)] text-[var(--text-secondary)] border border-[var(--border-grid)] hover:text-[var(--text-primary)] hover:border-[var(--accent-orange)]"
@@ -123,15 +177,37 @@ export function ProjectDossierGrid() {
 
         {/* Projects Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {filteredProjects.map((project) => {
+          {displayedProjects.map((project, index) => {
             const title = language === "pt" ? project.titlePt : project.titleEn;
             const shortDesc = language === "pt" ? project.shortDescPt : project.shortDescEn;
+            const statusText =
+              language === "pt"
+                ? project.statusPt || project.status
+                : project.statusEn || project.status;
+            const isCompletedOrActive =
+              project.status === "COMPLETED" || project.status === "ACTIVE";
+            const isExtraCard = index >= 4;
+
+            const animClass =
+              isCollapsing && isExtraCard
+                ? "dossier-card-collapsing"
+                : isExtraCard
+                ? "dossier-card-reveal"
+                : "";
 
             return (
               <div
                 key={project.id}
-                className="bg-[var(--surface-panel)] border-2 border-[var(--border-grid)] p-4 sm:p-6 hud-panel relative flex flex-col justify-between hover:border-[var(--accent-orange)] transition-all group shadow-md"
+                style={
+                  isExtraCard && !isCollapsing
+                    ? { animationDelay: `${(index - 4) * 100}ms` }
+                    : undefined
+                }
+                className={`bg-[var(--surface-panel)] border-2 border-[var(--border-grid)] p-4 sm:p-6 hud-panel relative flex flex-col justify-between hover:border-[var(--accent-orange)] transition-all group shadow-md ${animClass}`}
               >
+                {/* Laser scanline on card entrance */}
+                {isExtraCard && !isCollapsing && <div className="card-scanline-sweep" />}
+
                 {/* Dossier Top Bar */}
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2 border-b border-[var(--border-grid)] pb-3 font-mono">
@@ -146,8 +222,17 @@ export function ProjectDossierGrid() {
                         {title}
                       </h3>
                     </div>
-                    <span className="px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] text-[9px] sm:text-[10px] font-bold font-mono uppercase self-start shrink-0">
-                      {project.status}
+                    <span
+                      className={`px-2 py-0.5 border text-[9px] sm:text-[10px] font-bold font-mono uppercase self-start shrink-0 flex items-center gap-1.5 ${
+                        isCompletedOrActive
+                          ? "bg-[var(--accent-green-glow)] text-[var(--accent-green)] border-[var(--accent-green)]"
+                          : "bg-amber-500/15 text-amber-400 border-amber-500/50"
+                      }`}
+                    >
+                      {!isCompletedOrActive && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+                      )}
+                      {statusText}
                     </span>
                   </div>
 
@@ -173,42 +258,100 @@ export function ProjectDossierGrid() {
                 <div className="flex flex-wrap items-center justify-between gap-2.5 pt-5 mt-4 border-t border-[var(--border-grid)] font-mono">
                   <button
                     onClick={() => setSelectedProject(project)}
-                    className="px-4 py-2 bg-[var(--accent-orange)] text-black font-extrabold text-xs uppercase hud-button hover:bg-orange-600 transition-all shadow-[0_0_10px_var(--accent-orange-glow)] active:scale-95"
+                    className="px-4 py-2 bg-[var(--accent-orange)] text-black font-extrabold text-xs uppercase hud-button hover:bg-orange-600 transition-all shadow-[0_0_10px_var(--accent-orange-glow)] active:scale-95 cursor-pointer"
                   >
                     {t.projects.viewDetails}
                   </button>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     {project.liveUrl && (
                       <a
                         href={project.liveUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-2.5 py-1.5 bg-[var(--bg-main)] border-2 border-[var(--accent-green)] text-[var(--accent-green)] hover:bg-[var(--accent-green)] hover:text-black font-extrabold text-[11px] uppercase hud-panel-sm transition-all flex items-center gap-1.5 shadow-[0_0_8px_var(--accent-green-glow)]"
+                        className="px-2.5 py-1.5 bg-[var(--bg-main)] border-2 border-[var(--accent-green)] text-[var(--accent-green)] hover:bg-[var(--accent-green)] hover:text-black font-extrabold text-[11px] uppercase hud-panel-sm transition-all flex items-center gap-1.5 shadow-[0_0_8px_var(--accent-green-glow)] cursor-pointer"
                         title={t.projects.liveDemo}
                       >
                         <ExternalLinkIcon className="w-3.5 h-3.5" />
                         <span>{language === "pt" ? "ONLINE" : "LIVE"}</span>
                       </a>
                     )}
-                    {project.repoUrl && (
+
+                    {project.repoFrontendUrl && project.repoBackendUrl ? (
+                      <>
+                        <a
+                          href={project.repoFrontendUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2.5 py-1.5 bg-[var(--bg-main)] border-2 border-[var(--accent-orange)] text-[var(--accent-orange)] hover:bg-[var(--accent-orange)] hover:text-black font-extrabold text-[10px] uppercase hud-panel-sm transition-all flex items-center gap-1 shadow-[0_0_8px_var(--accent-orange-glow)] cursor-pointer"
+                          title="Frontend Repository"
+                        >
+                          <GithubIcon className="w-3.5 h-3.5" />
+                          <span>FRONT</span>
+                        </a>
+                        <a
+                          href={project.repoBackendUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="px-2.5 py-1.5 bg-[var(--bg-main)] border-2 border-[var(--accent-green)] text-[var(--accent-green)] hover:bg-[var(--accent-green)] hover:text-black font-extrabold text-[10px] uppercase hud-panel-sm transition-all flex items-center gap-1 shadow-[0_0_8px_var(--accent-green-glow)] cursor-pointer"
+                          title="Backend Repository"
+                        >
+                          <GithubIcon className="w-3.5 h-3.5" />
+                          <span>BACK</span>
+                        </a>
+                      </>
+                    ) : project.repoUrl ? (
                       <a
                         href={project.repoUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="px-2.5 py-1.5 bg-[var(--bg-main)] border-2 border-[var(--border-bright)] text-[var(--text-primary)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] font-extrabold text-[11px] uppercase hud-panel-sm transition-all flex items-center gap-1.5 shadow-sm"
+                        className="px-2.5 py-1.5 bg-[var(--bg-main)] border-2 border-[var(--border-bright)] text-[var(--text-primary)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)] font-extrabold text-[11px] uppercase hud-panel-sm transition-all flex items-center gap-1.5 shadow-sm cursor-pointer"
                         title={t.projects.sourceCode}
                       >
                         <GithubIcon className="w-3.5 h-3.5" />
                         <span>CODE</span>
                       </a>
-                    )}
+                    ) : null}
                   </div>
                 </div>
               </div>
             );
           })}
         </div>
+
+        {/* Expand / Collapse Button with Animated Rotation & Pulse */}
+        {filteredProjects.length > 4 && (
+          <div className="mt-10 flex flex-col items-center justify-center font-mono">
+            <div className="w-full flex items-center gap-3 my-2">
+              <div className="h-[1px] bg-[var(--border-grid)] flex-1" />
+              <span className="text-[10px] text-[var(--text-secondary)] uppercase tracking-widest transition-opacity">
+                ARCHIVE CAPACITY: {filteredProjects.length} DOSSIERS {isExpanded && !isCollapsing ? `// ALL DEPLOYED` : `// 4 SHOWN`}
+              </span>
+              <div className="h-[1px] bg-[var(--border-grid)] flex-1" />
+            </div>
+
+            <button
+              onClick={handleToggleExpand}
+              disabled={isCollapsing}
+              className="px-6 py-3 mt-3 bg-[var(--surface-panel)] border-2 border-[var(--border-grid)] hover:border-[var(--accent-orange)] text-[var(--text-primary)] hover:text-[var(--accent-orange)] font-black text-xs uppercase tracking-wider hud-button transition-all duration-300 flex items-center gap-2.5 shadow-[0_0_15px_rgba(0,0,0,0.5)] hover:shadow-[0_0_20px_var(--accent-orange-glow)] active:scale-95 group cursor-pointer disabled:opacity-50"
+            >
+              <span className="relative flex items-center justify-center w-4 h-4">
+                <ChevronDownIcon
+                  className={`w-4 h-4 text-[var(--accent-orange)] transition-transform duration-300 ease-out ${
+                    isExpanded && !isCollapsing ? "rotate-180" : "rotate-0"
+                  }`}
+                />
+              </span>
+              <span className="transition-colors duration-200">
+                {isExpanded && !isCollapsing
+                  ? t.projects.viewLess
+                  : language === "pt"
+                  ? `VER MAIS PROJETOS (+${filteredProjects.length - 4})`
+                  : `VIEW MORE PROJECTS (+${filteredProjects.length - 4})`}
+              </span>
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Dossier Detail Modal */}

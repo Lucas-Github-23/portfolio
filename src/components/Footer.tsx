@@ -5,13 +5,16 @@ import { useLanguage } from "@/context/LanguageContext";
 
 export function Footer() {
   const { t } = useLanguage();
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="py-8 bg-[var(--bg-main)] border-t border-[var(--border-grid)] font-mono text-xs text-[var(--text-secondary)]">
       <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
         <div className="flex items-center gap-2">
           <span className="w-2 h-2 rounded-full bg-[var(--accent-orange)]" />
-          <span>{t.footer.copyright}</span>
+          <span>
+            © {currentYear} {t.footer.copyright}
+          </span>
         </div>
 
         <div className="flex items-center gap-4">

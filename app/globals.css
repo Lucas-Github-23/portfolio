@@ -558,3 +558,79 @@ canvas {
   animation: hudBackdropFadeOut 0.35s ease-out forwards !important;
 }
 
+/* Dossier Card Expansion & Collapse Animations */
+@keyframes dossierCardReveal {
+  0% {
+    opacity: 0;
+    transform: translateY(28px) scale(0.96);
+    filter: brightness(1.25) blur(2px);
+  }
+  60% {
+    opacity: 0.95;
+    transform: translateY(-2px) scale(1.005);
+    filter: brightness(1.05) blur(0px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: brightness(1) blur(0px);
+  }
+}
+
+@keyframes dossierCardCollapse {
+  0% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+}
+
+.dossier-card-reveal {
+  animation: dossierCardReveal 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+  will-change: transform, opacity, filter;
+}
+
+.dossier-card-collapsing {
+  animation: dossierCardCollapse 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  pointer-events: none;
+}
+
+/* Hologram laser sweep line on extra card reveal */
+@keyframes cardScanlineSweep {
+  0% {
+    top: 0%;
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.9;
+  }
+  85% {
+    opacity: 0.9;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+
+.card-scanline-sweep {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--accent-orange) 50%,
+    transparent 100%
+  );
+  box-shadow: 0 0 10px var(--accent-orange), 0 0 20px var(--accent-orange-glow);
+  animation: cardScanlineSweep 0.85s ease-out forwards;
+  pointer-events: none;
+  z-index: 25;
+}
+
+
