@@ -27,39 +27,61 @@ interface LanguageContextType {
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("pt");
+  const [language, setLanguageState] = useState<Language>("en");
   const [theme, setTheme] = useState<"dark" | "light">("dark");
   const [crtEnabled, setCrtEnabled] = useState<boolean>(false);
   const [emergencyActive, setEmergencyActive] = useState<boolean>(false);
   const [activeSection, setActiveSectionState] = useState<SectionId>("status");
-  const [evaUnit, setEvaUnitState] = useState<EvaUnit>("nerv");
+  const [evaUnit, setEvaUnitState] = useState<EvaUnit>("eva-01");
   const [isTransitioning, setIsTransitioning] = useState<boolean>(false);
 
   useEffect(() => {
+    // 1. Language: Default is 'en', restore saved user choice if present
     const savedLang = safeGetItem("nerv_lang") as Language;
     if (savedLang === "en" || savedLang === "pt") {
       setLanguageState(savedLang);
+    } else {
+      setLanguageState("en");
     }
 
+    // 2. Theme: First visit uses OS/System preference, subsequent visits restore user choice
     const savedTheme = safeGetItem("nerv_theme") as "dark" | "light";
     if (savedTheme === "dark" || savedTheme === "light") {
       setTheme(savedTheme);
       if (savedTheme === "light") {
         document.documentElement.classList.add("light");
+      } else {
+        document.documentElement.classList.remove("light");
+      }
+    } else {
+      // System default for first-time visitor
+      const prefersLight =
+        typeof window !== "undefined" &&
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: light)").matches;
+      const initialTheme = prefersLight ? "light" : "dark";
+      setTheme(initialTheme);
+      if (initialTheme === "light") {
+        document.documentElement.classList.add("light");
+      } else {
+        document.documentElement.classList.remove("light");
       }
     }
 
+    // 3. CRT Scanlines
     const savedCrt = safeGetItem("nerv_crt");
     if (savedCrt) {
       setCrtEnabled(savedCrt === "true");
     }
 
+    // 4. EVA Unit Palette: Default is 'eva-01', restore saved user choice if present
     const savedEva = safeGetItem("nerv_eva_unit") as EvaUnit;
     if (savedEva && ["nerv", "eva-01", "eva-02", "eva-00"].includes(savedEva)) {
       setEvaUnitState(savedEva);
       document.documentElement.setAttribute("data-eva", savedEva);
     } else {
-      document.documentElement.setAttribute("data-eva", "nerv");
+      setEvaUnitState("eva-01");
+      document.documentElement.setAttribute("data-eva", "eva-01");
     }
 
     // Auto-update activeSection on manual scroll via IntersectionObserver
