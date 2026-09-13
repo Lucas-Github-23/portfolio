@@ -136,6 +136,7 @@ export const translations = {
     footer: {
       copyright: "LUCAS PEREIRA • ALL RIGHTS RESERVED",
       status: "DEFENSE SYSTEM ACTIVE",
+      disclaimer: "Non-commercial developer portfolio. Aesthetic homage inspired by Neon Genesis Evangelion. Original trademarks & lore belong to Studio Khara / Gainax.",
     },
   },
   pt: {
@@ -273,6 +274,7 @@ export const translations = {
     footer: {
       copyright: "LUCAS PEREIRA • TODOS OS DIREITOS RESERVADOS",
       status: "SISTEMA DE DEFESA ATIVO",
+      disclaimer: "Portfólio pessoal sem fins lucrativos. Homenagem estética inspirada em Neon Genesis Evangelion. Marcas e direitos originais pertencem ao Studio Khara / Gainax.",
     },
   },
 };
