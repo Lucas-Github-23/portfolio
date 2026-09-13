@@ -1,11 +1,13 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage, useTheme, useTactical } from "@/context";
 import { CpuIcon, ActivityIcon, TerminalIcon } from "./Icons";
 
 export function HeroSection() {
-  const { t, setActiveSection, evaUnit } = useLanguage();
+  const { t } = useLanguage();
+  const { evaUnit } = useTheme();
+  const { setActiveSection } = useTactical();
   const [syncRate, setSyncRate] = useState<number>(98.4);
 
   useEffect(() => {

@@ -1,8 +1,9 @@
 import React, { useEffect, useRef } from "react";
-import { useLanguage, SectionId } from "@/context/LanguageContext";
+import { useTheme, useTactical, SectionId } from "@/context";
 
 export function TacticalCanvasBackground() {
-  const { activeSection, theme } = useLanguage();
+  const { theme } = useTheme();
+  const { activeSection } = useTactical();
   const bgCanvasRef = useRef<HTMLCanvasElement | null>(null);
   const fgCanvasRef = useRef<HTMLCanvasElement | null>(null);
 

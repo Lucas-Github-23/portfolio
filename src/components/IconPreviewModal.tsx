@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context";
 import { ICON_VARIANTS, IconInfo, IconVariant } from "./DynamicFavicon";
 import { ShuffleIcon, CheckIcon, TargetIcon, XIcon } from "./Icons";
 import { safeGetItem } from "@/utils/storage";

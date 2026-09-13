@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { LanguageProvider } from "@/context/LanguageContext";
+import { AppProviders } from "@/context";
 import { ScanlineOverlay } from "@/components/ScanlineOverlay";
 import { AngelAttackOverlay } from "@/components/AngelAttackOverlay";
 import { DynamicFavicon } from "@/components/DynamicFavicon";
@@ -67,13 +67,13 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "pt_BR",
-    alternateLocale: "en_US",
+    locale: "en_US",
+    alternateLocale: "pt_BR",
     url: siteUrl,
     siteName: "LUCAS // DEV-02 • NERV HQ GEOFRONT",
     title: "Lucas // Software Engineer • NERV Tactical HUD Portfolio",
     description:
-      "Portfólio interativo de Engenharia de Software inspirado na interface tática NERV / MAGI (Evangelion). Projetos Full-Stack, diagnósticos de sistema e métricas de sincronia.",
+      "Interactive Software Engineering portfolio inspired by Evangelion NERV / MAGI tactical interface. Full-Stack applications, telemetry and diagnostics.",
     images: [
       {
         url: "/og-image.jpg",
@@ -88,7 +88,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Lucas // Software Engineer • NERV Tactical HUD Portfolio",
     description:
-      "Portfólio interativo de Engenharia de Software inspirado na interface tática NERV / MAGI (Evangelion). Projetos Full-Stack e diagnósticos táticos.",
+      "Interactive Software Engineering portfolio inspired by Evangelion NERV / MAGI tactical interface. Full-Stack applications, telemetry and diagnostics.",
     images: ["/og-image.jpg"],
   },
   robots: {
@@ -117,12 +117,12 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col nerv-grid-bg">
-        <LanguageProvider>
+        <AppProviders>
           <DynamicFavicon />
           <ScanlineOverlay />
           <AngelAttackOverlay />
           {children}
-        </LanguageProvider>
+        </AppProviders>
       </body>
     </html>
   );

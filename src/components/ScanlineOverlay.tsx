@@ -1,10 +1,11 @@
 "use client";
 
 import React from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useTheme, useTactical } from "@/context";
 
 export function ScanlineOverlay() {
-  const { crtEnabled, emergencyActive, toggleEmergency, t } = useLanguage();
+  const { crtEnabled } = useTheme();
+  const { emergencyActive, toggleEmergency } = useTactical();
 
   return (
     <>

@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useLanguage, EvaUnit } from "@/context/LanguageContext";
+import { useLanguage, useTheme, EvaUnit } from "@/context";
 import { ShieldAlertIcon } from "./Icons";
 
 // Konami Code sequence: Up, Up, Down, Down, Left, Right, Left, Right, b, a
@@ -48,10 +48,16 @@ function getPilotForTheme(unit: EvaUnit): PilotInfo {
 }
 
 export function AngelAttackOverlay() {
-  const { language, evaUnit } = useLanguage();
+  const { language } = useLanguage();
+  const { evaUnit } = useTheme();
   const [active, setActive] = useState<boolean>(false);
-  const [konamiIndex, setKonamiIndex] = useState<number>(0);
   const [currentPilot, setCurrentPilot] = useState<PilotInfo>(() => getPilotForTheme(evaUnit));
+  const konamiIndexRef = React.useRef<number>(0);
+  const activeRef = React.useRef<boolean>(false);
+
+  useEffect(() => {
+    activeRef.current = active;
+  }, [active]);
 
   // Update or randomize pilot whenever overlay activates or theme changes
   useEffect(() => {
@@ -63,25 +69,25 @@ export function AngelAttackOverlay() {
   // Listen for Konami Code sequence and secret triggers
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      const expectedKey = KONAMI_CODE[konamiIndex];
-      if (e.key === "Escape" && active) {
+      const expectedKey = KONAMI_CODE[konamiIndexRef.current];
+      if (e.key === "Escape" && activeRef.current) {
         setActive(false);
+        konamiIndexRef.current = 0;
         return;
       }
       if (e.key.toLowerCase() === expectedKey.toLowerCase()) {
-        const nextIndex = konamiIndex + 1;
+        const nextIndex = konamiIndexRef.current + 1;
         if (nextIndex === KONAMI_CODE.length) {
           setActive(true);
-          setKonamiIndex(0);
+          konamiIndexRef.current = 0;
         } else {
-          setKonamiIndex(nextIndex);
+          konamiIndexRef.current = nextIndex;
         }
       } else {
-        setKonamiIndex(0);
+        konamiIndexRef.current = 0;
       }
     };
 
-    // Listen for custom trigger event (e.g. secret click on NERV logo in HUD)
     const handleSecretTrigger = () => {
       setActive(true);
     };
@@ -93,7 +99,7 @@ export function AngelAttackOverlay() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("nerv_angel_attack", handleSecretTrigger);
     };
-  }, [konamiIndex, active]);
+  }, []);
 
   if (!active) return null;
 

@@ -2,7 +2,7 @@
 
 import React from "react";
 import { createPortal } from "react-dom";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context";
 import { ExternalLinkIcon, GithubIcon, ShieldAlertIcon } from "./Icons";
 
 export interface ProjectData {

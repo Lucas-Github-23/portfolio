@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context";
 import { TerminalIcon, MailIcon, GithubIcon, LinkedinIcon, CopyIcon, CheckIcon } from "./Icons";
 
 export function SignalTransmissionForm() {

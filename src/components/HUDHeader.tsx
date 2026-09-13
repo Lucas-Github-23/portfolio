@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage, useTheme, useTactical } from "@/context";
 import { SunIcon, MoonIcon, ShieldAlertIcon, MonitorIcon, LayersIcon, TerminalIcon } from "./Icons";
 import { IconPreviewModal } from "./IconPreviewModal";
 import { EvaSyncModal } from "./EvaSyncModal";
@@ -9,19 +9,9 @@ import { IconVariant } from "./DynamicFavicon";
 import { safeGetItem } from "@/utils/storage";
 
 export function HUDHeader() {
-  const {
-    language,
-    setLanguage,
-    t,
-    theme,
-    toggleTheme,
-    crtEnabled,
-    toggleCrt,
-    toggleEmergency,
-    activeSection,
-    setActiveSection,
-    evaUnit,
-  } = useLanguage();
+  const { language, setLanguage, t } = useLanguage();
+  const { theme, toggleTheme, crtEnabled, toggleCrt, evaUnit } = useTheme();
+  const { activeSection, setActiveSection, toggleEmergency } = useTactical();
 
   const [timeString, setTimeString] = useState<string>("");
   const [logoClicks, setLogoClicks] = useState<number>(0);

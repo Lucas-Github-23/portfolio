@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import { useLanguage } from "@/context/LanguageContext";
+import { useLanguage } from "@/context";
 import { ProjectData, ProjectModal } from "./ProjectModal";
 import {
   TerminalIcon,

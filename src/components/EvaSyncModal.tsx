@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { createPortal } from "react-dom";
-import { useLanguage, EvaUnit } from "@/context/LanguageContext";
+import { useLanguage, useTheme, EvaUnit } from "@/context";
 import { CheckIcon, TargetIcon, XIcon, ActivityIcon, CpuIcon } from "./Icons";
 
 interface EvaSyncModalProps {
@@ -11,7 +11,8 @@ interface EvaSyncModalProps {
 }
 
 export function EvaSyncModal({ isOpen, onClose }: EvaSyncModalProps) {
-  const { language, t, evaUnit, setEvaUnit } = useLanguage();
+  const { language, t } = useLanguage();
+  const { evaUnit, setEvaUnit } = useTheme();
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState<boolean>(false);
   const [mounted, setMounted] = useState<boolean>(false);
