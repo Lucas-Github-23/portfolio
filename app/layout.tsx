@@ -22,7 +22,7 @@ const siteUrl = process.env.NEXT_PUBLIC_SITE_URL
   ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
   : process.env.VERCEL_URL
   ? `https://${process.env.VERCEL_URL}`
-  : "https://portfolio-lucas-dev.vercel.app";
+  : "https://lucasgo.dev";
 
 export const viewport: Viewport = {
   themeColor: "#080808",

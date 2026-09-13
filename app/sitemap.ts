@@ -7,7 +7,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
     : process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
-    : "https://portfolio-lucas-dev.vercel.app";
+    : "https://lucasgo.dev";
 
   return [
     {
