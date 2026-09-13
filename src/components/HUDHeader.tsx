@@ -265,6 +265,7 @@ export function HUDHeader() {
             <div className="flex border border-[var(--border-grid)] p-0.5 hud-panel-sm bg-[var(--surface-panel)]">
               <button
                 onClick={() => setLanguage("en")}
+                aria-label="Switch interface to English"
                 className={`px-1.5 sm:px-2 py-1 font-bold text-[9px] sm:text-[10px] transition-colors ${
                   language === "en"
                     ? "bg-[var(--accent-orange)] text-black shadow-sm"
@@ -275,6 +276,7 @@ export function HUDHeader() {
               </button>
               <button
                 onClick={() => setLanguage("pt")}
+                aria-label="Mudar interface para Português"
                 className={`px-1.5 sm:px-2 py-1 font-bold text-[9px] sm:text-[10px] transition-colors ${
                   language === "pt"
                     ? "bg-[var(--accent-orange)] text-black shadow-sm"
@@ -290,6 +292,7 @@ export function HUDHeader() {
               onClick={toggleTheme}
               className="p-1.5 border border-[var(--border-grid)] bg-[var(--surface-panel)] text-[var(--text-secondary)] hover:text-[var(--accent-orange)] transition-colors hud-panel-sm cursor-pointer"
               title={theme === "dark" ? t.hud.themeLight : t.hud.themeDark}
+              aria-label={theme === "dark" ? t.hud.themeLight : t.hud.themeDark}
             >
               {theme === "dark" ? <SunIcon /> : <MoonIcon />}
             </button>

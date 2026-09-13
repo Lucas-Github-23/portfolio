@@ -95,6 +95,9 @@ export function ProjectModal({
   return createPortal(
     <div
       onClick={handleClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="project-modal-title"
       className={`fixed inset-0 z-[100] bg-black/85 flex items-center justify-center p-3 sm:p-4 select-none ${
         isClosing ? "hud-backdrop-closing" : "hud-backdrop-animate"
       }`}
@@ -123,13 +126,17 @@ export function ProjectModal({
                       </span>
                     )}
                   </div>
-                  <h3 className="text-xl sm:text-2xl font-black text-[var(--text-primary)] uppercase tracking-tight mt-1 font-mono break-words">
+                  <h3
+                    id="project-modal-title"
+                    className="text-xl sm:text-2xl font-black text-[var(--text-primary)] uppercase tracking-tight mt-1 font-mono break-words"
+                  >
                     {title}
                   </h3>
                 </div>
                 <button
                   onClick={handleClose}
-                  className="px-3 py-1.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs tracking-wider uppercase hud-button hover:bg-orange-600 transition-colors shrink-0"
+                  aria-label={t.projects.closeModal}
+                  className="px-3 py-1.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs tracking-wider uppercase hud-button hover:bg-orange-600 transition-colors shrink-0 cursor-pointer"
                 >
                   {t.projects.closeModal}
                 </button>

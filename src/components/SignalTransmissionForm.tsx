@@ -80,10 +80,11 @@ export function SignalTransmissionForm() {
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Name */}
               <div>
-                <label className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
+                <label htmlFor="comm-name" className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
                   {t.contact.nameLabel}
                 </label>
                 <input
+                  id="comm-name"
                   type="text"
                   required
                   value={formData.name}
@@ -95,10 +96,11 @@ export function SignalTransmissionForm() {
 
               {/* Email */}
               <div>
-                <label className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
+                <label htmlFor="comm-email" className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
                   {t.contact.emailLabel}
                 </label>
                 <input
+                  id="comm-email"
                   type="email"
                   required
                   value={formData.email}
@@ -110,10 +112,11 @@ export function SignalTransmissionForm() {
 
               {/* Subject */}
               <div>
-                <label className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
+                <label htmlFor="comm-subject" className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
                   {t.contact.subjectLabel}
                 </label>
                 <input
+                  id="comm-subject"
                   type="text"
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
@@ -124,10 +127,11 @@ export function SignalTransmissionForm() {
 
               {/* Message */}
               <div>
-                <label className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
+                <label htmlFor="comm-message" className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
                   {t.contact.messageLabel}
                 </label>
                 <textarea
+                  id="comm-message"
                   required
                   rows={4}
                   value={formData.message}

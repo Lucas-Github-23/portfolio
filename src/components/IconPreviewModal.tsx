@@ -93,6 +93,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
             className="w-full bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] hud-panel shadow-[0_0_35px_var(--accent-orange-glow)] p-4 sm:p-6 relative text-[var(--text-primary)] font-mono overflow-y-auto max-h-[90vh]"
             role="dialog"
             aria-modal="true"
+            aria-labelledby="icon-modal-title"
           >
             <div className="space-y-5">
               {/* Header */}
@@ -100,7 +101,10 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
             <div className="flex items-center gap-2.5">
               <span className="w-3 h-3 bg-[var(--accent-orange)] rotate-45 inline-block" />
               <div>
-                <h2 className="text-sm sm:text-base md:text-lg font-black tracking-wider text-[var(--accent-orange)] uppercase">
+                <h2
+                  id="icon-modal-title"
+                  className="text-sm sm:text-base md:text-lg font-black tracking-wider text-[var(--accent-orange)] uppercase"
+                >
                   {language === "pt" ? "SELETOR & PREVIEW DE ÍCONES HUD" : "HUD ICON SELECTOR & PREVIEW"}
                 </h2>
                 <p className="text-[10px] sm:text-xs text-[var(--text-secondary)]">

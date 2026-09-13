@@ -20,16 +20,19 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Default is 'en', restore saved user choice if present
     const savedLang = safeGetItem("nerv_lang") as Language;
-    if (savedLang === "en" || savedLang === "pt") {
-      setLanguageState(savedLang);
-    } else {
-      setLanguageState("en");
+    const initialLang = savedLang === "en" || savedLang === "pt" ? savedLang : "en";
+    setLanguageState(initialLang);
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = initialLang;
     }
   }, []);
 
   const setLanguage = (lang: Language) => {
     setLanguageState(lang);
     safeSetItem("nerv_lang", lang);
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = lang;
+    }
   };
 
   const t = translations[language];
