@@ -28,8 +28,9 @@ export function SignalTransmissionForm() {
         document.body.appendChild(textArea);
         textArea.focus();
         textArea.select();
-        document.execCommand("copy");
-        document.body.removeChild(textArea);
+        if (textArea.parentNode) {
+          textArea.parentNode.removeChild(textArea);
+        }
       }
       setCopiedEmail(true);
       setTimeout(() => setCopiedEmail(false), 3000);

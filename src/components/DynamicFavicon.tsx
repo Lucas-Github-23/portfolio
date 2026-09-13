@@ -52,25 +52,34 @@ export const ICON_VARIANTS: IconInfo[] = [
 export function updateFavicon(path: string) {
   if (typeof document === "undefined") return;
 
-  // Remove existing icon links
-  const existingIcons = document.querySelectorAll("link[rel*='icon']");
-  existingIcons.forEach((el) => el.remove());
+  // 1. Update or create dynamic favicon link safely without destroying Next.js-tracked nodes
+  let iconLink = document.querySelector("link#dynamic-favicon") as HTMLLinkElement | null;
+  if (!iconLink) {
+    iconLink = document.querySelector("link[rel='icon']") as HTMLLinkElement | null;
+  }
 
-  // Create new high-priority SVG icon link
-  const link = document.createElement("link");
-  link.type = "image/svg+xml";
-  link.rel = "icon";
-  link.href = path;
-  document.head.appendChild(link);
+  if (iconLink) {
+    iconLink.href = path;
+    iconLink.type = "image/svg+xml";
+  } else {
+    const newLink = document.createElement("link");
+    newLink.id = "dynamic-favicon";
+    newLink.rel = "icon";
+    newLink.type = "image/svg+xml";
+    newLink.href = path;
+    document.head.appendChild(newLink);
+  }
 
-  // Also update apple-touch-icon
+  // 2. Also update apple-touch-icon safely if present or create it
   let appleLink = document.querySelector("link[rel='apple-touch-icon']") as HTMLLinkElement | null;
-  if (!appleLink) {
+  if (appleLink) {
+    appleLink.href = path;
+  } else {
     appleLink = document.createElement("link");
     appleLink.rel = "apple-touch-icon";
+    appleLink.href = path;
     document.head.appendChild(appleLink);
   }
-  appleLink.href = path;
 }
 
 export function DynamicFavicon() {
