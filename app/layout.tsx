@@ -34,30 +34,34 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Lucas // Software Engineer • NERV Tactical HUD Portfolio",
-    template: "%s | Lucas // DEV-02",
+    default: "Lucas Gabriel | Software Engineer",
+    template: "%s | Lucas Gabriel",
   },
   description:
-    "Software Engineering portfolio designed in Evangelion NERV / MAGI tactical interface style. Full-Stack, React, Next.js, TypeScript, and Data Systems.",
-  applicationName: "NERV HUD // LUCAS DEV-02",
-  authors: [{ name: "Lucas", url: "https://github.com/Lucas-Github-23" }],
-  creator: "Lucas",
-  publisher: "Lucas",
+    "Lucas Gabriel's Software Engineering Portfolio. Building high-performance web applications with React, Next.js, TypeScript, .NET, and SQL.",
+  applicationName: "Lucas Gabriel",
+  authors: [{ name: "Lucas Gabriel", url: "https://github.com/Lucas-Github-23" }],
+  creator: "Lucas Gabriel",
+  publisher: "Lucas Gabriel",
   keywords: [
-    "Lucas",
+    "Lucas Gabriel",
+    "Lucas Gabriel Pereira",
+    "Lucas Gabriel Oliveira Pereira",
+    "Lucas Pereira",
     "Software Engineer",
     "Engenheiro de Software",
     "Desenvolvedor Full Stack",
+    "Full-Stack Developer",
     "Frontend Developer",
     "Backend Developer",
     "Next.js",
     "React",
     "TypeScript",
     "Tailwind CSS",
+    "C#",
+    ".NET",
     "SQL",
-    "NERV",
-    "MAGI",
-    "Evangelion Portfolio",
+    "lucasgo.dev",
   ],
   icons: {
     icon: [
@@ -70,25 +74,25 @@ export const metadata: Metadata = {
     locale: "en_US",
     alternateLocale: "pt_BR",
     url: siteUrl,
-    siteName: "LUCAS // DEV-02 • NERV HQ GEOFRONT",
-    title: "Lucas // Software Engineer • NERV Tactical HUD Portfolio",
+    siteName: "Lucas Gabriel",
+    title: "Lucas Gabriel | Software Engineer",
     description:
-      "Interactive Software Engineering portfolio inspired by Evangelion NERV / MAGI tactical interface. Full-Stack applications, telemetry and diagnostics.",
+      "Lucas Gabriel's Software Engineering Portfolio. Building high-performance web applications with React, Next.js, TypeScript, .NET, and SQL.",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
         type: "image/jpeg",
-        alt: "Lucas // Software Engineer - NERV Tactical HUD Interface Social Preview Card",
+        alt: "Lucas Gabriel - Software Engineer Portfolio",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lucas // Software Engineer • NERV Tactical HUD Portfolio",
+    title: "Lucas Gabriel | Software Engineer",
     description:
-      "Interactive Software Engineering portfolio inspired by Evangelion NERV / MAGI tactical interface. Full-Stack applications, telemetry and diagnostics.",
+      "Lucas Gabriel's Software Engineering Portfolio. Building high-performance web applications with React, Next.js, TypeScript, .NET, and SQL.",
     images: ["/og-image.jpg"],
   },
   robots: {
@@ -104,6 +108,35 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Person",
+      "@id": "https://lucasgo.dev/#person",
+      name: "Lucas Gabriel",
+      alternateName: ["Lucas Gabriel Oliveira Pereira", "Lucas Pereira", "Lucas Gabriel Pereira"],
+      url: "https://lucasgo.dev",
+      jobTitle: "Software Engineer",
+      sameAs: [
+        "https://github.com/Lucas-Github-23",
+        "https://www.linkedin.com/in/lucas-pereira-521082279/",
+      ],
+      knowsAbout: ["React", "Next.js", "TypeScript", ".NET", "C#", "SQL", "Software Engineering"],
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://lucasgo.dev/#website",
+      url: "https://lucasgo.dev",
+      name: "Lucas Gabriel",
+      alternateName: "Lucas Gabriel | Software Engineer",
+      publisher: {
+        "@id": "https://lucasgo.dev/#person",
+      },
+    },
+  ],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -116,6 +149,12 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+      </head>
       <body className="min-h-full flex flex-col nerv-grid-bg">
         <AppProviders>
           <DynamicFavicon />
