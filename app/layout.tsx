@@ -101,6 +101,9 @@ export const metadata: Metadata = {
       "Lucas Gabriel's Software Engineering Portfolio. Building high-performance web applications with React, Next.js, TypeScript, .NET, and SQL.",
     images: ["/og-image.jpg"],
   },
+  alternates: {
+    canonical: "/",
+  },
   robots: {
     index: true,
     follow: true,
