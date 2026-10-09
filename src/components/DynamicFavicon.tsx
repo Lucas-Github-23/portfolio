@@ -52,12 +52,8 @@ export const ICON_VARIANTS: IconInfo[] = [
 export function updateFavicon(path: string) {
   if (typeof document === "undefined") return;
 
-  // 1. Update or create dynamic favicon link safely without destroying Next.js-tracked nodes
+  // Update or create dedicated dynamic favicon link without mutating static Next.js favicons
   let iconLink = document.querySelector("link#dynamic-favicon") as HTMLLinkElement | null;
-  if (!iconLink) {
-    iconLink = document.querySelector("link[rel='icon']") as HTMLLinkElement | null;
-  }
-
   if (iconLink) {
     iconLink.href = path;
     iconLink.type = "image/svg+xml";
@@ -68,17 +64,6 @@ export function updateFavicon(path: string) {
     newLink.type = "image/svg+xml";
     newLink.href = path;
     document.head.appendChild(newLink);
-  }
-
-  // 2. Also update apple-touch-icon safely if present or create it
-  let appleLink = document.querySelector("link[rel='apple-touch-icon']") as HTMLLinkElement | null;
-  if (appleLink) {
-    appleLink.href = path;
-  } else {
-    appleLink = document.createElement("link");
-    appleLink.rel = "apple-touch-icon";
-    appleLink.href = path;
-    document.head.appendChild(appleLink);
   }
 }
 
