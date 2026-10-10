@@ -55,22 +55,22 @@ export const translations = {
     },
     magi: {
       title: "MAGI SUPERCOMPUTER SYSTEM",
-      subtitle: "Tripartite consensus architecture evaluating core engineering competencies.",
+      subtitle: "Tripartite LLM consensus architecture evaluating core engineering competencies.",
       cores: {
         melchior: {
-          name: "MELCHIOR-1",
+          name: "CLAUDE 3.7",
           role: "Frontend Architecture & Design",
           verdict: "CONSENSUS: 100% APPROVAL",
           detail: "Specialized in Next.js, React (Vite), TypeScript, HTML5, and responsive Web APIs.",
         },
         balthasar: {
-          name: "BALTHASAR-2",
+          name: "GPT-4o",
           role: "Backend & Systems Intelligence",
           verdict: "CONSENSUS: 100% APPROVAL",
           detail: "Knowledge in SQL Server, MySQL, MongoDB, Node.js, REST/GraphQL APIs, Power BI, M, and VBA Office Automation.",
         },
         caspar: {
-          name: "CASPAR-3",
+          name: "GEMINI 2.0",
           role: "DevOps & Operational Logistics",
           verdict: "CONSENSUS: 100% APPROVAL",
           detail: "Containerized deployments via Docker, CI/CD automated pipelines, Git version control, and cloud optimizations.",
@@ -198,22 +198,22 @@ export const translations = {
     },
     magi: {
       title: "SISTEMA SUPERCOMPUTADOR MAGI",
-      subtitle: "Arquitetura de consenso tripartite avaliando competências centrais de engenharia.",
+      subtitle: "Arquitetura tripartite de consenso por LLMs avaliando competências centrais de engenharia.",
       cores: {
         melchior: {
-          name: "MELCHIOR-1",
+          name: "CLAUDE 3.7",
           role: "Arquitetura Frontend & Design",
           verdict: "CONSENSO: 100% APROVAÇÃO",
           detail: "Especializado em Next.js, React (Vite), TypeScript, HTML5 e Web APIs responsivas.",
         },
         balthasar: {
-          name: "BALTHASAR-2",
+          name: "GPT-4o",
           role: "Inteligência Backend & Sistemas",
           verdict: "CONSENSO: 100% APROVAÇÃO",
           detail: "Conhecimento em SQL Server, MySQL, MongoDB, Node.js, APIs REST/GraphQL, Power BI, Linguagem M e automação VBA Office.",
         },
         caspar: {
-          name: "CASPAR-3",
+          name: "GEMINI 2.0",
           role: "DevOps & Logística Operacional",
           verdict: "CONSENSO: 100% APROVAÇÃO",
           detail: "Deployments containerizados via Docker, pipelines CI/CD automatizadas, Git e deploy em nuvem.",

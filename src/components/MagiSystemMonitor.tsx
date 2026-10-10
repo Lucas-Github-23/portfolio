@@ -1,12 +1,11 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { useLanguage } from "@/context";
 import { CpuIcon } from "./Icons";
 
 export function MagiSystemMonitor() {
   const { t } = useLanguage();
-  const [activeCore, setActiveCore] = useState<"melchior" | "balthasar" | "caspar">("melchior");
 
   const coreData = {
     melchior: t.magi.cores.melchior,
@@ -31,21 +30,15 @@ export function MagiSystemMonitor() {
           </p>
         </div>
 
-        {/* 3 MAGI Cores Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        {/* 3 LLM Consensus Cores Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {(["melchior", "balthasar", "caspar"] as const).map((coreKey) => {
             const core = coreData[coreKey];
-            const isActive = activeCore === coreKey;
 
             return (
-              <button
+              <div
                 key={coreKey}
-                onClick={() => setActiveCore(coreKey)}
-                className={`text-left p-6 hud-panel border-2 transition-all relative cursor-pointer ${
-                  isActive
-                    ? "bg-[var(--surface-panel)] border-[var(--accent-orange)] shadow-[0_0_20px_var(--accent-orange-glow)]"
-                    : "bg-[var(--surface-panel)]/50 border-[var(--border-grid)] hover:border-[var(--border-bright)]"
-                }`}
+                className="text-left p-6 hud-panel border-2 bg-[var(--surface-panel)] border-[var(--border-grid)] hover:border-[var(--accent-orange)] hover:shadow-[0_0_20px_var(--accent-orange-glow)] transition-all relative group"
               >
                 {/* Core Header */}
                 <div className="flex justify-between items-start mb-4 font-mono">
@@ -57,7 +50,10 @@ export function MagiSystemMonitor() {
                       {core.role}
                     </h3>
                   </div>
-                  <span className="w-3 h-3 rounded-full bg-[var(--accent-orange)] animate-ping" />
+                  <div className="relative flex items-center justify-center w-3 h-3">
+                    <span className="absolute inline-flex h-full w-full rounded-full bg-[var(--accent-orange)] opacity-75 animate-ping" />
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[var(--accent-orange)]" />
+                  </div>
                 </div>
 
                 {/* Consensus Verdict Badge */}
@@ -69,31 +65,12 @@ export function MagiSystemMonitor() {
                 <p className="text-xs font-mono text-[var(--text-secondary)] leading-relaxed">
                   {core.detail}
                 </p>
-              </button>
+              </div>
             );
           })}
-        </div>
-
-        {/* Selected Core Detailed Diagnostic Panel */}
-        <div className="bg-[var(--surface-panel)] border-2 border-[var(--accent-orange)] p-4 sm:p-6 hud-panel relative font-mono shadow-md">
-          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2 border-b border-[var(--border-grid)] pb-3 mb-4">
-            <span className="text-xs font-extrabold text-[var(--accent-orange)] tracking-widest uppercase flex items-center gap-2">
-              <span className="w-2 h-2 bg-[var(--accent-orange)] shrink-0" />
-              <span className="truncate">DIAGNOSTIC LOG // {coreData[activeCore].name}</span>
-            </span>
-            <span className="text-[10px] text-[var(--text-secondary)]">STATUS: 100% OPERATIONAL</span>
-          </div>
-
-          <div className="text-xs sm:text-sm text-[var(--text-primary)] leading-relaxed space-y-2">
-            <p className="font-bold text-[var(--accent-green)]">
-              &gt; {coreData[activeCore].role}
-            </p>
-            <p className="text-[var(--text-secondary)]">
-              {coreData[activeCore].detail}
-            </p>
-          </div>
         </div>
       </div>
     </section>
   );
 }
+

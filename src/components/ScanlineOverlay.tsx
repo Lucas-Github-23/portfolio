@@ -28,15 +28,15 @@ export function ScanlineOverlay() {
 
             <div className="grid grid-cols-3 gap-2 md:gap-4 mb-8 text-xs font-mono">
               <div className="p-3 bg-[var(--surface-panel)] border border-[var(--accent-red)]">
-                <span className="block text-[var(--accent-orange)]">MELCHIOR-1</span>
+                <span className="block text-[var(--accent-orange)]">CLAUDE 3.7</span>
                 <span className="text-[var(--accent-red)] font-bold">LOCKED</span>
               </div>
               <div className="p-3 bg-[var(--surface-panel)] border border-[var(--accent-red)]">
-                <span className="block text-[var(--accent-orange)]">BALTHASAR-2</span>
+                <span className="block text-[var(--accent-orange)]">GPT-4o</span>
                 <span className="text-[var(--accent-red)] font-bold">LOCKED</span>
               </div>
               <div className="p-3 bg-[var(--surface-panel)] border border-[var(--accent-red)]">
-                <span className="block text-[var(--accent-orange)]">CASPAR-3</span>
+                <span className="block text-[var(--accent-orange)]">GEMINI 2.0</span>
                 <span className="text-[var(--accent-red)] font-bold">LOCKED</span>
               </div>
             </div>
