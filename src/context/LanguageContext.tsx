@@ -14,47 +14,96 @@ interface LanguageContextType {
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
+/**
+ * Detects whether the visitor's environment points to Portuguese (Brazil) or International/English.
+ * Checks URL parameter -> localStorage -> navigator.languages -> navigator.language -> Brazilian Timezone.
+ */
+function detectPreferredLanguage(): Language {
+  if (typeof window === "undefined") return "pt";
+
+  // 1. URL parameter override (?lang=en or ?lang=pt) for direct shared links (e.g., CVs, LinkedIn)
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const urlLang = params.get("lang")?.toLowerCase();
+    if (urlLang === "en" || urlLang === "pt") {
+      safeSetItem("nerv_lang", urlLang);
+      return urlLang as Language;
+    }
+  } catch {
+    // Ignore URL parse errors
+  }
+
+  // 2. Saved user preference in storage
+  const saved = safeGetItem("nerv_lang") as Language;
+  if (saved === "en" || saved === "pt") {
+    return saved;
+  }
+
+  // 3. Check browser language list (navigator.languages and navigator.language)
+  const langs: string[] = [];
+  if (typeof navigator !== "undefined") {
+    if (navigator.language) langs.push(navigator.language);
+    if (Array.isArray(navigator.languages)) langs.push(...navigator.languages);
+    if ((navigator as unknown as { userLanguage?: string }).userLanguage) {
+      langs.push((navigator as unknown as { userLanguage: string }).userLanguage);
+    }
+    if ((navigator as unknown as { browserLanguage?: string }).browserLanguage) {
+      langs.push((navigator as unknown as { browserLanguage: string }).browserLanguage);
+    }
+  }
+
+  const hasPt = langs.some(
+    (l) => typeof l === "string" && l.toLowerCase().startsWith("pt")
+  );
+
+  // If Portuguese is present anywhere in user's browser language list, use pt
+  if (hasPt) {
+    return "pt";
+  }
+
+  // 4. Check Brazilian timezone as a strong geographic indicator
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
+    if (
+      tz.includes("Sao_Paulo") ||
+      tz.includes("Fortaleza") ||
+      tz.includes("Recife") ||
+      tz.includes("Belem") ||
+      tz.includes("Manaus") ||
+      tz.includes("Cuiaba") ||
+      tz.includes("Porto_Velho") ||
+      tz.includes("Boa_Vista") ||
+      tz.includes("Campo_Grande") ||
+      tz.includes("Maceio") ||
+      tz.includes("Bahia") ||
+      tz.includes("Noronha")
+    ) {
+      return "pt";
+    }
+  } catch {
+    // Ignore timezone detection errors
+  }
+
+  // 5. If visitor explicitly has English or international language without Portuguese, use en
+  const isEnglishOrOther = langs.some(
+    (l) => typeof l === "string" && !l.toLowerCase().startsWith("pt")
+  );
+  if (isEnglishOrOther) {
+    return "en";
+  }
+
+  return "pt";
+}
+
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
-  const [language, setLanguageState] = useState<Language>("en");
+  // Start with 'pt' as default so Brazilian visitors and SSR default to Portuguese
+  const [language, setLanguageState] = useState<Language>("pt");
 
   useEffect(() => {
-    // 0. Check URL query param (?lang=en or ?lang=pt) for direct shared links (e.g., CVs, LinkedIn)
-    if (typeof window !== "undefined") {
-      try {
-        const params = new URLSearchParams(window.location.search);
-        const urlLang = params.get("lang")?.toLowerCase();
-        if (urlLang === "en" || urlLang === "pt") {
-          setLanguageState(urlLang as Language);
-          safeSetItem("nerv_lang", urlLang);
-          if (typeof document !== "undefined") {
-            document.documentElement.lang = urlLang === "pt" ? "pt-BR" : "en";
-          }
-          return;
-        }
-      } catch {
-        // Fall through to storage check
-      }
-    }
-
-    // 1. Check saved user preference if present
-    const savedLang = safeGetItem("nerv_lang") as Language;
-    if (savedLang === "en" || savedLang === "pt") {
-      setLanguageState(savedLang);
-      if (typeof document !== "undefined") {
-        document.documentElement.lang = savedLang === "pt" ? "pt-BR" : "en";
-      }
-      return;
-    }
-
-    // 2. Auto-detect browser language for first-time visitors:
-    // Portuguese browsers -> pt, International/other browsers -> en
-    if (typeof navigator !== "undefined" && navigator.language) {
-      const isPt = navigator.language.toLowerCase().startsWith("pt");
-      const detected: Language = isPt ? "pt" : "en";
-      setLanguageState(detected);
-      if (typeof document !== "undefined") {
-        document.documentElement.lang = detected === "pt" ? "pt-BR" : "en";
-      }
+    const initialLang = detectPreferredLanguage();
+    setLanguageState(initialLang);
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = initialLang === "pt" ? "pt-BR" : "en";
     }
   }, []);
 
