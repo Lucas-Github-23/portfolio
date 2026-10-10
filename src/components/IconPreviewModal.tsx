@@ -14,7 +14,7 @@ interface IconPreviewModalProps {
 
 export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
   const { language } = useLanguage();
-  const [currentMode, setCurrentMode] = useState<IconVariant>("random");
+  const [currentMode, setCurrentMode] = useState<IconVariant>("tactical-l");
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isClosing, setIsClosing] = useState<boolean>(false);
   const [mounted, setMounted] = useState<boolean>(false);
@@ -33,7 +33,7 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
   }, [isClosing, onClose]);
 
   useEffect(() => {
-    const saved = safeGetItem("nerv_fav_variant", "random") as IconVariant;
+    const saved = safeGetItem("nerv_fav_variant", "tactical-l") as IconVariant;
     setCurrentMode(saved);
   }, [isOpen]);
 
@@ -66,8 +66,8 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
     }
     
     const msg = language === "pt" 
-      ? `Ícone atualizado: ${name} ${variant === "random" ? "(Modo Aleatório Ativo)" : ""}`
-      : `Icon updated: ${name} ${variant === "random" ? "(Random Mode Active)" : ""}`;
+      ? `Ícone atualizado: ${name} ${variant === "tactical-l" ? "(Principal / Padrão NERV)" : variant === "random" ? "(Modo Aleatório)" : ""}`
+      : `Icon updated: ${name} ${variant === "tactical-l" ? "(Primary / NERV Default)" : variant === "random" ? "(Random Mode)" : ""}`;
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3500);
   };
@@ -109,8 +109,8 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
                 </h2>
                 <p className="text-[10px] sm:text-xs text-[var(--text-secondary)]">
                   {language === "pt"
-                    ? "Selecione o ícone da aba ou ative a rotação aleatória a cada acesso"
-                    : "Select browser tab favicon or enable random rotation on each visit"}
+                    ? "O monograma 'L' é o ícone padrão do sistema. Você também pode fixar outros ícones ou ativar rotação."
+                    : "The 'L' monogram is the default system icon. You can also pin other icons or enable random rotation."}
                 </p>
               </div>
             </div>
@@ -130,28 +130,131 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
             </div>
           )}
 
-          {/* Global Mode Option: Random Rotation */}
+          {/* Primary Icons Grid */}
+          <div className="space-y-2.5">
+            <div className="flex items-center justify-between text-[11px] font-bold text-[var(--text-secondary)]">
+              <span className="uppercase tracking-wider flex items-center gap-1.5 text-[var(--accent-orange)]">
+                <TargetIcon className="w-3.5 h-3.5" />
+                {language === "pt" ? "COLEÇÃO DE ÍCONES TÁTICOS" : "TACTICAL ICON COLLECTION"}
+              </span>
+              <span className="text-[9px] text-[var(--accent-orange)] font-bold">
+                {language === "pt" ? "★ 'L' = PRINCIPAL // PADRÃO" : "★ 'L' = PRIMARY // DEFAULT"}
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {ICON_VARIANTS.map((icon: IconInfo) => {
+                const isSelected = currentMode === icon.id;
+                const isPrimary = icon.id === "tactical-l";
+                const name = language === "pt" ? icon.namePt : icon.name;
+                const desc = language === "pt" ? icon.descriptionPt : icon.description;
+
+                return (
+                  <div
+                    key={icon.id}
+                    className={`bg-[var(--bg-main)] border-2 p-4 hud-panel space-y-3 transition-all relative ${
+                      isSelected
+                        ? "border-[var(--accent-orange)] shadow-[0_0_15px_var(--accent-orange-glow)] bg-[var(--surface-panel)]"
+                        : "border-[var(--border-grid)] hover:border-[var(--border-bright)]"
+                    }`}
+                  >
+                    {/* Top Badge */}
+                    <div className="flex items-center justify-between text-[10px] font-bold">
+                      <div className="flex items-center gap-1.5">
+                        <span className="text-[var(--accent-orange)]">{icon.id.toUpperCase()}</span>
+                        {isPrimary && (
+                          <span className="px-1.5 py-0.5 bg-[var(--accent-orange)]/20 text-[var(--accent-orange)] border border-[var(--accent-orange)]/50 text-[8px] font-black uppercase rounded-sm">
+                            {language === "pt" ? "PRINCIPAL" : "PRIMARY"}
+                          </span>
+                        )}
+                      </div>
+                      {isSelected && (
+                        <span className="px-1.5 py-0.5 bg-[var(--accent-orange)] text-black font-black text-[9px] hud-panel-sm flex items-center gap-1">
+                          <CheckIcon className="w-2.5 h-2.5 stroke-[3]" />
+                          {language === "pt" ? "ATIVO" : "ACTIVE"}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* SVG Icon Visual Preview Container */}
+                    <div className="h-28 bg-[var(--surface-panel)] border border-[var(--border-grid)] flex flex-col items-center justify-center p-3 relative overflow-hidden group">
+                      <div className="w-16 h-16 relative flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={icon.path}
+                          alt={name}
+                          className="w-14 h-14 object-contain drop-shadow-[0_0_8px_rgba(255,69,0,0.4)]"
+                        />
+                      </div>
+                      <span className="absolute bottom-1 right-2 text-[8px] text-[var(--text-secondary)] font-mono">
+                        SVG // 128px
+                      </span>
+                    </div>
+
+                    {/* Info */}
+                    <div className="space-y-1">
+                      <h3 className="font-black text-xs text-[var(--text-primary)] uppercase tracking-wide">
+                        {name}
+                      </h3>
+                      <p className="text-[10px] text-[var(--text-secondary)] leading-relaxed h-12 overflow-hidden">
+                        {desc}
+                      </p>
+                    </div>
+
+                    {/* Selection Button */}
+                    <button
+                      onClick={() => selectVariant(icon.id, name)}
+                      className={`w-full py-2 text-xs font-black uppercase hud-button transition-all flex items-center justify-center gap-1.5 ${
+                        isSelected
+                          ? "bg-[var(--accent-orange)] text-black shadow-[0_0_10px_var(--accent-orange-glow)]"
+                          : "bg-[var(--surface-panel)] text-[var(--text-primary)] border border-[var(--border-grid)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)]"
+                      }`}
+                    >
+                      {isSelected ? (
+                        <>
+                          <TargetIcon className="w-3.5 h-3.5" />
+                          <span>{language === "pt" ? "ÍCONE FIXADO" : "ACTIVE ICON"}</span>
+                        </>
+                      ) : (
+                        <span>
+                          {language === "pt"
+                            ? isPrimary
+                              ? "USAR PRINCIPAL (L)"
+                              : "USAR ESTE ÍCONE"
+                            : isPrimary
+                            ? "USE PRIMARY (L)"
+                            : "USE THIS ICON"}
+                        </span>
+                      )}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Secondary Option: Random Rotation */}
           <div
-            className={`p-4 border-2 hud-panel flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all ${
+            className={`p-3.5 border hud-panel flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 transition-all ${
               currentMode === "random"
-                ? "bg-[var(--surface-panel)] border-[var(--accent-green)] shadow-[0_0_25px_var(--accent-green-glow)]"
-                : "bg-[var(--bg-main)] border-[var(--border-grid)] hover:border-[var(--border-bright)]"
+                ? "bg-[var(--surface-panel)] border-[var(--accent-green)] shadow-[0_0_20px_var(--accent-green-glow)]"
+                : "bg-[var(--bg-main)]/60 border-[var(--border-grid)] hover:border-[var(--border-bright)]"
             }`}
           >
-            <div className="flex items-center gap-3.5">
+            <div className="flex items-center gap-3">
               <div
-                className={`w-10 h-10 rounded hud-panel-sm flex items-center justify-center shrink-0 transition-colors ${
+                className={`w-9 h-9 rounded hud-panel-sm flex items-center justify-center shrink-0 transition-colors ${
                   currentMode === "random"
                     ? "bg-[var(--accent-green-glow)] border border-[var(--accent-green)] text-[var(--accent-green)]"
                     : "bg-[var(--surface-panel)] border border-[var(--border-grid)] text-[var(--text-secondary)]"
                 }`}
               >
-                <ShuffleIcon className="w-5 h-5" />
+                <ShuffleIcon className="w-4 h-4" />
               </div>
               <div>
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="font-extrabold text-xs text-[var(--text-primary)]">
-                    {language === "pt" ? "MODO ROTAÇÃO DINÂMICA (ALEATÓRIA)" : "DYNAMIC RANDOM ROTATION"}
+                    {language === "pt" ? "MODO ALTERNATIVO: ROTAÇÃO ALEATÓRIA" : "ALTERNATIVE MODE: RANDOM ROTATION"}
                   </span>
                   {currentMode === "random" && (
                     <span className="px-2 py-0.5 bg-[var(--accent-green)] text-black text-[9px] font-black rounded-sm tracking-wider uppercase flex items-center gap-1">
@@ -162,8 +265,8 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
                 </div>
                 <span className="text-[10px] text-[var(--text-secondary)] block mt-0.5">
                   {language === "pt"
-                    ? "Sorteia automaticamente um dos 3 ícones táticos a cada carregamento de página"
-                    : "Automatically picks one of the 3 tactical icons on every page refresh"}
+                    ? "Sorteia dinamicamente um dos 3 ícones a cada carregamento ao invés de manter o 'L' fixo"
+                    : "Dynamically picks one of the 3 icons on each refresh instead of keeping 'L' pinned"}
                 </span>
               </div>
             </div>
@@ -178,86 +281,12 @@ export function IconPreviewModal({ isOpen, onClose }: IconPreviewModalProps) {
               {currentMode === "random" ? (
                 <>
                   <CheckIcon className="w-4 h-4 stroke-[3]" />
-                  <span>{language === "pt" ? "SELECIONADO (ATIVO)" : "ACTIVE"}</span>
+                  <span>{language === "pt" ? "ATIVO" : "ACTIVE"}</span>
                 </>
               ) : (
                 <span>{language === "pt" ? "ATIVAR MODO ALEATÓRIO" : "ENABLE RANDOM"}</span>
               )}
             </button>
-          </div>
-
-          {/* Icon Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {ICON_VARIANTS.map((icon: IconInfo) => {
-              const isSelected = currentMode === icon.id;
-              const name = language === "pt" ? icon.namePt : icon.name;
-              const desc = language === "pt" ? icon.descriptionPt : icon.description;
-
-              return (
-                <div
-                  key={icon.id}
-                  className={`bg-[var(--bg-main)] border-2 p-4 hud-panel space-y-3 transition-all ${
-                    isSelected
-                      ? "border-[var(--accent-orange)] shadow-[0_0_15px_var(--accent-orange-glow)] bg-[var(--surface-panel)]"
-                      : "border-[var(--border-grid)] hover:border-[var(--border-bright)]"
-                  }`}
-                >
-                  {/* Top Badge */}
-                  <div className="flex items-center justify-between text-[10px] font-bold">
-                    <span className="text-[var(--accent-orange)]">{icon.id.toUpperCase()}</span>
-                    {isSelected && (
-                      <span className="px-1.5 py-0.5 bg-[var(--accent-orange)] text-black font-black text-[9px] hud-panel-sm">
-                        {language === "pt" ? "SELECIONADO" : "SELECTED"}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* SVG Icon Visual Preview Container */}
-                  <div className="h-28 bg-[var(--surface-panel)] border border-[var(--border-grid)] flex flex-col items-center justify-center p-3 relative overflow-hidden group">
-                    <div className="w-16 h-16 relative flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={icon.path}
-                        alt={name}
-                        className="w-14 h-14 object-contain drop-shadow-[0_0_8px_rgba(255,69,0,0.4)]"
-                      />
-                    </div>
-                    <span className="absolute bottom-1 right-2 text-[8px] text-[var(--text-secondary)] font-mono">
-                      SVG // 128px
-                    </span>
-                  </div>
-
-                  {/* Info */}
-                  <div className="space-y-1">
-                    <h3 className="font-black text-xs text-[var(--text-primary)] uppercase tracking-wide">
-                      {name}
-                    </h3>
-                    <p className="text-[10px] text-[var(--text-secondary)] leading-relaxed h-12 overflow-hidden">
-                      {desc}
-                    </p>
-                  </div>
-
-                  {/* Selection Button */}
-                  <button
-                    onClick={() => selectVariant(icon.id, name)}
-                    className={`w-full py-2 text-xs font-black uppercase hud-button transition-all flex items-center justify-center gap-1.5 ${
-                      isSelected
-                        ? "bg-[var(--accent-orange)] text-black shadow-[0_0_10px_var(--accent-orange-glow)]"
-                        : "bg-[var(--surface-panel)] text-[var(--text-primary)] border border-[var(--border-grid)] hover:border-[var(--accent-orange)] hover:text-[var(--accent-orange)]"
-                    }`}
-                  >
-                    {isSelected ? (
-                      <>
-                        <TargetIcon className="w-3.5 h-3.5" />
-                        <span>{language === "pt" ? "ÍCONE FIXADO" : "ACTIVE ICON"}</span>
-                      </>
-                    ) : (
-                      <span>{language === "pt" ? "USAR ESTE ÍCONE" : "USE THIS ICON"}</span>
-                    )}
-                  </button>
-                </div>
-              );
-            })}
           </div>
 
           {/* Footer Note */}

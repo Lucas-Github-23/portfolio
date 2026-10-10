@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     template: "%s | Lucas Gabriel",
   },
   description:
-    "Lucas Gabriel's Software Engineering Portfolio. Building high-performance web applications with React, Next.js, TypeScript, .NET, and SQL.",
+    "Portfólio de Engenharia de Software de Lucas Gabriel. Soluções em backend, análise de dados, automação de processos e aplicações web completas.",
   applicationName: "Lucas Gabriel",
   authors: [{ name: "Lucas Gabriel", url: "https://github.com/Lucas-Github-23" }],
   creator: "Lucas Gabriel",
@@ -50,10 +50,12 @@ export const metadata: Metadata = {
     "Lucas Pereira",
     "Software Engineer",
     "Engenheiro de Software",
+    "Desenvolvedor Backend",
+    "Backend Developer",
+    "Análise de Dados",
+    "Data Analytics",
     "Desenvolvedor Full Stack",
     "Full-Stack Developer",
-    "Frontend Developer",
-    "Backend Developer",
     "Next.js",
     "React",
     "TypeScript",
@@ -61,6 +63,7 @@ export const metadata: Metadata = {
     "C#",
     ".NET",
     "SQL",
+    "Python",
     "lucasgo.dev",
   ],
   icons: {
@@ -77,13 +80,13 @@ export const metadata: Metadata = {
   },
   openGraph: {
     type: "website",
-    locale: "en_US",
-    alternateLocale: "pt_BR",
+    locale: "pt_BR",
+    alternateLocale: "en_US",
     url: siteUrl,
     siteName: "Lucas Gabriel",
     title: "Lucas Gabriel | Software Engineer",
     description:
-      "Lucas Gabriel's Software Engineering Portfolio. Building high-performance web applications with React, Next.js, TypeScript, .NET, and SQL.",
+      "Portfólio de Engenharia de Software de Lucas Gabriel. Soluções em backend, análise de dados, automação de processos e aplicações web completas.",
     images: [
       {
         url: "/og-image.jpg",
@@ -98,7 +101,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Lucas Gabriel | Software Engineer",
     description:
-      "Lucas Gabriel's Software Engineering Portfolio. Building high-performance web applications with React, Next.js, TypeScript, .NET, and SQL.",
+      "Portfólio de Engenharia de Software de Lucas Gabriel. Soluções em backend, análise de dados, automação de processos e aplicações web completas.",
     images: ["/og-image.jpg"],
   },
   alternates: {
@@ -127,11 +130,24 @@ const jsonLd = {
       alternateName: ["Lucas Gabriel Oliveira Pereira", "Lucas Pereira", "Lucas Gabriel Pereira"],
       url: "https://lucasgo.dev",
       jobTitle: "Software Engineer",
+      description:
+        "Engenheiro de Software com foco em backend, análise de dados, automação de processos e desenvolvimento de software.",
       sameAs: [
         "https://github.com/Lucas-Github-23",
         "https://www.linkedin.com/in/lucas-pereira-521082279/",
       ],
-      knowsAbout: ["React", "Next.js", "TypeScript", ".NET", "C#", "SQL", "Software Engineering"],
+      knowsAbout: [
+        "Software Engineering",
+        "Backend Development",
+        "Data Analytics",
+        ".NET",
+        "C#",
+        "SQL",
+        "Python",
+        "TypeScript",
+        "React",
+        "Next.js",
+      ],
     },
     {
       "@type": "WebSite",
@@ -139,6 +155,8 @@ const jsonLd = {
       url: "https://lucasgo.dev",
       name: "Lucas Gabriel",
       alternateName: "Lucas Gabriel | Software Engineer",
+      description:
+        "Portfólio de Engenharia de Software de Lucas Gabriel. Soluções em backend, análise de dados, automação de processos e aplicações web completas.",
       publisher: {
         "@id": "https://lucasgo.dev/#person",
       },
@@ -153,7 +171,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="en"
+      lang="pt-BR"
       data-eva="nerv"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning

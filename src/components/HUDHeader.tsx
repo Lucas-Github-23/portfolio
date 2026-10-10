@@ -19,7 +19,7 @@ export function HUDHeader() {
   const [isMenuClosing, setIsMenuClosing] = useState<boolean>(false);
   const [iconModalOpen, setIconModalOpen] = useState<boolean>(false);
   const [evaModalOpen, setEvaModalOpen] = useState<boolean>(false);
-  const [iconVariant, setIconVariant] = useState<IconVariant>("random");
+  const [iconVariant, setIconVariant] = useState<IconVariant>("tactical-l");
   const [systemMenuOpen, setSystemMenuOpen] = useState<boolean>(false);
   const [isSystemMenuClosing, setIsSystemMenuClosing] = useState<boolean>(false);
   const systemMenuRef = useRef<HTMLDivElement>(null);
@@ -177,7 +177,7 @@ export function HUDHeader() {
   }, []);
 
   useEffect(() => {
-    const saved = safeGetItem("nerv_fav_variant", "random") as IconVariant;
+    const saved = safeGetItem("nerv_fav_variant", "tactical-l") as IconVariant;
     setIconVariant(saved);
 
     const handleIconChange = (e: CustomEvent<IconVariant>) => {
@@ -379,7 +379,11 @@ export function HUDHeader() {
                             </span>
                           </div>
                         </div>
-                        {iconVariant === "random" ? (
+                        {iconVariant === "tactical-l" ? (
+                          <span className="px-1.5 py-0.5 bg-[var(--accent-orange)] text-black text-[9px] font-black uppercase rounded-sm shrink-0 shadow-[0_0_6px_var(--accent-orange-glow)]">
+                            TACTICAL L
+                          </span>
+                        ) : iconVariant === "random" ? (
                           <span className="px-1.5 py-0.5 bg-[var(--accent-green)] text-black text-[9px] font-black uppercase rounded-sm shadow-[0_0_6px_var(--accent-green-glow)] shrink-0">
                             RANDOM
                           </span>
@@ -517,7 +521,11 @@ export function HUDHeader() {
                       <LayersIcon className="w-4 h-4 text-[var(--accent-orange)] shrink-0" />
                       <span>{language === "pt" ? "SELETOR DE ÍCONES" : "ICONS PREVIEW"}</span>
                     </div>
-                    {iconVariant === "random" ? (
+                    {iconVariant === "tactical-l" ? (
+                      <span className="px-2 py-0.5 bg-[var(--accent-orange)] text-black text-[9px] font-black tracking-wider uppercase rounded-sm shadow-[0_0_8px_var(--accent-orange-glow)]">
+                        TACTICAL L
+                      </span>
+                    ) : iconVariant === "random" ? (
                       <span className="px-2 py-0.5 bg-[var(--accent-green)] text-black text-[9px] font-black tracking-wider flex items-center gap-1.5 rounded-sm shadow-[0_0_8px_var(--accent-green-glow)]">
                         <span className="w-1.5 h-1.5 rounded-full bg-black animate-ping" />
                         {language === "pt" ? "ALEATÓRIO: ON" : "RANDOM: ON"}

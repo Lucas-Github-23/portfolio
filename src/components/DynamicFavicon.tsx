@@ -68,12 +68,21 @@ export function updateFavicon(path: string) {
 }
 
 export function DynamicFavicon() {
-  const [selectedVariant, setSelectedVariant] = useState<IconVariant>("random");
+  const [selectedVariant, setSelectedVariant] = useState<IconVariant>("tactical-l");
   const [activeIcon, setActiveIcon] = useState<IconInfo>(ICON_VARIANTS[0]);
 
   useEffect(() => {
-    // Read saved preference or default to random
-    const saved = safeGetItem("nerv_fav_variant", "random") as IconVariant;
+    // Migrate legacy default "random" to "tactical-l" on first load of v2
+    const migrated = safeGetItem("nerv_fav_default_v2", "false");
+    let saved = safeGetItem("nerv_fav_variant", "tactical-l") as IconVariant;
+    if (migrated !== "true") {
+      if (saved === "random" || !saved) {
+        saved = "tactical-l";
+        safeSetItem("nerv_fav_variant", "tactical-l");
+      }
+      safeSetItem("nerv_fav_default_v2", "true");
+    }
+
     setSelectedVariant(saved);
 
     let chosen: IconInfo;

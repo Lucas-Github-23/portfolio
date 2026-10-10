@@ -1,52 +1,62 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="100%" height="100%">
   <defs>
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0a0a0c" />
-      <stop offset="100%" stop-color="#141419" />
+      <stop offset="0%" stop-color="#070709" />
+      <stop offset="100%" stop-color="#121218" />
     </linearGradient>
     <linearGradient id="lGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FF5722" />
-      <stop offset="60%" stop-color="#FF1744" />
-      <stop offset="100%" stop-color="#D50000" />
+      <stop offset="0%" stop-color="#FF6A00" />
+      <stop offset="50%" stop-color="#FF3300" />
+      <stop offset="100%" stop-color="#E0002A" />
     </linearGradient>
-    <linearGradient id="glowBorder" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#FF4500" />
-      <stop offset="100%" stop-color="#FF0033" />
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#FF6A00" />
+      <stop offset="100%" stop-color="#FF1744" />
     </linearGradient>
-    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#FF4500" flood-opacity="0.8" />
+    <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="0" stdDeviation="3.5" flood-color="#FF5500" flood-opacity="0.85" />
     </filter>
   </defs>
 
-  <!-- Background Base with Rounded Hex Cut -->
-  <rect width="128" height="128" rx="26" fill="url(#bgGrad)" />
-  <rect width="124" height="124" x="2" y="2" rx="24" fill="none" stroke="#22222a" stroke-width="2" />
+  <!-- Full-bleed background that fills 100% of any square or circular mask -->
+  <rect width="128" height="128" fill="url(#bgGrad)" />
 
-  <!-- Outer Tactical Hexagon Frame -->
-  <polygon points="64,12 112,38 112,90 64,116 16,90 16,38" 
-           fill="none" stroke="url(#glowBorder)" stroke-width="4.5" stroke-linejoin="round" />
+  <!-- Outer Tactical HUD Perimeter Ring (concentric to Google Search circular crop) -->
+  <circle cx="64" cy="64" r="59" fill="none" stroke="url(#ringGrad)" stroke-width="3" opacity="0.85" />
+  <circle cx="64" cy="64" r="62.5" fill="none" stroke="#252530" stroke-width="1.5" />
 
-  <!-- Corner Tactical Brackets -->
-  <path d="M 32 20 L 18 28 L 18 42" fill="none" stroke="#FF4500" stroke-width="2.5" stroke-linecap="round" />
-  <path d="M 96 20 L 110 28 L 110 42" fill="none" stroke="#FF4500" stroke-width="2.5" stroke-linecap="round" />
-  <path d="M 32 108 L 18 100 L 18 86" fill="none" stroke="#FF4500" stroke-width="2.5" stroke-linecap="round" />
-  <path d="M 96 108 L 110 100 L 110 86" fill="none" stroke="#FF4500" stroke-width="2.5" stroke-linecap="round" />
+  <!-- Cardinal Tactical Crosshair Reticles -->
+  <line x1="64" y1="2" x2="64" y2="9" stroke="#FF5500" stroke-width="2.5" />
+  <line x1="64" y1="119" x2="64" y2="126" stroke="#FF5500" stroke-width="2.5" />
+  <line x1="2" y1="64" x2="9" y2="64" stroke="#FF5500" stroke-width="2.5" />
+  <line x1="119" y1="64" x2="126" y2="64" stroke="#FF5500" stroke-width="2.5" />
 
-  <!-- Sync Status Nodes -->
-  <circle cx="64" cy="12" r="3.5" fill="#00FF66" />
-  <circle cx="112" cy="64" r="2.5" fill="#FF4500" />
-  <circle cx="16" cy="64" r="2.5" fill="#FF4500" />
-  <circle cx="64" cy="116" r="3.5" fill="#00FF66" />
+  <!-- Tactical Sync Status Indicators -->
+  <circle cx="64" cy="5.5" r="2.5" fill="#00FF66" />
+  <circle cx="64" cy="122.5" r="2.5" fill="#00FF66" />
 
-  <!-- Stylized Cybernetic Tactical "L" -->
-  <path d="M 40 32 L 62 32 L 62 70 L 88 70 L 88 88 L 40 88 Z" 
-        fill="url(#lGrad)" filter="url(#glow)" />
-  
-  <!-- Modern Stencil Accent Cuts inside L -->
-  <line x1="42" y1="44" x2="60" y2="44" stroke="#FFE0B2" stroke-width="2" stroke-linecap="round" />
-  <polygon points="62,70 70,70 70,78 62,78" fill="#FFFFFF" opacity="0.9" />
+  <!-- Massive, Bold Cybernetic Monogram "L" (Fills ~80% of view area) -->
+  <g filter="url(#glow)">
+    <path d="M 30 24 
+             L 58 24 
+             L 58 76 
+             L 98 76 
+             L 98 104 
+             L 30 104 
+             Z" 
+          fill="url(#lGrad)" />
+  </g>
 
-  <!-- DEV-02 Mini Indicator Stencil -->
-  <text x="75" y="52" fill="#00FF66" font-family="'Courier New', monospace, sans-serif" font-weight="900" font-size="13" letter-spacing="0.5">02</text>
-  <rect x="75" y="55" width="14" height="2" fill="#00FF66" />
+  <!-- High-Tech Stencil Core Accents & Highlights -->
+  <!-- Top vertical bevel cut -->
+  <polygon points="30,24 38,24 30,32" fill="#FFE5D9" opacity="0.9" />
+  <!-- Horizontal inner highlight line -->
+  <line x1="33" y1="36" x2="55" y2="36" stroke="#FFD8BE" stroke-width="2.5" stroke-linecap="round" />
+  <!-- Corner notch cybernetic detail -->
+  <polygon points="58,76 68,76 68,86 58,86" fill="#FFFFFF" opacity="0.9" />
+  <!-- Bottom base highlight stripe -->
+  <line x1="62" y1="100" x2="94" y2="100" stroke="#FFE0B2" stroke-width="2" stroke-linecap="round" />
+  <!-- Mini status LED dot inside upper quadrant -->
+  <circle cx="86" cy="38" r="3.5" fill="#00FF66" />
+  <circle cx="86" cy="38" r="1.5" fill="#FFFFFF" />
 </svg>
