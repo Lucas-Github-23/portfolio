@@ -59,15 +59,15 @@ export const translations = {
       cores: {
         melchior: {
           name: "CLAUDE 3.7",
-          role: "Frontend Architecture & Design",
+          role: "Data Analytics & Process Automation",
           verdict: "CONSENSUS: 100% APPROVAL",
-          detail: "Specialized in Next.js, React (Vite), TypeScript, HTML5, and responsive Web APIs.",
+          detail: "Data modeling and extraction via SQL, analytical dashboard design in Power BI (DAX/M), and operational workflow automation.",
         },
         balthasar: {
           name: "GPT-4o",
           role: "Backend & Systems Intelligence",
           verdict: "CONSENSUS: 100% APPROVAL",
-          detail: "Knowledge in SQL Server, MySQL, MongoDB, Node.js, REST/GraphQL APIs, Power BI, M, and VBA Office Automation.",
+          detail: "Architecture of backend services with Node.js, REST/GraphQL APIs, database persistence (SQL Server, MySQL, MongoDB), and scalable system design.",
         },
         caspar: {
           name: "GEMINI 2.0",
@@ -202,15 +202,15 @@ export const translations = {
       cores: {
         melchior: {
           name: "CLAUDE 3.7",
-          role: "Arquitetura Frontend & Design",
+          role: "Análise de Dados & Automação de Processos",
           verdict: "CONSENSO: 100% APROVAÇÃO",
-          detail: "Especializado em Next.js, React (Vite), TypeScript, HTML5 e Web APIs responsivas.",
+          detail: "Modelagem e extração com SQL, desenvolvimento de dashboards em Power BI (DAX/M) e automação de fluxos operacionais com scripts.",
         },
         balthasar: {
           name: "GPT-4o",
           role: "Inteligência Backend & Sistemas",
           verdict: "CONSENSO: 100% APROVAÇÃO",
-          detail: "Conhecimento em SQL Server, MySQL, MongoDB, Node.js, APIs REST/GraphQL, Power BI, Linguagem M e automação VBA Office.",
+          detail: "Arquitetura de serviços backend com Node.js, APIs REST/GraphQL, persistência em bancos de dados (SQL Server, MySQL, MongoDB) e regras de negócio escaláveis.",
         },
         caspar: {
           name: "GEMINI 2.0",
