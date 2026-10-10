@@ -71,7 +71,7 @@ export const translations = {
         },
         caspar: {
           name: "GEMINI 2.0",
-          role: "DevOps & Operational Logistics",
+          role: "DevOps & CI/CD Pipelines",
           verdict: "CONSENSUS: 100% APPROVAL",
           detail: "Containerized deployments via Docker, CI/CD automated pipelines, Git version control, and cloud optimizations.",
         },
@@ -214,7 +214,7 @@ export const translations = {
         },
         caspar: {
           name: "GEMINI 2.0",
-          role: "DevOps & Logística Operacional",
+          role: "DevOps & Pipelines CI/CD",
           verdict: "CONSENSO: 100% APROVAÇÃO",
           detail: "Deployments containerizados via Docker, pipelines CI/CD automatizadas, Git e deploy em nuvem.",
         },
