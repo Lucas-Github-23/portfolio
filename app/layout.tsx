@@ -118,6 +118,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  other: {
+    google: "notranslate",
+  },
 };
 
 const jsonLd = {
@@ -172,11 +175,13 @@ export default function RootLayout({
   return (
     <html
       lang="pt-BR"
+      translate="no"
       data-eva="nerv"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased notranslate`}
       suppressHydrationWarning
     >
       <head>
+        <meta name="google" content="notranslate" />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
