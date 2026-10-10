@@ -26,42 +26,41 @@ function detectPreferredLanguage(): Language {
     const params = new URLSearchParams(window.location.search);
     const urlLang = params.get("lang")?.toLowerCase();
     if (urlLang === "en" || urlLang === "pt") {
-      safeSetItem("nerv_lang", urlLang);
       return urlLang as Language;
     }
   } catch {
     // Ignore URL parse errors
   }
 
-  // 2. Saved user preference in storage
+  // 2. Saved user preference in storage (only if user explicitly clicked EN or PT)
   const saved = safeGetItem("nerv_lang") as Language;
   if (saved === "en" || saved === "pt") {
     return saved;
   }
 
   // 3. Check browser language list (navigator.languages and navigator.language)
-  const langs: string[] = [];
+  const rawLangs: string[] = [];
   if (typeof navigator !== "undefined") {
-    if (navigator.language) langs.push(navigator.language);
-    if (Array.isArray(navigator.languages)) langs.push(...navigator.languages);
+    if (navigator.language) rawLangs.push(navigator.language);
+    if (Array.isArray(navigator.languages)) rawLangs.push(...navigator.languages);
     if ((navigator as unknown as { userLanguage?: string }).userLanguage) {
-      langs.push((navigator as unknown as { userLanguage: string }).userLanguage);
-    }
-    if ((navigator as unknown as { browserLanguage?: string }).browserLanguage) {
-      langs.push((navigator as unknown as { browserLanguage: string }).browserLanguage);
+      rawLangs.push((navigator as unknown as { userLanguage: string }).userLanguage);
     }
   }
 
-  const hasPt = langs.some(
-    (l) => typeof l === "string" && l.toLowerCase().startsWith("pt")
-  );
+  const langs = rawLangs.filter(Boolean).map((l) => l.toLowerCase());
 
-  // If Portuguese is present anywhere in user's browser language list, use pt
-  if (hasPt) {
+  // Priority 1: If primary language or any preferred language starts with 'pt' -> return 'pt'
+  if (langs.some((l) => l.startsWith("pt"))) {
     return "pt";
   }
 
-  // 4. Check Brazilian timezone as a strong geographic indicator
+  // Priority 2: If primary language starts with 'en' -> return 'en'
+  if (langs.some((l) => l.startsWith("en"))) {
+    return "en";
+  }
+
+  // Priority 3: Check Brazilian timezone as a strong geographic indicator
   try {
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || "";
     if (
@@ -84,14 +83,6 @@ function detectPreferredLanguage(): Language {
     // Ignore timezone detection errors
   }
 
-  // 5. If visitor explicitly has English or international language without Portuguese, use en
-  const isEnglishOrOther = langs.some(
-    (l) => typeof l === "string" && !l.toLowerCase().startsWith("pt")
-  );
-  if (isEnglishOrOther) {
-    return "en";
-  }
-
   return "pt";
 }
 
@@ -104,6 +95,15 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLanguageState(initialLang);
     if (typeof document !== "undefined") {
       document.documentElement.lang = initialLang === "pt" ? "pt-BR" : "en";
+    }
+
+    if (typeof window !== "undefined") {
+      console.log("[NERV HUD] Language initialized:", {
+        detected: initialLang,
+        browserLang: typeof navigator !== "undefined" ? navigator.language : null,
+        browserLanguages: typeof navigator !== "undefined" ? navigator.languages : null,
+        savedPreference: safeGetItem("nerv_lang", "none"),
+      });
     }
   }, []);
 
