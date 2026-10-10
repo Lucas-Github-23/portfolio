@@ -18,12 +18,43 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguageState] = useState<Language>("en");
 
   useEffect(() => {
-    // Default is 'en', restore saved user choice if present
+    // 0. Check URL query param (?lang=en or ?lang=pt) for direct shared links (e.g., CVs, LinkedIn)
+    if (typeof window !== "undefined") {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const urlLang = params.get("lang")?.toLowerCase();
+        if (urlLang === "en" || urlLang === "pt") {
+          setLanguageState(urlLang as Language);
+          safeSetItem("nerv_lang", urlLang);
+          if (typeof document !== "undefined") {
+            document.documentElement.lang = urlLang === "pt" ? "pt-BR" : "en";
+          }
+          return;
+        }
+      } catch {
+        // Fall through to storage check
+      }
+    }
+
+    // 1. Check saved user preference if present
     const savedLang = safeGetItem("nerv_lang") as Language;
-    const initialLang = savedLang === "en" || savedLang === "pt" ? savedLang : "en";
-    setLanguageState(initialLang);
-    if (typeof document !== "undefined") {
-      document.documentElement.lang = initialLang;
+    if (savedLang === "en" || savedLang === "pt") {
+      setLanguageState(savedLang);
+      if (typeof document !== "undefined") {
+        document.documentElement.lang = savedLang === "pt" ? "pt-BR" : "en";
+      }
+      return;
+    }
+
+    // 2. Auto-detect browser language for first-time visitors:
+    // Portuguese browsers -> pt, International/other browsers -> en
+    if (typeof navigator !== "undefined" && navigator.language) {
+      const isPt = navigator.language.toLowerCase().startsWith("pt");
+      const detected: Language = isPt ? "pt" : "en";
+      setLanguageState(detected);
+      if (typeof document !== "undefined") {
+        document.documentElement.lang = detected === "pt" ? "pt-BR" : "en";
+      }
     }
   }, []);
 
@@ -31,7 +62,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     setLanguageState(lang);
     safeSetItem("nerv_lang", lang);
     if (typeof document !== "undefined") {
-      document.documentElement.lang = lang;
+      document.documentElement.lang = lang === "pt" ? "pt-BR" : "en";
     }
   };
 

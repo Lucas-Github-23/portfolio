@@ -106,6 +106,11 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: "/",
+    languages: {
+      "pt-BR": "/",
+      "en-US": "/?lang=en",
+      "x-default": "/",
+    },
   },
   robots: {
     index: true,
