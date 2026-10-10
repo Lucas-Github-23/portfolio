@@ -154,7 +154,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      data-eva="eva-01"
+      data-eva="nerv"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >

@@ -18,7 +18,7 @@ const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<"dark" | "light">("dark");
-  const [evaUnit, setEvaUnitState] = useState<EvaUnit>("eva-01");
+  const [evaUnit, setEvaUnitState] = useState<EvaUnit>("nerv");
   const [crtEnabled, setCrtEnabled] = useState<boolean>(false);
 
   useEffect(() => {
@@ -45,14 +45,22 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       }
     }
 
-    // 2. EVA Unit Palette: Default is 'eva-01', restore saved user choice if present
+    // 2. EVA Unit Palette: Default is 'nerv' (Tactical Obsidian & Amber)
     const savedEva = safeGetItem("nerv_eva_unit") as EvaUnit;
-    if (savedEva && ["nerv", "eva-01", "eva-02", "eva-00"].includes(savedEva)) {
+    const migrationDone = safeGetItem("nerv_eva_default_v3");
+
+    // Migrate from legacy default 'eva-01' to 'nerv' once, or default to 'nerv'
+    if (!migrationDone) {
+      safeSetItem("nerv_eva_default_v3", "true");
+      setEvaUnitState("nerv");
+      safeSetItem("nerv_eva_unit", "nerv");
+      document.documentElement.setAttribute("data-eva", "nerv");
+    } else if (savedEva && ["nerv", "eva-01", "eva-02", "eva-00"].includes(savedEva)) {
       setEvaUnitState(savedEva);
       document.documentElement.setAttribute("data-eva", savedEva);
     } else {
-      setEvaUnitState("eva-01");
-      document.documentElement.setAttribute("data-eva", "eva-01");
+      setEvaUnitState("nerv");
+      document.documentElement.setAttribute("data-eva", "nerv");
     }
 
     // 3. CRT Scanlines

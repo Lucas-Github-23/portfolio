@@ -1,38 +1,42 @@
 @import "tailwindcss";
 
 @layer base {
-  :root {
+  /* NERV HQ-01 (Tactical Obsidian & Hazard Orange) - Standard Default */
+  :root,
+  html[data-eva="nerv"] {
     --bg-main: #080808;
-    --surface-panel: #121212;
-    --surface-panel-hover: #1c1c1c;
-    --text-primary: #e5e5e5;
-    --text-secondary: #808080;
-    --accent-orange: #ff4500;
-    --accent-orange-glow: rgba(255, 69, 0, 0.4);
+    --surface-panel: #111113;
+    --surface-panel-hover: #1a1a1e;
+    --text-primary: #f4f4f5;
+    --text-secondary: #888892;
+    --accent-orange: #ff5500;
+    --accent-orange-glow: rgba(255, 85, 0, 0.4);
     --accent-green: #00ff66;
     --accent-green-glow: rgba(0, 255, 102, 0.3);
     --accent-red: #ff0033;
     --accent-red-glow: rgba(255, 0, 51, 0.4);
-    --border-grid: #262626;
-    --border-bright: #3d3d3d;
-    --magi-yellow: #ffcc00;
+    --border-grid: #242429;
+    --border-bright: #3a3a42;
+    --magi-yellow: #ffb800;
   }
 
-  .light {
-    --bg-main: #e8e6e1;
-    --surface-panel: #dfdcd5;
-    --surface-panel-hover: #d4d0c7;
-    --text-primary: #1a1a1a;
-    --text-secondary: #5a5a5a;
-    --accent-orange: #d03000;
-    --accent-orange-glow: rgba(208, 48, 0, 0.3);
-    --accent-green: #008a38;
-    --accent-green-glow: rgba(0, 138, 56, 0.25);
-    --accent-red: #c80025;
-    --accent-red-glow: rgba(200, 0, 37, 0.3);
-    --border-grid: #c5c2b9;
-    --border-bright: #a8a499;
-    --magi-yellow: #b89000;
+  /* Clean Technical Slate Light Theme - Neutral Blueprint / Engineering Dossier */
+  .light,
+  html.light[data-eva="nerv"] {
+    --bg-main: #f5f6f9;
+    --surface-panel: #ffffff;
+    --surface-panel-hover: #ebeef2;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --accent-orange: #ea580c;
+    --accent-orange-glow: rgba(234, 88, 12, 0.28);
+    --accent-green: #059669;
+    --accent-green-glow: rgba(5, 150, 105, 0.22);
+    --accent-red: #dc2626;
+    --accent-red-glow: rgba(220, 38, 38, 0.28);
+    --border-grid: #e2e8f0;
+    --border-bright: #cbd5e1;
+    --magi-yellow: #d97706;
   }
 
   /* EVA-01 Test Type (Shinji Ikari) */
