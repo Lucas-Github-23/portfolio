@@ -156,8 +156,8 @@ export function ProjectDossierGrid() {
           {[
             { id: "all", label: t.projects.filterAll },
             { id: "fullstack", label: t.projects.filterFullstack },
-            { id: "frontend", label: t.projects.filterFrontend },
             { id: "backend", label: t.projects.filterBackend },
+            { id: "frontend", label: t.projects.filterFrontend },
           ].map((filter) => (
             <button
               key={filter.id}

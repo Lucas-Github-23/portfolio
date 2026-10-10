@@ -81,10 +81,10 @@ export const translations = {
       title: "TECHNICAL SKILLS",
       subtitle: "Technologies, frameworks, databases, and development tools.",
       categories: {
-        frontend: "FRONTEND",
         backend: "BACKEND & DATABASES",
+        tools: "TOOLS & ANALYTICS",
         devops: "DEVOPS & INFRASTRUCTURE",
-        tools: "TOOLS",
+        frontend: "FRONTEND",
       },
     },
     projects: {
@@ -224,10 +224,10 @@ export const translations = {
       title: "HABILIDADES TÉCNICAS",
       subtitle: "Tecnologias, frameworks, bancos de dados e ferramentas de desenvolvimento.",
       categories: {
-        frontend: "FRONTEND",
         backend: "BACKEND & BANCO DE DADOS",
+        tools: "FERRAMENTAS & DADOS",
         devops: "DEVOPS & INFRAESTRUTURA",
-        tools: "FERRAMENTAS",
+        frontend: "FRONTEND",
       },
     },
     projects: {

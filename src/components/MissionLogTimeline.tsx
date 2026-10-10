@@ -22,6 +22,18 @@ export function MissionLogTimeline() {
 
   const timelineData: TimelineItem[] = [
     {
+      id: "LOG-VISOLUX-PCP",
+      yearEn: "JUN 2026 - PRESENT",
+      yearPt: "JUN 2026 - PRESENTE",
+      roleEn: "Production Planning & Control Assistant (PCP)",
+      rolePt: "Auxiliar de Planejamento e Controle da Produção (PCP)",
+      orgEn: "VISOLUX SIGN COMPANY",
+      orgPt: "VISOLUX SIGN COMPANY",
+      descEn: "Executed industrial production sequencing, raw material supply calculations, work order scheduling, and performance telemetry reports. Developed internal spreadsheets and automated routines utilizing Excel, VBA, and Power BI to streamline shop-floor operations.",
+      descPt: "Atuação no Planejamento e Controle da Produção (PCP), acompanhamento e sequenciamento de ordens de fabricação, controle de matéria-prima e elaboração de relatórios gerenciais. Desenvolvimento e automação de planilhas e processos operacionais com Excel, VBA e Power BI.",
+      status: "ACTIVE",
+    },
+    {
       id: "LOG-CURRENT",
       yearEn: "2026 - PRESENT",
       yearPt: "2026 - PRESENTE",
@@ -32,6 +44,18 @@ export function MissionLogTimeline() {
       descEn: "Currently studying core software engineering principles, data structures, algorithm complexity, object-oriented design, and database systems.",
       descPt: "Cursando Engenharia de Software com foco em princípios de arquitetura de software, estruturas de dados, orientação a objetos e bancos de dados.",
       status: "IN PROGRESS",
+    },
+    {
+      id: "LOG-VISOLUX-APPRENTICE",
+      yearEn: "MAY 2025 - JUN 2026",
+      yearPt: "MAI 2025 - JUN 2026",
+      roleEn: "Operations & Administrative Apprentice",
+      rolePt: "Jovem Aprendiz Administrativo / Operacional",
+      orgEn: "VISOLUX SIGN COMPANY",
+      orgPt: "VISOLUX SIGN COMPANY",
+      descEn: "Assisted in administrative support, internal document processing, data organization in spreadsheets, and manufacturing routine coordination, resulting in internal promotion to PCP Assistant.",
+      descPt: "Suporte administrativo, organização e tratamento de dados em planilhas, controle de documentações e acompanhamento de fluxos internos de produção, resultando em efetivação e promoção para o setor de PCP.",
+      status: "COMPLETED",
     },
     {
       id: "LOG-TECH-01",

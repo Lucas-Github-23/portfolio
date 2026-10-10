@@ -12,20 +12,19 @@ interface SkillItem {
 
 export function SkillsMatrix() {
   const { t } = useLanguage();
-  const [selectedCategory, setSelectedCategory] = useState<string>("frontend");
+  const [selectedCategory, setSelectedCategory] = useState<string>("backend");
 
   const skillData: Record<string, SkillItem[]> = {
-    frontend: [
-      { name: "Next.js", level: 95, status: "OPTIMAL" },
-      { name: "React (Vite)", level: 92, status: "OPTIMAL" },
-      { name: "TypeScript", level: 90, status: "OPTIMAL" },
-      { name: "HTML5 & Web APIs", level: 95, status: "MAX SYNC" },
-    ],
     backend: [
-      { name: "SQL (SQL Server, MySQL & MongoDB)", level: 88, status: "OPTIMAL" },
-      { name: "VBA (Excel, PowerPoint & MS Office)", level: 85, status: "OPTIMAL" },
-      { name: "Node.js", level: 75, status: "STABLE" },
-      { name: "REST & GraphQL APIs", level: 68, status: "DEVELOPING" },
+      { name: "SQL (SQL Server, MySQL & MongoDB)", level: 90, status: "OPTIMAL" },
+      { name: "VBA (Excel & Office Automation)", level: 88, status: "OPTIMAL" },
+      { name: "Node.js", level: 80, status: "STABLE" },
+      { name: "REST & GraphQL APIs", level: 75, status: "OPTIMAL" },
+    ],
+    tools: [
+      { name: "Power BI (Dashboards & DAX)", level: 90, status: "OPTIMAL" },
+      { name: "Linguagem M (Power Query ETL)", level: 88, status: "OPTIMAL" },
+      { name: "Git & Version Control", level: 95, status: "MAX SYNC" },
     ],
     devops: [
       { name: "Docker & Containerization", level: 90, status: "OPTIMAL" },
@@ -33,10 +32,11 @@ export function SkillsMatrix() {
       { name: "Cloud & Vercel Deployments", level: 95, status: "MAX SYNC" },
       { name: "Linux System Admin", level: 86, status: "STABLE" },
     ],
-    tools: [
-      { name: "Git & Version Control", level: 95, status: "MAX SYNC" },
-      { name: "Power BI (Dashboards & DAX)", level: 90, status: "OPTIMAL" },
-      { name: "Linguagem M (Power Query ETL)", level: 88, status: "OPTIMAL" },
+    frontend: [
+      { name: "TypeScript", level: 88, status: "OPTIMAL" },
+      { name: "HTML5 & Web APIs", level: 90, status: "OPTIMAL" },
+      { name: "Next.js", level: 85, status: "OPTIMAL" },
+      { name: "React (Vite)", level: 82, status: "OPTIMAL" },
     ],
   };
 
