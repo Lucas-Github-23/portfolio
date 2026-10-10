@@ -2,18 +2,18 @@
 
 import React, { useState } from "react";
 import { useLanguage } from "@/context";
-import { TerminalIcon, MailIcon, GithubIcon, LinkedinIcon, CopyIcon, CheckIcon } from "./Icons";
+import {
+  TerminalIcon,
+  MailIcon,
+  GithubIcon,
+  LinkedinIcon,
+  CopyIcon,
+  CheckIcon,
+  ExternalLinkIcon,
+} from "./Icons";
 
 export function SignalTransmissionForm() {
   const { language, t } = useLanguage();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
-
-  const [status, setStatus] = useState<"idle" | "transmitting" | "success">("idle");
   const [copiedEmail, setCopiedEmail] = useState<boolean>(false);
 
   const handleCopyEmail = async () => {
@@ -40,233 +40,204 @@ export function SignalTransmissionForm() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.name || !formData.email || !formData.message) return;
-
-    setStatus("transmitting");
-    setTimeout(() => {
-      setStatus("success");
-      setFormData({ name: "", email: "", subject: "", message: "" });
-      setTimeout(() => setStatus("idle"), 5000);
-    }, 1500);
-  };
-
   return (
     <section id="contact" className="py-12 sm:py-16">
       <div className="max-w-7xl mx-auto px-4">
         {/* Section Header */}
-        <div className="mb-12 text-center max-w-2xl mx-auto">
+        <div className="mb-10 sm:mb-12 text-center max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 font-mono text-xs text-[var(--accent-orange)] tracking-widest uppercase mb-2">
             <TerminalIcon className="w-4 h-4 text-[var(--accent-orange)]" />
-            DIRECT COMM FREQUENCY
+            {t.contact.badge}
           </div>
           <h2 className="text-3xl md:text-4xl font-black font-mono uppercase tracking-tight text-[var(--text-primary)]">
             {t.contact.title}
           </h2>
-          <p className="text-sm text-[var(--text-secondary)] font-mono mt-2">
+          <p className="text-sm text-[var(--text-secondary)] font-mono mt-2 leading-relaxed">
             {t.contact.subtitle}
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* Main Transmission Form */}
-          <div className="lg:col-span-7 bg-[var(--surface-panel)] border-2 border-[var(--border-grid)] p-4 sm:p-6 hud-panel space-y-6 shadow-md">
-            <div className="border-b border-[var(--border-grid)] pb-3">
-              <span className="font-mono text-xs font-bold text-[var(--text-secondary)] tracking-widest uppercase flex items-center gap-2">
-                <span className="w-2 h-2 bg-[var(--accent-green)] animate-ping" />
-                {t.contact.channelStatus}
-              </span>
-            </div>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Name */}
-              <div>
-                <label htmlFor="comm-name" className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
-                  {t.contact.nameLabel}
-                </label>
-                <input
-                  id="comm-name"
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder={t.contact.namePlaceholder}
-                  className="w-full bg-[var(--bg-main)] border border-[var(--border-grid)] px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none font-mono transition-colors"
-                />
-              </div>
-
-              {/* Email */}
-              <div>
-                <label htmlFor="comm-email" className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
-                  {t.contact.emailLabel}
-                </label>
-                <input
-                  id="comm-email"
-                  type="email"
-                  required
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder={t.contact.emailPlaceholder}
-                  className="w-full bg-[var(--bg-main)] border border-[var(--border-grid)] px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none font-mono transition-colors"
-                />
-              </div>
-
-              {/* Subject */}
-              <div>
-                <label htmlFor="comm-subject" className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
-                  {t.contact.subjectLabel}
-                </label>
-                <input
-                  id="comm-subject"
-                  type="text"
-                  value={formData.subject}
-                  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
-                  placeholder={t.contact.subjectPlaceholder}
-                  className="w-full bg-[var(--bg-main)] border border-[var(--border-grid)] px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none font-mono transition-colors"
-                />
-              </div>
-
-              {/* Message */}
-              <div>
-                <label htmlFor="comm-message" className="block text-xs font-bold text-[var(--accent-orange)] tracking-widest uppercase mb-1">
-                  {t.contact.messageLabel}
-                </label>
-                <textarea
-                  id="comm-message"
-                  required
-                  rows={4}
-                  value={formData.message}
-                  onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                  placeholder={t.contact.messagePlaceholder}
-                  className="w-full bg-[var(--bg-main)] border border-[var(--border-grid)] px-4 py-2.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent-orange)] outline-none font-mono transition-colors resize-none"
-                />
-              </div>
-
-              {/* Submit Button */}
-              <button
-                type="submit"
-                disabled={status === "transmitting"}
-                className="w-full py-3.5 bg-[var(--accent-orange)] text-black font-extrabold text-xs md:text-sm tracking-wider uppercase hud-button hover:bg-orange-600 transition-colors shadow-[0_0_15px_var(--accent-orange-glow)] disabled:opacity-50"
-              >
-                {status === "transmitting"
-                  ? t.contact.transmitting
-                  : t.contact.sendButton}
-              </button>
-
-              {/* Success Notification */}
-              {status === "success" && (
-                <div className="p-3 bg-[var(--accent-green-glow)] border border-[var(--accent-green)] text-[var(--accent-green)] text-xs font-bold text-center uppercase tracking-widest">
-                  {t.contact.successMessage}
+        {/* 3 Direct Channels Tactical Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 sm:gap-6 items-stretch font-mono">
+          {/* 1. Direct Email Card */}
+          <div
+            className={`bg-[var(--surface-panel)] border-2 p-5 sm:p-6 hud-panel flex flex-col justify-between space-y-5 transition-all shadow-md ${
+              copiedEmail
+                ? "border-[var(--accent-green)] shadow-[0_0_20px_var(--accent-green-glow)]"
+                : "border-[var(--border-grid)] hover:border-[var(--accent-orange)]"
+            }`}
+          >
+            <div className="space-y-4">
+              {/* Card Top Ribbon */}
+              <div className="flex justify-between items-center border-b border-[var(--border-grid)] pb-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-[var(--accent-orange)]">
+                  <MailIcon className="w-5 h-5" />
+                  <span className="tracking-wider">{t.contact.emailCard.title}</span>
                 </div>
-              )}
-            </form>
-          </div>
-
-          {/* Direct Frequency Channels */}
-          <div className="lg:col-span-5 space-y-6">
-            <div className="bg-[var(--surface-panel)] border border-[var(--border-grid)] p-6 hud-panel-sm space-y-4">
-              <span className="text-xs font-extrabold text-[var(--accent-orange)] tracking-widest uppercase block border-b border-[var(--border-grid)] pb-2">
-                {t.contact.directChannels}
-              </span>
-
-              <div className="space-y-3">
-                <a
-                  href="https://github.com/Lucas-Github-23"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-[var(--bg-main)] border border-[var(--border-grid)] hover:border-[var(--accent-orange)] transition-colors text-[var(--text-primary)]"
-                >
-                  <GithubIcon className="w-5 h-5 text-[var(--accent-orange)]" />
-                  <div>
-                    <span className="block text-xs font-bold">{t.contact.githubLabel}</span>
-                    <span className="text-[10px] text-[var(--text-secondary)]">github.com/Lucas-Github-23</span>
-                  </div>
-                </a>
-
-                <a
-                  href="https://www.linkedin.com/in/lucas-pereira-521082279/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center gap-3 p-3 bg-[var(--bg-main)] border border-[var(--border-grid)] hover:border-[var(--accent-orange)] transition-colors text-[var(--text-primary)]"
-                >
-                  <LinkedinIcon className="w-5 h-5 text-[var(--accent-orange)]" />
-                  <div>
-                    <span className="block text-xs font-bold">{t.contact.linkedinLabel}</span>
-                    <span className="text-[10px] text-[var(--accent-orange)] font-bold">
-                      linkedin.com/in/lucas-pereira-521082279
-                    </span>
-                  </div>
-                </a>
-
-                <button
-                  type="button"
-                  onClick={handleCopyEmail}
-                  title={
-                    copiedEmail
-                      ? language === "pt"
-                        ? "E-mail copiado!"
-                        : "Email copied!"
-                      : language === "pt"
-                        ? "Clique para copiar o e-mail"
-                        : "Click to copy email"
-                  }
-                  className={`w-full flex items-center justify-between p-3 bg-[var(--bg-main)] border transition-all text-left group cursor-pointer ${
-                    copiedEmail
-                      ? "border-[var(--accent-green)] shadow-[0_0_12px_var(--accent-green-glow)] bg-[var(--accent-green-glow)]/10"
-                      : "border-[var(--border-grid)] hover:border-[var(--accent-orange)]"
-                  }`}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    {copiedEmail ? (
-                      <CheckIcon className="w-5 h-5 text-[var(--accent-green)] shrink-0 transition-transform scale-110" />
-                    ) : (
-                      <MailIcon className="w-5 h-5 text-[var(--accent-orange)] shrink-0 group-hover:scale-110 transition-transform" />
-                    )}
-                    <div className="min-w-0">
-                      <span className="block text-xs font-bold text-[var(--text-primary)]">
-                        {t.contact.emailDirectLabel}
-                      </span>
-                      <span
-                        className={`text-[10px] font-bold font-mono transition-colors break-all ${
-                          copiedEmail
-                            ? "text-[var(--accent-green)]"
-                            : "text-[var(--accent-orange)]"
-                        }`}
-                      >
-                        kukagabriel@hotmail.com
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="shrink-0 ml-2">
-                    {copiedEmail ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] text-[9px] font-bold uppercase font-mono tracking-wider animate-pulse">
-                        <CheckIcon className="w-3 h-3" />
-                        {language === "pt" ? "COPIADO!" : "COPIED!"}
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-[var(--surface-panel)] text-[var(--text-secondary)] border border-[var(--border-grid)] group-hover:text-[var(--accent-orange)] group-hover:border-[var(--accent-orange)] text-[9px] font-bold uppercase font-mono tracking-wider transition-colors">
-                        <CopyIcon className="w-3 h-3" />
-                        {language === "pt" ? "COPIAR" : "COPY"}
-                      </span>
-                    )}
-                  </div>
-                </button>
+                <span className="text-[9px] px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] font-extrabold uppercase flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] animate-ping" />
+                  {t.contact.emailCard.badge}
+                </span>
               </div>
-            </div>
 
-            {/* Tactical Security Note */}
-            <div className="p-4 bg-[var(--surface-panel)]/50 border border-[var(--border-grid)] text-[10px] text-[var(--text-secondary)] space-y-1">
-              <span className="text-[var(--accent-orange)] font-bold block">
-                {t.contact.securityProtocolTitle}
-              </span>
-              <p>
-                {t.contact.securityProtocolDesc}
+              {/* Email Address Display */}
+              <div className="p-3 bg-[var(--bg-main)] border border-[var(--border-grid)] rounded-sm">
+                <span className="text-[10px] text-[var(--text-secondary)] block uppercase tracking-widest mb-0.5">
+                  {language === "pt" ? "ENDEREÇO OFICIAL" : "OFFICIAL INBOX"}
+                </span>
+                <span className="text-sm sm:text-base font-bold text-[var(--accent-orange)] break-all select-all">
+                  kukagabriel@hotmail.com
+                </span>
+              </div>
+
+              {/* Description */}
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                {t.contact.emailCard.desc}
               </p>
             </div>
+
+            {/* Action Buttons */}
+            <div className="pt-2 flex flex-col sm:flex-row gap-2.5">
+              <button
+                type="button"
+                onClick={handleCopyEmail}
+                aria-label={t.contact.emailCard.copyBtn}
+                className={`flex-1 py-3 px-3 font-extrabold text-xs uppercase hud-button transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                  copiedEmail
+                    ? "bg-[var(--accent-green)] text-black shadow-[0_0_15px_var(--accent-green-glow)]"
+                    : "bg-[var(--accent-orange)] text-black hover:bg-orange-600 shadow-[0_0_12px_var(--accent-orange-glow)]"
+                }`}
+              >
+                {copiedEmail ? (
+                  <>
+                    <CheckIcon className="w-4 h-4" />
+                    <span>{t.contact.emailCard.copiedBtn}</span>
+                  </>
+                ) : (
+                  <>
+                    <CopyIcon className="w-4 h-4" />
+                    <span>{t.contact.emailCard.copyBtn}</span>
+                  </>
+                )}
+              </button>
+
+              <a
+                href="mailto:kukagabriel@hotmail.com?subject=Contato%20via%20Portfolio&body=Olá%20Lucas,"
+                className="py-3 px-3 bg-[var(--bg-main)] border border-[var(--border-bright)] hover:border-[var(--accent-orange)] text-[var(--text-primary)] hover:text-[var(--accent-orange)] font-bold text-xs uppercase hud-button transition-colors flex items-center justify-center gap-1.5"
+                title={t.contact.emailCard.openBtn}
+              >
+                <ExternalLinkIcon className="w-3.5 h-3.5" />
+                <span className="hidden sm:inline">{language === "pt" ? "APP" : "CLIENT"}</span>
+                <span className="sm:hidden">{t.contact.emailCard.openBtn}</span>
+              </a>
+            </div>
           </div>
+
+          {/* 2. LinkedIn Card */}
+          <div className="bg-[var(--surface-panel)] border-2 border-[var(--border-grid)] hover:border-[var(--accent-orange)] p-5 sm:p-6 hud-panel flex flex-col justify-between space-y-5 transition-all shadow-md group">
+            <div className="space-y-4">
+              {/* Card Top Ribbon */}
+              <div className="flex justify-between items-center border-b border-[var(--border-grid)] pb-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-[var(--accent-orange)]">
+                  <LinkedinIcon className="w-5 h-5" />
+                  <span className="tracking-wider">{t.contact.linkedinCard.title}</span>
+                </div>
+                <span className="text-[9px] px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] font-extrabold uppercase flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)]" />
+                  {t.contact.linkedinCard.badge}
+                </span>
+              </div>
+
+              {/* Profile Link Display */}
+              <div className="p-3 bg-[var(--bg-main)] border border-[var(--border-grid)] rounded-sm">
+                <span className="text-[10px] text-[var(--text-secondary)] block uppercase tracking-widest mb-0.5">
+                  {language === "pt" ? "PERFIL PROFISSIONAL" : "PROFESSIONAL PROFILE"}
+                </span>
+                <span className="text-xs sm:text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-orange)] transition-colors break-all">
+                  linkedin.com/in/lucas-pereira-521082279
+                </span>
+              </div>
+
+              {/* Description */}
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                {t.contact.linkedinCard.desc}
+              </p>
+            </div>
+
+            {/* Action Button */}
+            <div className="pt-2">
+              <a
+                href="https://www.linkedin.com/in/lucas-pereira-521082279/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 px-4 bg-[var(--surface-panel)] border-2 border-[var(--border-bright)] hover:border-[var(--accent-orange)] text-[var(--text-primary)] hover:text-[var(--accent-orange)] font-extrabold text-xs uppercase hud-button transition-all flex items-center justify-center gap-2 shadow-sm"
+              >
+                <LinkedinIcon className="w-4 h-4 text-[var(--accent-orange)]" />
+                <span>{t.contact.linkedinCard.openBtn}</span>
+                <ExternalLinkIcon className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+
+          {/* 3. GitHub Card */}
+          <div className="bg-[var(--surface-panel)] border-2 border-[var(--border-grid)] hover:border-[var(--accent-green)] p-5 sm:p-6 hud-panel flex flex-col justify-between space-y-5 transition-all shadow-md group">
+            <div className="space-y-4">
+              {/* Card Top Ribbon */}
+              <div className="flex justify-between items-center border-b border-[var(--border-grid)] pb-3">
+                <div className="flex items-center gap-2 text-xs font-bold text-[var(--accent-green)]">
+                  <GithubIcon className="w-5 h-5" />
+                  <span className="tracking-wider">{t.contact.githubCard.title}</span>
+                </div>
+                <span className="text-[9px] px-2 py-0.5 bg-[var(--accent-green-glow)] text-[var(--accent-green)] border border-[var(--accent-green)] font-extrabold uppercase flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[var(--accent-green)] animate-ping" />
+                  {t.contact.githubCard.badge}
+                </span>
+              </div>
+
+              {/* Repository Link Display */}
+              <div className="p-3 bg-[var(--bg-main)] border border-[var(--border-grid)] rounded-sm">
+                <span className="text-[10px] text-[var(--text-secondary)] block uppercase tracking-widest mb-0.5">
+                  {language === "pt" ? "REPOSITÓRIOS PÚBLICOS" : "PUBLIC REPOSITORIES"}
+                </span>
+                <span className="text-xs sm:text-sm font-bold text-[var(--text-primary)] group-hover:text-[var(--accent-green)] transition-colors break-all">
+                  github.com/Lucas-Github-23
+                </span>
+              </div>
+
+              {/* Description */}
+              <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
+                {t.contact.githubCard.desc}
+              </p>
+            </div>
+
+            {/* Action Button */}
+            <div className="pt-2">
+              <a
+                href="https://github.com/Lucas-Github-23"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-3 px-4 bg-[var(--surface-panel)] border-2 border-[var(--border-bright)] hover:border-[var(--accent-green)] text-[var(--text-primary)] hover:text-[var(--accent-green)] font-extrabold text-xs uppercase hud-button transition-all flex items-center justify-center gap-2 shadow-sm"
+              >
+                <GithubIcon className="w-4 h-4 text-[var(--accent-green)]" />
+                <span>{t.contact.githubCard.openBtn}</span>
+                <ExternalLinkIcon className="w-3.5 h-3.5" />
+              </a>
+            </div>
+          </div>
+        </div>
+
+        {/* Tactical Status Protocol Banner at Bottom */}
+        <div className="mt-8 p-4 bg-[var(--surface-panel)]/60 border border-[var(--border-grid)] hud-panel-sm flex flex-col sm:flex-row items-center justify-between gap-3 text-center sm:text-left font-mono">
+          <div className="flex items-center gap-2 text-xs font-bold text-[var(--accent-orange)]">
+            <span className="w-2 h-2 rounded-full bg-[var(--accent-green)] animate-pulse shrink-0" />
+            <span>{t.contact.securityProtocolTitle}</span>
+          </div>
+          <p className="text-[11px] text-[var(--text-secondary)]">
+            {t.contact.securityProtocolDesc}
+          </p>
         </div>
       </div>
     </section>
   );
 }
+
