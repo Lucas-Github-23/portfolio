@@ -29,8 +29,8 @@ export function MissionLogTimeline() {
       rolePt: "Auxiliar de Planejamento e Controle da Produção (PCP)",
       orgEn: "VISOLUX SIGN COMPANY",
       orgPt: "VISOLUX SIGN COMPANY",
-      descEn: "Executed industrial production sequencing, raw material supply calculations, work order scheduling, and performance telemetry reports. Developed internal spreadsheets and automated routines utilizing Excel, VBA, and Power BI to streamline shop-floor operations.",
-      descPt: "Atuação no Planejamento e Controle da Produção (PCP), acompanhamento e sequenciamento de ordens de fabricação, controle de matéria-prima e elaboração de relatórios gerenciais. Desenvolvimento e automação de planilhas e processos operacionais com Excel, VBA e Power BI.",
+      descEn: "Executed industrial production sequencing, raw material supply calculations, work order scheduling, and performance KPI reports. Developed internal spreadsheets and automated routines utilizing Excel, VBA, and Power BI to streamline manufacturing workflows.",
+      descPt: "Atuação no Planejamento e Controle da Produção (PCP), acompanhamento e sequenciamento de ordens de fabricação, controle de matéria-prima e elaboração de relatórios gerenciais. Desenvolvimento e automação de planilhas e rotinas de planejamento com Excel, VBA e Power BI.",
       status: "ACTIVE",
     },
     {

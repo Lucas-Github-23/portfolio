@@ -168,7 +168,7 @@ export function ProjectModal({
               {/* Detailed Narrative */}
               <div className="space-y-3 font-mono text-sm text-[var(--text-primary)] leading-relaxed">
                 <p className="border-l-2 border-[var(--accent-orange)] pl-3 italic text-[var(--text-secondary)]">
-                  &quot;Classified operational dossier details for deployment {activeProject.id}. All technical specifications verified.&quot;
+                  &quot;Technical dossier details for deployment {activeProject.id}. All project specifications verified.&quot;
                 </p>
                 <p>{description}</p>
               </div>
@@ -190,7 +190,7 @@ export function ProjectModal({
                 </div>
               </div>
 
-              {/* Links & Repository Telemetry */}
+              {/* Links & Repository Access */}
               <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-[var(--border-grid)] font-mono">
                 {activeProject.liveUrl && (
                   <a

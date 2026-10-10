@@ -28,7 +28,7 @@ export function ProjectDossierGrid() {
       shortDescEn: "Next.js 16 tactical developer interface with dual-language i18n, MAGI supercomputer diagnostic widgets, and CRT scanlines.",
       shortDescPt: "Interface tática Next.js 16 para desenvolvedor com i18n bilíngue, widgets de diagnóstico do supercomputador MAGI e scanlines CRT.",
       fullDescEn: "Architected a custom Evangelion NERV / MAGI command interface using Next.js App Router, Tailwind CSS design tokens, and stateful language/theme controls. Features modular architecture, zero runtime bloat, and dynamic sync status monitoring.",
-      fullDescPt: "Arquitetado uma interface de comando Evangelion NERV / MAGI customizada usando Next.js App Router, design tokens em Tailwind CSS e controles de estado para idioma e tema. Inclui arquitetura modular, alta performance e monitoramento dinâmico de taxa de sincronia.",
+      fullDescPt: "Desenvolvida como uma interface de comando tática inspirada em Evangelion NERV / MAGI customizada usando Next.js App Router, design tokens em Tailwind CSS e controles de estado para idioma e tema. Inclui arquitetura modular, alta performance e monitoramento dinâmico de taxa de sincronia.",
       techStack: ["Next.js 16", "React 19", "TypeScript", "Tailwind CSS v4"],
       liveUrl: "https://github.com/Lucas-Github-23/portfolio",
       repoUrl: "https://github.com/Lucas-Github-23/portfolio",
@@ -59,7 +59,7 @@ export function ProjectDossierGrid() {
       clearance: "CLEARANCE LEVEL A-02",
       shortDescEn: "Modern biometric Pokédex featuring all 1,025 Pokémon (Gen I-IX), Multi-Console sprite engines (HD, 3D, DS, GBA), official Cries, encounter radar, and evolutionary tree.",
       shortDescPt: "Pokédex biométrica moderna com todos os 1.025 Pokémon (Gen I-IX), Multi-Console sprites (HD, 3D, DS, GBA), áudios oficiais (Cries), radar de captura e cadeia evolutiva.",
-      fullDescEn: "Modern web application inspired by Silph Co. hardware aesthetics featuring complete coverage of all 1,025 Pokémon (Kanto through Paldea and DLCs). Features real-time switching across 4 console sprite engines (Official HD, Showdown 3D, animated Gen 5 DS, and pixel-perfect 16-bit GBA), alternative form detection (Mega Evolutions, Gigantamax, Regional, Primal), official Cry sound playback with audio visualizer, Base Stat Total (BST) radar, game-version encounter locations, persistent favorites system with celebratory confetti, and infinite scroll telemetry.",
+      fullDescEn: "Modern web application inspired by Silph Co. hardware aesthetics featuring complete coverage of all 1,025 Pokémon (Kanto through Paldea and DLCs). Features real-time switching across 4 console sprite engines (Official HD, Showdown 3D, animated Gen 5 DS, and pixel-perfect 16-bit GBA), alternative form detection (Mega Evolutions, Gigantamax, Regional, Primal), official Cry sound playback with audio visualizer, Base Stat Total (BST) radar, game-version encounter locations, persistent favorites system with celebratory confetti, and infinite scrolling pagination.",
       fullDescPt: "Aplicação web moderna inspirada no chassi de hardware da Silph Co. com indexação integral de todos os 1.025 Pokémon (Kanto até Paldea e DLCs). Apresenta alternância em tempo real entre 4 estilos de sprites de consoles (Oficial HD, Showdown 3D, Nintendo DS animados e GBA 16-bit com renderização pixel-perfect), suporte a formas alternativas (Mega, Gigantamax, Regionais, Primal), reprodução de áudio oficial (Cries) com equalizador visual, matriz de status base (BST), radar de locais de captura por versão do jogo, sistema de favoritos persistente com chuva de confetes e carregamento infinito (Infinite Scroll).",
       techStack: ["React 19", "TypeScript", "Vite", "PokéAPI v2", "Tailwind CSS", "Canvas Confetti", "Web Audio API"],
       liveUrl: "https://pokedex-lucas-gabriel.vercel.app/",
@@ -91,7 +91,7 @@ export function ProjectDossierGrid() {
       clearance: "CLEARANCE LEVEL B-02",
       shortDescEn: "Fullstack analytics & parsing dashboard for Outlook .msg files combining a .NET (C#) Web API with a React 19 interface for automated message ingestion and metadata extraction.",
       shortDescPt: "Dashboard fullstack para processamento e visualização de e-mails do Outlook (.msg), combinando Web API em .NET (C#) com interface em React 19 para extração automatizada de dados.",
-      fullDescEn: "Engineered a unified fullstack software solution for parsing, organizing, and visualizing Microsoft Outlook .msg binary email files without requiring desktop Outlook installations. The backend (.NET / C# Web API) executes automated batch ingestion, multipart stream extraction, header analysis, sender/receiver telemetry, and timestamp parsing. The frontend (React 19, Vite, Modern CSS) presents an interactive administrative dashboard with real-time payload filtering, detailed inspection views, search capabilities, and tabular data mapping.",
+      fullDescEn: "Engineered a unified fullstack software solution for parsing, organizing, and visualizing Microsoft Outlook .msg binary email files without requiring desktop Outlook installations. The backend (.NET / C# Web API) executes automated batch ingestion, multipart stream extraction, header analysis, sender/receiver metadata extraction, and timestamp parsing. The frontend (React 19, Vite, Modern CSS) presents an interactive administrative dashboard with real-time payload filtering, detailed inspection views, search capabilities, and tabular data mapping.",
       fullDescPt: "Solução de software fullstack unificada para leitura, extração e visualização de arquivos de e-mail do Microsoft Outlook (.msg) sem necessidade de instalação local do cliente de e-mail. O backend (.NET / C# Web API) realiza a ingestão e parsing automatizado dos arquivos binários de e-mail, decodificando metadados, anexos, cabeçalhos, remetentes, destinatários e corpos de mensagem via REST. O frontend (React 19, Vite) fornece uma interface gráfica moderna e responsiva com filtragem de mensagens em tempo real, painel de métricas, busca avançada e visualização limpa de conteúdos.",
       techStack: [".NET (C#)", "Web API", "React 19", "JavaScript", "Vite", "Outlook .MSG Parsing", "REST API"],
       repoFrontendUrl: "https://github.com/Lucas-Github-23/msg-dashboard-front-end",
@@ -126,6 +126,8 @@ export function ProjectDossierGrid() {
 
   const filteredProjects = projects.filter((p) => {
     if (activeFilter === "all") return true;
+    if (activeFilter === "backend") return p.category === "backend" || p.category === "fullstack";
+    if (activeFilter === "frontend") return p.category === "frontend" || p.category === "fullstack";
     return p.category === activeFilter;
   });
 
@@ -141,7 +143,7 @@ export function ProjectDossierGrid() {
         <div className="mb-10 text-center max-w-2xl mx-auto">
           <div className="inline-flex items-center gap-2 font-mono text-xs text-[var(--accent-orange)] tracking-widest uppercase mb-2">
             <TerminalIcon className="w-4 h-4 text-[var(--accent-orange)]" />
-            OPERATIONAL RECORDS
+            ENGINEERING ARCHIVE
           </div>
           <h2 className="text-3xl md:text-4xl font-black font-mono uppercase tracking-tight text-[var(--text-primary)]">
             {t.projects.title}
